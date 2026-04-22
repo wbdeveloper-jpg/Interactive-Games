@@ -1,8 +1,9 @@
-using UnityEngine;
-using TMPro;
 using DG.Tweening;
+using RewardSystem;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
+using UnityEngine;
 using UnityEngine.UI;
 
 public class EntryFlowController : MonoBehaviour
@@ -48,10 +49,20 @@ public class EntryFlowController : MonoBehaviour
         "Nina",
         "Ella"
     };
+
+    public List<SkillEntry> _skills = new()
+   {
+       new SkillEntry(BloomSkillType.Remember,   100f),
+       new SkillEntry(BloomSkillType.Understand,  50f),
+   };
+
     void Start()
     {
         GirlsGameManager.instance.SetupColors();
+        characterParent.localScale = Vector3.zero;
+
         AudioManager.Instance.PlayBGM(0);
+        RewardManager.Instance.ShowPreGame(_skills);
         StartCoroutine(EntryFlow());
     }
 
@@ -63,13 +74,15 @@ public class EntryFlowController : MonoBehaviour
         gameplayUI.SetActive(false);
         dialogueBox.SetActive(false);
 
+        yield return new WaitUntil(() => RewardManager.Instance.IsPreGameComplete);
+
         SetBackgroundAlpha(fullBgAlpha);
 
         // 🔥 STEP 1: Assign dynamic colors
-        GirlsGameManager.instance.SetupColors();
+        //GirlsGameManager.instance.SetupColors();
 
         // 🎬 Character pop
-        characterParent.localScale = Vector3.zero;
+        //characterParent.localScale = Vector3.zero;
 
         yield return characterParent.DOScale(1.1f, 0.4f).SetEase(Ease.OutBack).WaitForCompletion();
         yield return characterParent.DOScale(1f, 0.2f).WaitForCompletion();

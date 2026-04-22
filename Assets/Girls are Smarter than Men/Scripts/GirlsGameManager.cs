@@ -1,9 +1,11 @@
 using DG.Tweening;
+using RewardSystem;
 using System.Collections;
-using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.SceneManagement;
 
-public class GirlsGameManager : MonoBehaviour
+public class GirlsGameManager : MonoBehaviour, IGameSceneCallbacks
 {
     public ColorablePart[] parts;
     public float delayBetweenParts = 0.2f;
@@ -46,7 +48,7 @@ public class GirlsGameManager : MonoBehaviour
     public List<ColorData> skinColors;
 
     Dictionary<ColorData, int> colorUsage = new Dictionary<ColorData, int>();
-
+    GameEvaluationData gameEvaluationData;
     private void Awake()
     {
         if (instance == null)
@@ -89,6 +91,14 @@ public class GirlsGameManager : MonoBehaviour
         float accuracy = (float)correctCount / parts.Length * 100f;
 
         Debug.Log("Accuracy: " + accuracy);
+
+        gameEvaluationData = new GameEvaluationData();
+
+        gameEvaluationData.timeScore = 0.4f;
+        gameEvaluationData.timeTaken = 250f;
+        gameEvaluationData.accuracyScore = accuracy;
+        gameEvaluationData.mistakeCount = parts.Length - correctCount;
+
 
         yield return new WaitForSeconds(0.5f);
 
@@ -158,7 +168,8 @@ public class GirlsGameManager : MonoBehaviour
         mainParent.gameObject.SetActive(false);
         backgroundImage.DOFade(0.8f, 0.3f);
         // 🎉 Show result panel AFTER fade
-        resultPanel.ShowResult(accuracy);
+        //resultPanel.ShowResult(accuracy);
+        RewardManager.Instance.ShowPostGame(entryFlow._skills, gameEvaluationData);
     }
 
     // =========================
@@ -244,4 +255,24 @@ public class GirlsGameManager : MonoBehaviour
         return fallback;
     }
 
+    public void OnPlayAgain()
+    {
+        PlayAgain();
+    }
+
+    public void OnHome()
+    {
+        MainMenu();
+    }
+
+    public void PlayAgain()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+    public void MainMenu()
+    {
+        SceneManager.LoadScene("Loader Scene");
+        UnityAndroidMediator.Instance.PassDataToAndroid("Game Done");
+        GameLoader.Instance.SendEventToJS("Game Done", "Girls are wiser than man");
+    }
 }
