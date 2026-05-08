@@ -14,17 +14,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RewardSystem.BloomSkillData
   skillType: 1
   skillName: Understand
-  icon: {fileID: 21300000, guid: 6b26a169479d2764ebb19d09220e0b62, type: 3}
+  icon: {fileID: 21300000, guid: f59a28f987fd2d740886ef131b93eb12, type: 3}
+  skillColor: {r: 0.39215687, g: 0.70980394, b: 0.9647059, a: 1}
   definition: Understand is about making sense of information and explaining it in
     your own words.
-  details: 'You earn more points when you:
+  details: '1. explain ideas clearly
 
-    - explain ideas clearly
+    2. summarize concepts
 
-    - summarize
-    concepts
+    3. interpret
+    meaning from content
 
-    - interpret meaning from content
-
-    - give examples of what you
-    learned'
+    4. give examples of what you learned'

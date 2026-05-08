@@ -40,22 +40,26 @@ namespace RewardSystem
         /// <param name="silverThreshold">Normalized score needed for silver (0-1).</param>
         /// <param name="goldThreshold">Normalized score needed for gold (0-1).</param>
         public static SkillResult Calculate(
-            SkillEntry         skill,
+            SkillEntry skill,
             GameEvaluationData eval,
-            float              timeWeight,
-            float              accuracyWeight,
-            float              silverThreshold,
-            float              goldThreshold)
+            float timeWeight,
+            float accuracyWeight,
+            float silverThreshold,
+            float goldThreshold)
         {
             // Clamp inputs to valid range
             float tScore = Mathf.Clamp01(eval.timeScore);
             float aScore = Mathf.Clamp01(eval.accuracyScore);
 
-            // Normalize weights so they always sum to 1 even if inspector values don't
-            float totalWeight = timeWeight + accuracyWeight;
+            // Per-skill weights take priority — fall back to global defaults if not set (sentinel -1)
+            float resolvedTime = skill.timeWeight >= 0f ? skill.timeWeight : timeWeight;
+            float resolvedAccuracy = skill.accuracyWeight >= 0f ? skill.accuracyWeight : accuracyWeight;
+
+            // Normalize so they always sum to 1 regardless of input values
+            float totalWeight = resolvedTime + resolvedAccuracy;
             if (totalWeight <= 0f) totalWeight = 1f; // safety guard
-            float tW = timeWeight     / totalWeight;
-            float aW = accuracyWeight / totalWeight;
+            float tW = resolvedTime / totalWeight;
+            float aW = resolvedAccuracy / totalWeight;
 
             // Combined 0-1 performance score
             float combined = (tScore * tW) + (aScore * aW);
@@ -66,28 +70,37 @@ namespace RewardSystem
             // Normalized always 0-1 regardless of maxScore
             float normalized = skill.maxScore > 0f ? finalScore / skill.maxScore : 0f;
 
+            // Medal calculated first — stars derived from it so both always stay in sync
+            MedalTier medal = GetMedal(normalized, silverThreshold, goldThreshold);
+
             return new SkillResult
             {
-                skillType       = skill.skillType,
-                finalScore      = finalScore,
+                skillType = skill.skillType,
+                finalScore = finalScore,
                 normalizedScore = normalized,
-                starCount       = GetStarCount(normalized),
-                medal           = GetMedal(normalized, silverThreshold, goldThreshold)
+                maxScore = skill.maxScore,   // stored for display in UI card
+                medal = medal,
+                starCount = GetStarCount(medal)
             };
         }
 
         // --- Private helpers ---
 
-        private static int GetStarCount(float normalized)
+        // Stars are derived from medal tier — same thresholds, no duplication.
+        // Gold = 3 stars, Silver = 2 stars, Bronze = 1 star.
+        private static int GetStarCount(MedalTier medal)
         {
-            if (normalized >= 0.75f) return 3;
-            if (normalized >= 0.45f) return 2;
-            return 1;
+            return medal switch
+            {
+                MedalTier.Gold => 3,
+                MedalTier.Silver => 2,
+                _ => 1,
+            };
         }
 
         private static MedalTier GetMedal(float normalized, float silver, float gold)
         {
-            if (normalized >= gold)   return MedalTier.Gold;
+            if (normalized >= gold) return MedalTier.Gold;
             if (normalized >= silver) return MedalTier.Silver;
             return MedalTier.Bronze;
         }

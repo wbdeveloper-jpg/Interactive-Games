@@ -1,53 +1,90 @@
 using UnityEngine;
 using System.Collections;
 
+[RequireComponent(typeof(Collider2D))]
 public class MonkeyRedirect : MonoBehaviour
 {
     public Transform[] pathPoints;
+    public GameManager gameManager;
     public float moveSpeed = 5f;
+    public Vector3 offset = new Vector3(0.5f, 0.5f, 0f);
 
-    public Vector3 offset = new Vector3(0.5f, 0.5f, 0); // monkey position relative to player
+    private bool isRedirecting;
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        PlayerMovement player = other.GetComponent<PlayerMovement>();
-
-        if (player != null)
+        if (isRedirecting)
         {
-            AudioManager.Instance.PlaySFX(4);
-            StartCoroutine(MovePlayer(player));
+            return;
         }
+
+        PlayerMovement player = other.GetComponent<PlayerMovement>();
+        if (player == null)
+        {
+            return;
+        }
+
+        PlayMonkeySfx();
+
+        if (gameManager != null)
+        {
+            gameManager.ReducePoint(2);
+        }
+
+        StartCoroutine(MovePlayer(player));
     }
 
-    IEnumerator MovePlayer(PlayerMovement player)
+    private IEnumerator MovePlayer(PlayerMovement player)
     {
+        isRedirecting = true;
+
+        bool playerWasEnabled = player.enabled;
         player.StopMovement();
         player.enabled = false;
-
-        // Activate monkey (in case it's hidden)
         gameObject.SetActive(true);
 
-        foreach (Transform point in pathPoints)
+        if (pathPoints != null)
         {
-            while (Vector3.Distance(player.transform.position, point.position) > 0.05f)
+            foreach (Transform point in pathPoints)
             {
-                // Move player
-                player.transform.position = Vector3.MoveTowards(
-                    player.transform.position,
-                    point.position,
-                    moveSpeed * Time.deltaTime
-                );
+                if (point == null)
+                {
+                    continue;
+                }
 
-                // 🔥 Move monkey with player (drag effect)
-                transform.position = player.transform.position + offset;
+                while (player != null && Vector3.Distance(player.transform.position, point.position) > 0.05f)
+                {
+                    player.transform.position = Vector3.MoveTowards(
+                        player.transform.position,
+                        point.position,
+                        Mathf.Max(0f, moveSpeed) * Time.deltaTime
+                    );
 
-                yield return null;
+                    transform.position = player.transform.position + offset;
+                    yield return null;
+                }
             }
         }
 
-        // 🔥 Hide monkey after reaching destination
-        gameObject.SetActive(false);
+        if (player != null)
+        {
+            player.enabled = playerWasEnabled;
+        }
 
-        player.enabled = true;
+        isRedirecting = false;
+        gameObject.SetActive(false);
+    }
+
+    private void PlayMonkeySfx()
+    {
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlaySFX(4);
+        }
+    }
+
+    private void OnValidate()
+    {
+        moveSpeed = Mathf.Max(0f, moveSpeed);
     }
 }

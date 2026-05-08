@@ -17,84 +17,141 @@ public class EndPanelController : MonoBehaviour
 
     public float typeSpeed = 0.04f;
 
-    private string message = "Yay! Thanks to you, Mowgli found the honey!";
+    [SerializeField] private string message = "Yay! Thanks to you, Mowgli found the honey!";
+    [SerializeField] private bool waitForContinueButton = false;
 
     public IEnumerator PlayOutro()
     {
-        // 🔴 FORCE CLEAN STATE
-        baloo.SetActive(false);
-        thoughtBubble.SetActive(false);
-        honey.SetActive(false);
-        continueBtn.gameObject.SetActive(false);
-        text.text = "";
+        SetCleanState();
+
+        if (panel == null)
+        {
+            yield break;
+        }
 
         panel.gameObject.SetActive(true);
-        panel.alpha = 0;
+        panel.alpha = 0f;
 
-        // ---- PANEL FADE ----
-        yield return panel.DOFade(1, 0.4f).WaitForCompletion();
-        AudioManager.Instance.PlaySFX(2);
-        // ---- STEP 1: BALOO POP ----
-        baloo.SetActive(true);
-        baloo.transform.localScale = Vector3.zero;
+        yield return panel.DOFade(1f, 0.4f).SetLink(panel.gameObject).WaitForCompletion();
+        PlaySfx(2);
 
-        yield return baloo.transform.DOScale(1f, 0.35f)
-            .SetEase(Ease.OutBack)
-            .WaitForCompletion();
-
+        yield return PopIn(baloo, 0.35f);
         yield return new WaitForSeconds(0.1f);
-
-        // ---- STEP 2: THOUGHT BUBBLE POP ----
-        thoughtBubble.SetActive(true);
-        thoughtBubble.transform.localScale = Vector3.zero;
-
-        yield return thoughtBubble.transform.DOScale(1f, 0.3f)
-            .SetEase(Ease.OutBack)
-            .WaitForCompletion();
-
-        // ---- STEP 3: TEXT TYPE ----
-        //AudioManager.Instance.PlaySFX(6);
-        yield return TypeText(message,6);
-
-        // ---- STEP 4: HONEY POP ----
-        honey.SetActive(true);
-        honey.transform.localScale = Vector3.zero;
-
-        yield return honey.transform.DOScale(1f, 0.3f)
-            .SetEase(Ease.OutBack)
-            .WaitForCompletion();
-
+        yield return PopIn(thoughtBubble, 0.3f);
+        yield return TypeText(message, 6);
+        yield return PopIn(honey, 0.3f);
         yield return new WaitForSeconds(0.5f);
 
-        // ---- STEP 5: CONTINUE BUTTON ----
-        continueBtn.gameObject.SetActive(true);
-        continueBtn.transform.localScale = Vector3.one;
-
-        continueBtn.transform.DOScale(1.05f, 1f)
-            .SetLoops(-1, LoopType.Yoyo)
-            .SetEase(Ease.InOutSine);
-
-        bool clicked = false;
-        continueBtn.onClick.RemoveAllListeners();
-        continueBtn.onClick.AddListener(() => clicked = true);
-
-        yield return new WaitUntil(() => clicked);
+        if (waitForContinueButton && continueBtn != null)
+        {
+            yield return WaitForContinue();
+        }
     }
 
-    IEnumerator TypeText(string msg, int clipNo)
+    private void SetCleanState()
     {
-        text.text = "";
+        SafeSetActive(baloo, false);
+        SafeSetActive(thoughtBubble, false);
+        SafeSetActive(honey, false);
 
+        if (continueBtn != null)
+        {
+            continueBtn.gameObject.SetActive(false);
+            continueBtn.onClick.RemoveAllListeners();
+        }
 
-        AudioClip clip = AudioManager.Instance.sfxClips[clipNo];
-        float delay = clip.length / msg.Length;
+        if (text != null)
+        {
+            text.text = string.Empty;
+        }
+    }
 
-        AudioManager.Instance.PlaySFX(clipNo);
+    private IEnumerator PopIn(GameObject obj, float duration)
+    {
+        if (obj == null)
+        {
+            yield break;
+        }
+
+        obj.SetActive(true);
+        obj.transform.DOKill(false);
+        obj.transform.localScale = Vector3.zero;
+
+        yield return obj.transform.DOScale(1f, duration)
+            .SetEase(Ease.OutBack)
+            .SetLink(obj)
+            .WaitForCompletion();
+    }
+
+    private IEnumerator TypeText(string msg, int clipNo)
+    {
+        if (text == null)
+        {
+            yield break;
+        }
+
+        text.text = string.Empty;
+
+        if (string.IsNullOrEmpty(msg))
+        {
+            yield break;
+        }
+
+        float delay = Mathf.Max(0.001f, typeSpeed);
+        AudioManager audioManager = AudioManager.Instance;
+        if (audioManager != null && audioManager.HasSFXClip(clipNo))
+        {
+            AudioClip clip = audioManager.sfxClips[clipNo];
+            delay = Mathf.Max(0.001f, clip.length / msg.Length);
+            audioManager.PlaySFX(clipNo);
+        }
 
         foreach (char c in msg)
         {
             text.text += c;
             yield return new WaitForSeconds(delay);
         }
+    }
+
+    private IEnumerator WaitForContinue()
+    {
+        bool clicked = false;
+        continueBtn.gameObject.SetActive(true);
+        continueBtn.transform.localScale = Vector3.one;
+
+        continueBtn.transform.DOKill(false);
+        continueBtn.transform.DOScale(1.05f, 1f)
+            .SetLoops(-1, LoopType.Yoyo)
+            .SetEase(Ease.InOutSine)
+            .SetLink(continueBtn.gameObject);
+
+        continueBtn.onClick.RemoveAllListeners();
+        continueBtn.onClick.AddListener(() => clicked = true);
+
+        yield return new WaitUntil(() => clicked);
+
+        continueBtn.transform.DOKill(false);
+        continueBtn.onClick.RemoveAllListeners();
+    }
+
+    private void PlaySfx(int clipNo)
+    {
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlaySFX(clipNo);
+        }
+    }
+
+    private void SafeSetActive(GameObject obj, bool active)
+    {
+        if (obj != null)
+        {
+            obj.SetActive(active);
+        }
+    }
+
+    private void OnValidate()
+    {
+        typeSpeed = Mathf.Max(0.001f, typeSpeed);
     }
 }

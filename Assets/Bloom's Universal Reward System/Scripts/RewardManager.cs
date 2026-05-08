@@ -69,8 +69,11 @@ namespace RewardSystem
         [SerializeField] private PostGamePanel postGamePanel;
         [SerializeField] private InfoPanel infoPanel;
 
-        [Header("Canvas")]
-        [SerializeField] private Canvas mainCanvas;
+        [Header("Canvases")]
+        [Tooltip("UI Canvas — interactive panels, buttons, cards. SortOrder 999.")]
+        [SerializeField] private Canvas uiCanvas;
+        [Tooltip("BG Canvas — decorative backgrounds. SortOrder 997. Particles sit between 997-999.")]
+        [SerializeField] private Canvas bgCanvas;
 
         [Header("Score Weights (must sum to 1 or will be normalized)")]
         [Range(0f, 1f)]
@@ -81,6 +84,16 @@ namespace RewardSystem
         [Header("Medal Thresholds (normalized 0-1)")]
         [SerializeField] private float silverThreshold = 0.4f;
         [SerializeField] private float goldThreshold = 0.7f;
+
+        [Header("Reward Audio")]
+        [Tooltip("Dedicated AudioSource on this prefab — independent from any game scene audio.")]
+        [SerializeField] private AudioSource rewardAudioSource;
+        [Tooltip("Played when best skill result is Gold.")]
+        [SerializeField] private AudioClip goldClip;
+        [Tooltip("Played when best skill result is Silver (and no Gold).")]
+        [SerializeField] private AudioClip silverClip;
+        [Tooltip("Played when all results are Bronze.")]
+        [SerializeField] private AudioClip bronzeClip;
 
         // ── Private state ─────────────────────────────────────────
 
@@ -139,10 +152,12 @@ namespace RewardSystem
         /// </summary>
         private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
-            if (mainCanvas != null && Camera.main != null)
-            {
-                mainCanvas.worldCamera = Camera.main;
-            }
+            if (Camera.main == null) return;
+
+            // Both canvases need the new scene's camera assigned
+            // Screen Space - Camera mode loses its reference on scene transition
+            if (uiCanvas != null) uiCanvas.worldCamera = Camera.main;
+            if (bgCanvas != null) bgCanvas.worldCamera = Camera.main;
         }
 
         // ── Public API ─────────────────────────────────────────────
@@ -167,9 +182,16 @@ namespace RewardSystem
             postGamePanel.gameObject.SetActive(false);
             infoPanel.gameObject.SetActive(false);
 
-            // When panel fully fades out, flip the flag so waiting game coroutines unblock
-            preGamePanel.OnPanelComplete = () => IsPreGameComplete = true;
+            // Wire info button to open InfoPanel in pre-game context (pauses countdown)
+            preGamePanel.OnInfoClicked = () => infoPanel.Open(fromPreGame: true);
+            // When panel fully fades out: flip game-ready flag AND disable BG canvas
+            preGamePanel.OnPanelComplete = () =>
+            {
+                IsPreGameComplete = true;
+                SetBGCanvas(false);
+            };
 
+            SetBGCanvas(true);
             preGamePanel.Show(skills, allSkillData);
         }
 
@@ -206,23 +228,117 @@ namespace RewardSystem
                 results.Add(result);
             }
 
+            // Notify game scene to stop its own audio (optional interface — safe if not implemented)
+            NotifyGameAudioStop();
+
+            // Play reward audio based on best medal achieved across all skills
+            PlayRewardAudio(results);
+
             // Show post-game panel
-            postGamePanel.Show(
-                results,
-                allSkillData,
-                onInfoClicked: () => infoPanel.Open(fromPreGame: false)
-            );
+            // Wire info button once via the stored action (not passed into Show to avoid stacking)
+            postGamePanel.OnInfoClicked = () => infoPanel.Open(fromPreGame: false);
+            // On hidden: stop reward audio immediately + disable BG canvas
+            postGamePanel.OnHidden = () =>
+            {
+                StopRewardAudio();
+                SetBGCanvas(false);
+            };
+            SetBGCanvas(true);
+            postGamePanel.Show(results, allSkillData);
         }
 
         /// <summary>
-        /// Force hide all reward panels. Useful for edge cases like
-        /// scene transitions triggered outside the reward system.
+        /// Force hide all reward panels immediately and cleanly.
+        /// Stops all running coroutines and resets alpha — safe to call before scene transitions.
         /// </summary>
         public void HideAll()
         {
+            preGamePanel.StopAllCoroutines();
+            postGamePanel.StopAllCoroutines();
+
+            // Reset CanvasGroup alphas explicitly before deactivating
+            // Prevents ghost-panel rendering on Android during scene transitions
+            if (preGamePanel.TryGetComponent<CanvasGroup>(out var preCG)) preCG.alpha = 0f;
+            if (postGamePanel.TryGetComponent<CanvasGroup>(out var postCG)) postCG.alpha = 0f;
+
             preGamePanel.gameObject.SetActive(false);
             postGamePanel.gameObject.SetActive(false);
             infoPanel.gameObject.SetActive(false);
+
+            // Stop reward audio and disable BG canvas
+            StopRewardAudio();
+            SetBGCanvas(false);
+        }
+
+        /// <summary>
+        /// Plays the appropriate reward audio clip based on the best medal
+        /// achieved across all skill results. Gold > Silver > Bronze priority.
+        /// </summary>
+        private void PlayRewardAudio(List<SkillResult> results)
+        {
+            if (rewardAudioSource == null) return;
+
+            // Find the best medal across all skills
+            MedalTier best = MedalTier.Bronze;
+            foreach (var r in results)
+            {
+                if (r.medal == MedalTier.Gold) { best = MedalTier.Gold; break; }
+                if (r.medal == MedalTier.Silver) best = MedalTier.Silver;
+            }
+
+            AudioClip clip = best switch
+            {
+                MedalTier.Gold => goldClip,
+                MedalTier.Silver => silverClip,
+                _ => bronzeClip,
+            };
+
+            if (clip == null)
+            {
+                Debug.LogWarning($"[RewardSystem] No audio clip assigned for {best} medal.");
+                return;
+            }
+
+            rewardAudioSource.Stop();
+            rewardAudioSource.clip = clip;
+            rewardAudioSource.Play();
+        }
+
+        /// <summary>
+        /// Stops reward audio immediately — called when Play Again or Home is pressed.
+        /// Does not wait for clip to finish.
+        /// </summary>
+        private void StopRewardAudio()
+        {
+            if (rewardAudioSource != null && rewardAudioSource.isPlaying)
+                rewardAudioSource.Stop();
+        }
+
+        /// <summary>
+        /// Finds IGameAudioCallbacks in the current scene and calls OnRewardScreenOpen.
+        /// Safe to call even if no scene implements this interface.
+        /// </summary>
+        private void NotifyGameAudioStop()
+        {
+            foreach (var mb in FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None))
+            {
+                if (mb is IGameAudioCallbacks audioCallbacks)
+                {
+                    audioCallbacks.OnRewardScreenOpen();
+                    return; // one implementer per scene is enough
+                }
+            }
+            // No implementation found — silently skip, not an error
+        }
+
+        /// <summary>
+        /// Enables or disables the background canvas.
+        /// Called internally — never needed from game scenes.
+        /// </summary>
+        private void SetBGCanvas(bool active)
+        {
+            if (bgCanvas != null)
+                bgCanvas.gameObject.SetActive(active);
         }
 
         /// <summary>

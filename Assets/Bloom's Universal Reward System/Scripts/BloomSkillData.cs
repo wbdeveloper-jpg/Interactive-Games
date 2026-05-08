@@ -12,12 +12,14 @@
  *     • skillType   — pick the enum value matching this skill
  *     • skillName   — display name e.g. "Remember"
  *     • icon        — the Sprite shown on all Bloom cards
+ *     • skillColor  — unique color for this skill, applied to frame,
+ *                     icon tint, font color across all card types
  *     • definition  — one-liner definition shown in Info Panel
  *     • details     — longer description shown in Info Panel
  *
  * USAGE:
  *   Referenced by RewardManager's inspector list.
- *   At runtime, manager looks up skills by BloomSkillType enum.
+ *   skillColor is the single source of truth for all color theming.
  * ============================================================
  */
 
@@ -25,7 +27,6 @@ using UnityEngine;
 
 namespace RewardSystem
 {
-    // The 6 levels of Bloom's Taxonomy
     public enum BloomSkillType
     {
         Remember,
@@ -45,6 +46,9 @@ namespace RewardSystem
 
         [Header("Visuals")]
         public Sprite icon;
+
+        [Tooltip("Unique color per skill. Applied to frame, icon, text, stars, score bg, remark across all card types.")]
+        public Color skillColor = Color.white;
 
         [Header("Info Panel Content")]
         [TextArea(2, 4)]

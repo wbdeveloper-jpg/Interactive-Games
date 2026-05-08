@@ -1,3 +1,4 @@
+using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -34,20 +35,35 @@ public class UnityAndroidMediator : MonoBehaviour
     void Start()
     {
 #if UNITY_ANDROID && !UNITY_EDITOR
-        // fetch data from android (PULL METHOD)
-        AndroidJavaClass ajc = new AndroidJavaClass("com.unity3d.player.UnityPlayer"); // getting the class reference
-        activity = ajc.GetStatic<AndroidJavaObject>("currentActivity"); // getting the activity
+    StartCoroutine(InitAndroid()); // Don't do JNI calls on main thread directly
+#endif
+    }
 
-        // Notify Android that Unity is ready FIRST
+    IEnumerator InitAndroid()
+    {
+        yield return null; // Wait a frame before touching JNI
+
+        AndroidJavaClass ajc = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
+        activity = ajc.GetStatic<AndroidJavaObject>("currentActivity");
+
         activity.Call("OnUnityReady");
 
         data = activity.Call<string>("GetDataForUnity");
-        Debug.Log("Data received from Android (Pull): " + data);
-        receivedData.text = data;
-        SceneManager.LoadScene(data);
-#else
-        Debug.Log("Android bridge not available (Editor or non-Android platform)");
-#endif
+
+        if (!string.IsNullOrEmpty(data))
+        {
+            receivedData.text = data;
+            StartCoroutine(LoadSceneAsync(data)); // async, not sync!
+        }
+    }
+
+    IEnumerator LoadSceneAsync(string sceneName)
+    {
+        yield return null;
+        yield return null;
+        AsyncOperation op = SceneManager.LoadSceneAsync(sceneName);
+        while (op != null && !op.isDone)
+            yield return null;
     }
 
     // PUSH METHOD (Android → Unity)

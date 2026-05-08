@@ -45,4 +45,28 @@ namespace RewardSystem
         /// <summary>Called when player taps "Home" on post-game panel.</summary>
         void OnHome();
     }
+
+    /// <summary>
+    /// Optional secondary interface — implement this if your game scene
+    /// needs to pause or stop its own audio when the reward screen opens.
+    /// RewardManager checks for this interface separately — NOT implementing
+    /// it will NOT break the reward system or IGameSceneCallbacks.
+    ///
+    /// USAGE IN GAME SCENE:
+    ///   public class MyGameManager : MonoBehaviour, IGameSceneCallbacks, IGameAudioCallbacks
+    ///   {
+    ///       public void OnRewardScreenOpen()
+    ///       {
+    ///           AudioManager.Instance.StopBGM();
+    ///       }
+    ///   }
+    /// </summary>
+    public interface IGameAudioCallbacks
+    {
+        /// <summary>
+        /// Called by RewardManager just before post-game panel appears.
+        /// Use this to stop or pause your game scene's audio manager.
+        /// </summary>
+        void OnRewardScreenOpen();
+    }
 }

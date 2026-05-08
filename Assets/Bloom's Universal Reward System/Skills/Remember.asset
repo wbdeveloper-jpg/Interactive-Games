@@ -14,17 +14,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RewardSystem.BloomSkillData
   skillType: 0
   skillName: Remember
-  icon: {fileID: 21300000, guid: 970504c66cf5c4e4e883b978fea9c74d, type: 3}
+  icon: {fileID: 21300000, guid: 493b950c768b3e8469a2f62e951ab9cb, type: 3}
+  skillColor: {r: 0.8980392, g: 0.4509804, b: 0.4509804, a: 1}
   definition: "Remember is about bringing back what you\u2019ve already learned from
     your memory."
-  details: 'You earn more points when you:
+  details: '1. recall facts, terms, and basic concepts
 
-    - recall facts, terms, and basic
-    concepts
+    2. recognize correct
+    answers
 
-    - recognize correct answers
+    3. list or define information
 
-    - list or define information
-
-    -
-    repeat learned content accurately'
+    4. repeat learned content accurately'

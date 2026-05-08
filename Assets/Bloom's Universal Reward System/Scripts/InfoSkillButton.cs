@@ -3,14 +3,14 @@
  * InfoSkillButton.cs  —  MonoBehaviour on InfoSkillButton Prefab
  * ============================================================
  * PURPOSE:
- *   A simple skill selector button inside the Info Panel.
- *   Shows the skill icon and name. On click, fires callback
- *   to open the modal with that skill's full data.
+ *   Skill selector button inside the Info Panel.
+ *   Minimalistic design — icon and skill name only.
+ *   Both icon and text are tinted with the skill's assigned color.
  *
  * PREFAB HIERARCHY:
- *   InfoSkillButton (Button + this script)
- *     ├── Icon     (Image)
- *     └── Name     (TextMeshProUGUI)
+ *   InfoSkillButton  (Button + this script)
+ *     ├── Icon     (Image — gets skillColor as tint)
+ *     └── Name     (TextMeshProUGUI — gets skillColor)
  *
  * SETUP:
  *   Assign icon and nameText in inspector.
@@ -26,21 +26,25 @@ namespace RewardSystem
 {
     public class InfoSkillButton : MonoBehaviour
     {
-        [SerializeField] private Image            icon;
-        [SerializeField] private TextMeshProUGUI  nameText;
+        [SerializeField] private Image icon;
+        [SerializeField] private TextMeshProUGUI nameText;
 
         public Button _button;
 
-        private void Awake()
-        {
-            //_button = GetComponent<Button>();
-        }
+        //private void Awake()
+        //{
+        //    _button = GetComponent<Button>();
+        //}
 
-        /// <summary>Populate this button and wire its click callback.</summary>
+        /// <summary>Populate button with skill data, apply color, wire click callback.</summary>
         public void Setup(BloomSkillData data, System.Action onClick)
         {
-            icon.sprite   = data.icon;
+            icon.sprite = data.icon;
             nameText.text = data.skillName;
+
+            // Apply skill color to icon tint and text
+            icon.color = data.skillColor;
+            nameText.color = data.skillColor;
 
             _button.onClick.RemoveAllListeners();
             _button.onClick.AddListener(() => onClick?.Invoke());

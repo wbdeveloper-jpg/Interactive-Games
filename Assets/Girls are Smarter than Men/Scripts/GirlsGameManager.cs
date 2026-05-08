@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class GirlsGameManager : MonoBehaviour, IGameSceneCallbacks
+public class GirlsGameManager : MonoBehaviour, IGameSceneCallbacks, IGameAudioCallbacks
 {
     public ColorablePart[] parts;
     public float delayBetweenParts = 0.2f;
@@ -48,7 +48,9 @@ public class GirlsGameManager : MonoBehaviour, IGameSceneCallbacks
     public List<ColorData> skinColors;
 
     Dictionary<ColorData, int> colorUsage = new Dictionary<ColorData, int>();
-    GameEvaluationData gameEvaluationData;
+    GameEvaluationData gameEvaluationData = new GameEvaluationData();
+    float timetaken;
+    public float avgTime;
     private void Awake()
     {
         if (instance == null)
@@ -65,6 +67,8 @@ public class GirlsGameManager : MonoBehaviour, IGameSceneCallbacks
 
     IEnumerator EvaluateRoutine()
     {
+
+        timetaken = GameTimer.Instance.StopTimer();
         isEvaluating = true;
 
         // 🚫 Disable gameplay input
@@ -92,11 +96,13 @@ public class GirlsGameManager : MonoBehaviour, IGameSceneCallbacks
 
         Debug.Log("Accuracy: " + accuracy);
 
-        gameEvaluationData = new GameEvaluationData();
+        
 
-        gameEvaluationData.timeScore = 0.4f;
-        gameEvaluationData.timeTaken = 250f;
-        gameEvaluationData.accuracyScore = accuracy;
+        gameEvaluationData.timeScore = GameTimer.CalculateTimeScore(timetaken,avgTime);
+        Debug.Log("Time Taken" + timetaken + "/" + avgTime);
+;        Debug.Log("Time Score User Got :" + gameEvaluationData.timeScore);  
+        gameEvaluationData.timeTaken =  timetaken;
+        gameEvaluationData.accuracyScore = accuracy/100;
         gameEvaluationData.mistakeCount = parts.Length - correctCount;
 
 
@@ -271,8 +277,14 @@ public class GirlsGameManager : MonoBehaviour, IGameSceneCallbacks
     }
     public void MainMenu()
     {
+        RewardManager.Instance.HideAll();
         SceneManager.LoadScene("Loader Scene");
         UnityAndroidMediator.Instance.PassDataToAndroid("Game Done");
         GameLoader.Instance.SendEventToJS("Game Done", "Girls are wiser than man");
+    }
+
+    public void OnRewardScreenOpen()
+    {
+        AudioManager.Instance.StopBGM();
     }
 }

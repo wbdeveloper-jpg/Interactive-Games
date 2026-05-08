@@ -35,7 +35,7 @@ namespace RewardSystem
     {
         [Header("Card Prefab & Holder")]
         [SerializeField] private BloomCardPost cardPrefab;
-        [SerializeField] private Transform     cardHolder;
+        [SerializeField] private Transform cardHolder;
 
         [Header("Medal Sprites")]
         [SerializeField] private Sprite bronzeSprite;
@@ -53,8 +53,15 @@ namespace RewardSystem
         [Header("Fade In")]
         [SerializeField] private float fadeInDuration = 0.5f;
 
-        private CanvasGroup            _canvasGroup;
-        private List<BloomCardPost>    _spawnedCards = new();
+        private CanvasGroup _canvasGroup;
+        private List<BloomCardPost> _spawnedCards = new();
+
+        // Stored so btnInfo can be wired once in Awake, not re-added every Show()
+        public System.Action OnInfoClicked;
+
+        // Fired when panel hides itself (Play Again or Home pressed)
+        // RewardManager uses this to deactivate bgCanvas
+        public System.Action OnHidden;
 
         // ── Unity ───────────────────────────────────────────────
 
@@ -63,6 +70,9 @@ namespace RewardSystem
             _canvasGroup = GetComponent<CanvasGroup>();
             if (_canvasGroup == null)
                 _canvasGroup = gameObject.AddComponent<CanvasGroup>();
+
+            // Wire once — delegates to whatever RewardManager last assigned
+            btnInfo.onClick.AddListener(() => OnInfoClicked?.Invoke());
         }
 
         // ── Public API ──────────────────────────────────────────
@@ -71,21 +81,18 @@ namespace RewardSystem
         /// Show post-game results. Called by RewardManager after game over.
         /// </summary>
         public void Show(
-            List<SkillResult>   results,
-            List<BloomSkillData> allSkillData,
-            System.Action        onInfoClicked)
+            List<SkillResult> results,
+            List<BloomSkillData> allSkillData)
         {
             gameObject.SetActive(true);
             _canvasGroup.alpha = 0f;
 
-            // Wire buttons to current scene's callbacks (looked up fresh each time)
+            // Wire play/home buttons fresh each call (scene callbacks change per scene)
             btnPlayAgain.onClick.RemoveAllListeners();
             btnHome.onClick.RemoveAllListeners();
-            btnInfo.onClick.RemoveAllListeners();
 
             btnPlayAgain.onClick.AddListener(HandlePlayAgain);
             btnHome.onClick.AddListener(HandleHome);
-            btnInfo.onClick.AddListener(() => onInfoClicked?.Invoke());
 
             // Clear previous cards
             ClearCards();
@@ -97,7 +104,7 @@ namespace RewardSystem
                 if (data == null) continue;
 
                 BloomCardPost card = Instantiate(cardPrefab, cardHolder);
-                card.Populate(results[i], data, bronzeSprite, silverSprite, goldSprite);
+                card.Populate(data, results[i], bronzeSprite, silverSprite, goldSprite);
                 _spawnedCards.Add(card);
             }
 
@@ -132,20 +139,19 @@ namespace RewardSystem
 
         private void HandlePlayAgain()
         {
-            // Find the scene's callback implementer and call it
-            IGameSceneCallbacks callbacks = FindAnyObjectByType<MonoBehaviour>() is MonoBehaviour mb
-                ? mb.GetComponentInParent<IGameSceneCallbacks>() ?? FindCallbacksInScene()
-                : null;
-
-            callbacks?.OnPlayAgain();
+            IGameSceneCallbacks callbacks = FindCallbacksInScene();
+            // Hide fully BEFORE triggering scene reload — prevents panel surviving mid-transition on Android
             Hide();
+            callbacks?.OnPlayAgain();
         }
 
         private void HandleHome()
         {
             IGameSceneCallbacks callbacks = FindCallbacksInScene();
-            callbacks?.OnHome();
+            // Hide fully BEFORE scene load — Android destroys scene objects immediately on LoadScene
+            // If we call OnHome() first, the scene starts unloading while Hide() is still executing
             Hide();
+            callbacks?.OnHome();
         }
 
         /// <summary>Searches all MonoBehaviours in scene for IGameSceneCallbacks.</summary>
@@ -161,8 +167,14 @@ namespace RewardSystem
 
         private void Hide()
         {
+            // Stop all running coroutines (RevealSequence / FadeIn may still be active)
+            StopAllCoroutines();
+            // Force alpha to 0 explicitly — CanvasGroup may be mid-tween on Android
+            _canvasGroup.alpha = 0f;
             ClearCards();
             gameObject.SetActive(false);
+            // Notify RewardManager so it can deactivate bgCanvas
+            OnHidden?.Invoke();
         }
 
         private void ClearCards()
@@ -175,18 +187,6 @@ namespace RewardSystem
         }
     }
 
-    // Extension to keep BloomCardPost.Populate signature clean
-    public static class BloomCardPostExtensions
-    {
-        public static void Populate(
-            this BloomCardPost card,
-            SkillResult        result,
-            BloomSkillData     data,
-            Sprite             bronze,
-            Sprite             silver,
-            Sprite             gold)
-        {
-            card.Populate(data, result, bronze, silver, gold);
-        }
-    }
+    // Note: BloomCardPostExtensions removed — Populate() is called directly
+    // with correct parameter order (data, result, sprites) matching BloomCardPost signature.
 }

@@ -8908,6 +8908,7 @@ MonoBehaviour:
     color: {r: 0.84313726, g: 0.65882355, b: 0.43137255, a: 1}
   - colorName: Brown
     color: {r: 0.5529412, g: 0.33333334, b: 0.14117648, a: 1}
+  avgTime: 30
 --- !u!4 &1474922323
 Transform:
   m_ObjectHideFlags: 0

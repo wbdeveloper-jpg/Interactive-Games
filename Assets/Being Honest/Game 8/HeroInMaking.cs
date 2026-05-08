@@ -1,4 +1,5 @@
 ﻿using DG.Tweening;
+using RewardSystem;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -6,7 +7,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class HeroInMaking : MonoBehaviour
+public class HeroInMaking : MonoBehaviour, IGameSceneCallbacks, IGameAudioCallbacks
 {
     [Header("Character Levels")]
     [Tooltip("Index 0 = Level 1")]
@@ -18,6 +19,7 @@ public class HeroInMaking : MonoBehaviour
     [SerializeField] private string talkingBool = "Talking";
     [SerializeField] private string correctTrigger = "SPL";
     [SerializeField] private string sadTrigger = "Sad";
+    [SerializeField] private string lowestLevelIdleStateName = "Level 0 Idle";
 
     [Header("Hero Level UI")]
     [SerializeField] private TMP_Text heroLevelText;
@@ -69,48 +71,129 @@ public class HeroInMaking : MonoBehaviour
     [SerializeField] private Button mainMenuButton;
     [SerializeField] private float gameOverFadeDuration = 0.4f;
 
-    [Header("Questions")]
-    public List<QuestionData> questions;
+    [Header("Question Bank")]
+    [Tooltip("Add all available questions for this game here. At runtime, the game randomly selects from this list.")]
+    [SerializeField] private List<QuestionData> questionBank = new();
+
+    [Tooltip("How many random questions should be selected from the question bank.")]
+    [SerializeField] private int randomQuestionCount = 5;
+
+    [Tooltip("If false, the same question will not be selected twice in one game.")]
+    [SerializeField] private bool allowDuplicateQuestions = false;
+
+    [Header("Runtime Questions")]
+    [Tooltip("Runtime selected questions. This is filled automatically from Question Bank when the game starts.")]
+    [SerializeField] private List<QuestionData> questions = new();
+
+    [Header("Question Common Ending Audio")]
+    [Tooltip("Common audio played after every question's unique audio. The common ending text should already be included inside each Question text.")]
+    [SerializeField] private AudioClip questionCommonEndingAudio;
+
+    [Tooltip("Small pause between the unique question audio and the common ending audio.")]
+    [SerializeField] private float questionToCommonEndingGap = 0.4f;
 
     [Header("Answer Feedback Dialogues")]
-    [SerializeField] private List<string> correctFeedbackLines;
-    [SerializeField] private List<string> wrongFeedbackLines;
+    [SerializeField] private List<DialogueData> correctFeedbackDialogues;
+    [SerializeField] private List<DialogueData> wrongFeedbackDialogues;
     [SerializeField] private float feedbackFadeDuration = 0.25f;
+
+    private const int DefaultMaxEvaluationLevel = 6;
 
     private int heroLevel = 1;
     private int currentQuestionIndex = 0;
     private bool inputLocked = false;
     private bool questionResolved = false;
+    private bool gameFlowStarted = false;
+    private Coroutine replayAudioCoroutine;
+    private float timeTaken;
+    private int correctAnswerCount = 0;
+    private int mistakeCount = 0;
 
-    void Start()
+    public int avgTime;
+
+    public List<SkillEntry> _skills = new()
+    {
+        new SkillEntry(BloomSkillType.Evaluate,   100f, timeWeight: 0.2f, accuracyWeight: 0.8f),
+        new SkillEntry(BloomSkillType.Understand,  50f, timeWeight: 0.6f, accuracyWeight: 0.4f),
+    };
+
+    private GameEvaluationData _evaluationData = new();
+
+    private void Start()
     {
         Application.targetFrameRate = 60;
+
+        ResetRuntimeState();
+        SelectRandomQuestionsFromInspectorBank();
         ResetUI();
         StopAllParticles();
         StopNarration();
         UpdateHeroLevelUI();
-        ActivateHeroLevel(heroLevel);
-        StartCoroutine(MainFlow());
+        SetupButtonCallbacks();
+
+        if (RewardManager.Instance != null)
+        {
+            RewardManager.Instance.ShowPreGame(_skills);
+        }
+        else
+        {
+            Debug.LogWarning("RewardManager.Instance is missing. Continuing without pre-game reward screen.");
+        }
+
+        if (!gameFlowStarted)
+        {
+            gameFlowStarted = true;
+            StartCoroutine(MainFlow());
+        }
+    }
+
+    private void OnDisable()
+    {
+        KillTweens();
+    }
+
+    private void OnDestroy()
+    {
+        KillTweens();
     }
 
     #region Main Flow
 
     private IEnumerator MainFlow()
     {
-        yield return new WaitForSeconds(entryDelay);
+        if (RewardManager.Instance != null)
+        {
+            yield return new WaitUntil(() => RewardManager.Instance.IsPreGameComplete);
+        }
+
+        ActivateHeroLevel(heroLevel);
+
+        if (entryDelay > 0f)
+        {
+            yield return new WaitForSeconds(entryDelay);
+        }
 
         yield return PlayDialogueSequence(introDialogues, true);
+
+        if (GameTimer.Instance != null)
+        {
+            GameTimer.Instance.StartTimer();
+        }
+        else
+        {
+            Debug.LogWarning("GameTimer.Instance is missing. Time score will be calculated as 0.");
+        }
 
         yield return ShowQuestionBoard();
         yield return QuestionLoop();
         yield return HideQuestionBoard();
 
-        if(heroLevel <= 1)
+        if (heroLevel <= 1)
         {
             Debug.Log("I failed to powerup any means, Hero Level is -> " + heroLevel);
             yield return PlayDialogueSequence(outroDialoguesMin, false);
         }
-        else if(heroLevel > 1 && heroLevel <= 5)
+        else if (heroLevel > 1 && heroLevel <= 5)
         {
             Debug.Log("I am really very powerful right now, Hero Level is -> " + heroLevel);
             yield return PlayDialogueSequence(outroDialoguesMid, false);
@@ -120,6 +203,7 @@ public class HeroInMaking : MonoBehaviour
             Debug.Log("I reached my maximum potential. Hero Level is -> " + heroLevel);
             yield return PlayDialogueSequence(outroDialoguesMax, false);
         }
+
         HideDialogueText();
         ShowGameOverPanel();
     }
@@ -130,12 +214,43 @@ public class HeroInMaking : MonoBehaviour
 
     private void ActivateHeroLevel(int level)
     {
-        foreach (var hero in heroLevelCharacters)
-            hero.SetActive(false);
+        if (heroLevelCharacters == null || heroLevelCharacters.Count == 0)
+        {
+            currentHeroAnimator = null;
+            Debug.LogWarning("No hero level characters assigned.");
+            return;
+        }
+
+        foreach (GameObject hero in heroLevelCharacters)
+        {
+            if (hero != null)
+            {
+                hero.SetActive(false);
+            }
+        }
 
         int index = Mathf.Clamp(level - 1, 0, heroLevelCharacters.Count - 1);
-        heroLevelCharacters[index].SetActive(true);
-        currentHeroAnimator = heroLevelCharacters[index].GetComponentInChildren<Animator>();
+        GameObject selectedHero = heroLevelCharacters[index];
+
+        if (selectedHero == null)
+        {
+            currentHeroAnimator = null;
+            Debug.LogWarning($"Hero character at index {index} is missing.");
+            return;
+        }
+
+        selectedHero.SetActive(true);
+        currentHeroAnimator = selectedHero.GetComponentInChildren<Animator>();
+    }
+
+    private int GetMaxHeroLevel()
+    {
+        if (heroLevelCharacters != null && heroLevelCharacters.Count > 0)
+        {
+            return heroLevelCharacters.Count;
+        }
+
+        return DefaultMaxEvaluationLevel;
     }
 
     #endregion
@@ -144,64 +259,204 @@ public class HeroInMaking : MonoBehaviour
 
     private IEnumerator PlayDialogueSequence(List<DialogueData> dialogues, bool hideAfter)
     {
+        if (dialogues == null || dialogues.Count == 0)
+        {
+            yield break;
+        }
+
+        if (dialogueGroup == null || dialogueText == null)
+        {
+            Debug.LogWarning("Dialogue UI references are missing.");
+            yield break;
+        }
+
         dialogueGroup.gameObject.SetActive(true);
-        dialogueGroup.alpha = 1;
+        dialogueGroup.alpha = 1f;
         dialogueText.gameObject.SetActive(true);
 
         foreach (DialogueData line in dialogues)
         {
+            if (line == null || string.IsNullOrEmpty(line.text))
+            {
+                continue;
+            }
+
             yield return PlayTextWithAudio(dialogueText, line);
-            yield return new WaitForSeconds(dialogueLineGap);
+
+            if (dialogueLineGap > 0f)
+            {
+                yield return new WaitForSeconds(dialogueLineGap);
+            }
         }
 
         if (hideAfter)
+        {
             yield return FadeOutDialogue(0.3f);
+        }
     }
 
     private IEnumerator FadeOutDialogue(float duration)
     {
-        dialogueGroup.DOFade(0, duration);
+        if (dialogueGroup == null)
+        {
+            yield break;
+        }
+
+        dialogueGroup.DOKill();
+        dialogueGroup.DOFade(0f, duration);
         yield return new WaitForSeconds(duration);
         dialogueGroup.gameObject.SetActive(false);
     }
 
     private IEnumerator PlayTextWithAudio(TMP_Text textUI, DialogueData data)
     {
-        textUI.text = "";
+        if (textUI == null || data == null)
+        {
+            yield break;
+        }
+
+        string lineText = data.text ?? string.Empty;
+        textUI.text = string.Empty;
         SetTalking(true);
 
-        float duration = fallbackTypewriterSpeed * data.text.Length;
+        float duration = Mathf.Max(0.01f, fallbackTypewriterSpeed * lineText.Length);
 
-        if (data.audio != null)
+        if (data.audio != null && narrationSource != null)
         {
             narrationSource.Stop();
             narrationSource.clip = data.audio;
             narrationSource.Play();
-            duration = data.audio.length;
+            duration = Mathf.Max(0.01f, data.audio.length);
         }
 
-        float delay = duration / Mathf.Max(1, data.text.Length);
+        float delay = lineText.Length > 0 ? duration / lineText.Length : 0f;
 
-        foreach (char c in data.text)
+        foreach (char c in lineText)
         {
             textUI.text += c;
-            yield return new WaitForSeconds(delay);
+
+            if (delay > 0f)
+            {
+                yield return new WaitForSeconds(delay);
+            }
         }
 
-        if (data.audio != null)
-            yield return new WaitUntil(() => !narrationSource.isPlaying);
+        if (data.audio != null && narrationSource != null)
+        {
+            yield return new WaitUntil(() => narrationSource == null || !narrationSource.isPlaying);
+        }
 
         SetTalking(false);
     }
 
+    private IEnumerator PlayQuestionTextWithAudio(TMP_Text textUI, QuestionData data)
+    {
+        if (textUI == null || data == null)
+        {
+            yield break;
+        }
+
+        string fullQuestionText = data.question ?? string.Empty;
+        textUI.text = string.Empty;
+        SetTalking(true);
+
+        float questionAudioDuration = data.questionAudio != null ? data.questionAudio.length : 0f;
+        float commonAudioDuration = questionCommonEndingAudio != null ? questionCommonEndingAudio.length : 0f;
+        float gapDuration = questionCommonEndingAudio != null ? Mathf.Max(0f, questionToCommonEndingGap) : 0f;
+
+        float totalAudioDuration = questionAudioDuration + gapDuration + commonAudioDuration;
+        float fallbackDuration = Mathf.Max(0.01f, fallbackTypewriterSpeed * fullQuestionText.Length);
+        float typewriterDuration = totalAudioDuration > 0f ? totalAudioDuration : fallbackDuration;
+
+        Coroutine audioSequenceCoroutine = null;
+        if (narrationSource != null && (data.questionAudio != null || questionCommonEndingAudio != null))
+        {
+            audioSequenceCoroutine = StartCoroutine(PlayQuestionAudioSequence(data.questionAudio));
+        }
+
+        yield return TypeTextOverDuration(textUI, fullQuestionText, typewriterDuration);
+
+        if (audioSequenceCoroutine != null)
+        {
+            yield return audioSequenceCoroutine;
+        }
+
+        SetTalking(false);
+    }
+
+    private IEnumerator TypeTextOverDuration(TMP_Text textUI, string text, float duration)
+    {
+        if (textUI == null)
+        {
+            yield break;
+        }
+
+        string safeText = text ?? string.Empty;
+        textUI.text = string.Empty;
+
+        if (safeText.Length == 0)
+        {
+            if (duration > 0f)
+            {
+                yield return new WaitForSeconds(duration);
+            }
+
+            yield break;
+        }
+
+        float delay = Mathf.Max(0.001f, duration / safeText.Length);
+
+        foreach (char c in safeText)
+        {
+            textUI.text += c;
+            yield return new WaitForSeconds(delay);
+        }
+    }
+
+    private IEnumerator PlayQuestionAudioSequence(AudioClip questionAudio)
+    {
+        if (narrationSource == null)
+        {
+            yield break;
+        }
+
+        if (questionAudio != null)
+        {
+            narrationSource.Stop();
+            narrationSource.clip = questionAudio;
+            narrationSource.Play();
+            yield return new WaitUntil(() => narrationSource == null || !narrationSource.isPlaying);
+        }
+
+        if (questionCommonEndingAudio != null)
+        {
+            float gap = Mathf.Max(0f, questionToCommonEndingGap);
+            if (gap > 0f)
+            {
+                yield return new WaitForSeconds(gap);
+            }
+
+            narrationSource.Stop();
+            narrationSource.clip = questionCommonEndingAudio;
+            narrationSource.Play();
+            yield return new WaitUntil(() => narrationSource == null || !narrationSource.isPlaying);
+        }
+    }
+
     private void SetTalking(bool value)
     {
-        currentHeroAnimator?.SetBool(talkingBool, value);
+        if (currentHeroAnimator != null && !string.IsNullOrEmpty(talkingBool))
+        {
+            currentHeroAnimator.SetBool(talkingBool, value);
+        }
     }
 
     private void HideDialogueText()
     {
-        dialogueText.gameObject.SetActive(false);
+        if (dialogueText != null)
+        {
+            dialogueText.gameObject.SetActive(false);
+        }
     }
 
     #endregion
@@ -210,30 +465,120 @@ public class HeroInMaking : MonoBehaviour
 
     private IEnumerator ShowQuestionBoard()
     {
-        questionBoardGroup.gameObject.SetActive(true);
-        questionBoardGroup.alpha = 0;
-        questionBoard.localScale = Vector3.one * 0.95f;
+        if (questionBoardGroup == null || questionBoard == null)
+        {
+            Debug.LogWarning("Question board references are missing.");
+            yield break;
+        }
 
-        questionBoardGroup.DOFade(1, boardEntryDuration);
-        questionBoard.DOScale(1, boardEntryDuration).SetEase(Ease.OutBack);
+        questionBoardGroup.gameObject.SetActive(true);
+        questionBoardGroup.alpha = 0f;
+        questionBoard.localScale = Vector3.one * 0.95f;
+        questionBoard.localRotation = Quaternion.identity;
+
+        questionBoardGroup.DOKill();
+        questionBoard.DOKill();
+
+        questionBoardGroup.DOFade(1f, boardEntryDuration);
+        questionBoard.DOScale(1f, boardEntryDuration).SetEase(Ease.OutBack);
 
         yield return new WaitForSeconds(boardEntryDuration);
     }
 
     private IEnumerator HideQuestionBoard()
     {
-        questionBoardGroup.DOFade(0, boardRotateDuration);
+        if (questionBoardGroup == null || questionBoard == null)
+        {
+            yield break;
+        }
+
+        questionBoardGroup.DOKill();
+        questionBoard.DOKill();
+
+        questionBoardGroup.DOFade(0f, boardRotateDuration);
         questionBoard.DOScale(0.95f, boardRotateDuration);
 
         yield return new WaitForSeconds(boardRotateDuration);
         questionBoardGroup.gameObject.SetActive(false);
     }
 
+    private void SelectRandomQuestionsFromInspectorBank()
+    {
+        if (questionBank == null || questionBank.Count == 0)
+        {
+            Debug.LogWarning("Question Bank is empty. Falling back to Runtime Questions list if it has any manually assigned questions.");
+            return;
+        }
+
+        int requiredQuestionCount = Mathf.Max(1, randomQuestionCount);
+        List<QuestionData> sourceQuestions = new List<QuestionData>(questionBank);
+        List<QuestionData> selectedQuestions = new List<QuestionData>();
+
+        if (allowDuplicateQuestions)
+        {
+            for (int i = 0; i < requiredQuestionCount; i++)
+            {
+                selectedQuestions.Add(CloneQuestionData(sourceQuestions[Random.Range(0, sourceQuestions.Count)]));
+            }
+        }
+        else
+        {
+            ShuffleList(sourceQuestions);
+            int count = Mathf.Min(requiredQuestionCount, sourceQuestions.Count);
+
+            for (int i = 0; i < count; i++)
+            {
+                selectedQuestions.Add(CloneQuestionData(sourceQuestions[i]));
+            }
+        }
+
+        questions = selectedQuestions;
+        LogSelectedQuestionAudioStatus();
+        Debug.Log($"Selected {questions.Count} random questions from Inspector Question Bank.");
+    }
+
+    private QuestionData CloneQuestionData(QuestionData source)
+    {
+        if (source == null)
+        {
+            return new QuestionData();
+        }
+
+        return new QuestionData
+        {
+            question = source.question,
+            questionAudio = source.questionAudio,
+            correctAnswerIndex = source.correctAnswerIndex
+        };
+    }
+
+    private void LogSelectedQuestionAudioStatus()
+    {
+        if (questions == null)
+        {
+            return;
+        }
+
+        for (int i = 0; i < questions.Count; i++)
+        {
+            QuestionData question = questions[i];
+            string audioName = question != null && question.questionAudio != null ? question.questionAudio.name : "MISSING_AUDIO";
+            Debug.Log($"Selected Question {i + 1}: audio = {audioName}");
+        }
+    }
+
     private IEnumerator QuestionLoop()
     {
+        if (questions == null || questions.Count == 0)
+        {
+            Debug.LogWarning("No questions assigned.");
+            yield break;
+        }
+
         while (currentQuestionIndex < questions.Count)
         {
-            yield return ShowQuestion(questions[currentQuestionIndex]);
+            QuestionData currentQuestion = questions[currentQuestionIndex];
+            yield return ShowQuestion(currentQuestion);
             currentQuestionIndex++;
         }
     }
@@ -242,84 +587,183 @@ public class HeroInMaking : MonoBehaviour
     {
         inputLocked = true;
         questionResolved = false;
+        SetButtonsInteractable(false);
 
-        replayAudioGroup.gameObject.SetActive(false);
-        instruction.gameObject.SetActive(false);
-        questionText.text = "";
+        if (replayAudioGroup != null)
+        {
+            replayAudioGroup.DOKill();
+            replayAudioGroup.gameObject.SetActive(false);
+        }
 
-        yield return PlayTextWithAudio(
-            questionText,
-            new DialogueData { text = data.question, audio = data.questionAudio }
-        );
+        if (instruction != null)
+        {
+            instruction.DOKill();
+            instruction.gameObject.SetActive(false);
+        }
+
+        if (questionText != null)
+        {
+            questionText.text = string.Empty;
+        }
+
+        if (data == null)
+        {
+            Debug.LogWarning($"Question at index {currentQuestionIndex} is missing.");
+            questionResolved = true;
+            yield break;
+        }
+
+        yield return PlayQuestionTextWithAudio(questionText, data);
 
         yield return ShowButtons();
 
-        replayAudioGroup.alpha = 0;
-        instruction.alpha = 0;
-        replayAudioGroup.gameObject.SetActive(data.questionAudio != null);
-        instruction.gameObject.SetActive(data.questionAudio != null);
-        replayAudioGroup.DOFade(1, 0.25f);
-        instruction.DOFade(1, 0.25f);
+        bool hasQuestionAudio = data.questionAudio != null || questionCommonEndingAudio != null;
+
+        if (replayAudioGroup != null)
+        {
+            replayAudioGroup.alpha = 0f;
+            replayAudioGroup.gameObject.SetActive(hasQuestionAudio);
+
+            if (hasQuestionAudio)
+            {
+                replayAudioGroup.DOFade(1f, 0.25f);
+            }
+        }
+
+        if (instruction != null)
+        {
+            instruction.alpha = 0f;
+            instruction.gameObject.SetActive(hasQuestionAudio);
+
+            if (hasQuestionAudio)
+            {
+                instruction.DOFade(1f, 0.25f);
+            }
+        }
 
         inputLocked = false;
+        SetButtonsInteractable(true);
         yield return new WaitUntil(() => questionResolved);
     }
 
     private IEnumerator ShowButtons()
     {
+        if (yesButton == null || noButton == null)
+        {
+            Debug.LogWarning("Answer buttons are missing.");
+            yield break;
+        }
+
         yesButton.gameObject.SetActive(true);
         noButton.gameObject.SetActive(true);
+
+        yesButton.transform.DOKill();
+        noButton.transform.DOKill();
 
         yesButton.transform.localScale = Vector3.zero;
         noButton.transform.localScale = Vector3.zero;
 
-        yesButton.transform.DOScale(1, 0.3f).SetEase(Ease.OutBack);
-        yield return new WaitForSeconds(buttonPopDelay);
-        noButton.transform.DOScale(1, 0.3f).SetEase(Ease.OutBack);
+        yesButton.transform.DOScale(1f, 0.3f).SetEase(Ease.OutBack);
+
+        if (buttonPopDelay > 0f)
+        {
+            yield return new WaitForSeconds(buttonPopDelay);
+        }
+
+        noButton.transform.DOScale(1f, 0.3f).SetEase(Ease.OutBack);
     }
 
     public void OnAnswer(int index)
     {
-        if (inputLocked) return;
-        inputLocked = true;
+        if (inputLocked)
+        {
+            return;
+        }
 
+        if (questions == null || currentQuestionIndex < 0 || currentQuestionIndex >= questions.Count)
+        {
+            Debug.LogWarning("Answer received, but current question index is invalid.");
+            return;
+        }
+
+        StopReplayQuestionAudio();
+
+        inputLocked = true;
+        SetButtonsInteractable(false);
         StartCoroutine(OnAnswerSelected(index));
     }
 
     private IEnumerator OnAnswerSelected(int index)
     {
-        
+        if (replayAudioGroup != null)
+        {
+            replayAudioGroup.DOKill();
+            replayAudioGroup.DOFade(0f, 0.2f).OnComplete(() =>
+            {
+                if (replayAudioGroup != null)
+                {
+                    replayAudioGroup.gameObject.SetActive(false);
+                }
+            });
+        }
 
-        replayAudioGroup.DOFade(0, 0.2f).OnComplete(() =>
-            replayAudioGroup.gameObject.SetActive(false));
+        if (instruction != null)
+        {
+            instruction.DOKill();
+            instruction.DOFade(0f, 0.2f).OnComplete(() =>
+            {
+                if (instruction != null)
+                {
+                    instruction.gameObject.SetActive(false);
+                }
+            });
+        }
 
-        bool correct = index == questions[currentQuestionIndex].correctAnswerIndex;
+        QuestionData currentQuestion = questions[currentQuestionIndex];
+        bool correct = currentQuestion != null && index == currentQuestion.correctAnswerIndex;
 
         if (correct)
         {
-            AudioManager.Instance.PlaySFX(0);
-            correctParticle.Play();
+            correctAnswerCount++;
+
+            if (AudioManager.Instance != null)
+            {
+                AudioManager.Instance.PlaySFX(0);
+            }
+
+            correctParticle?.Play();
             cardBgParticle?.Play();
-            heroLevel++;
+            heroLevel = Mathf.Min(heroLevel + 1, GetMaxHeroLevel());
         }
         else
         {
-            AudioManager.Instance.PlaySFX(1);
-            wrongParticle.Play();
+            mistakeCount++;
+
+            if (AudioManager.Instance != null)
+            {
+                AudioManager.Instance.PlaySFX(1);
+            }
+
+            wrongParticle?.Play();
             heroLevel = Mathf.Max(1, heroLevel - 1);
         }
 
         ActivateHeroLevel(heroLevel);
 
-        if(heroLevel <= 1)
+        if (heroLevel <= 1 && currentHeroAnimator != null && !string.IsNullOrEmpty(lowestLevelIdleStateName))
         {
-            currentHeroAnimator.Play("Level 0 Idle", 0, 0f);
+            currentHeroAnimator.Play(lowestLevelIdleStateName, 0, 0f);
         }
 
         yield return ShowAnswerFeedback(correct);
 
-        yield  return new WaitForSeconds(1.5f);
-        currentHeroAnimator?.SetTrigger(correct ? correctTrigger : sadTrigger);
+        yield return new WaitForSeconds(1.5f);
+
+        if (currentHeroAnimator != null)
+        {
+            currentHeroAnimator.SetTrigger(correct ? correctTrigger : sadTrigger);
+        }
+
         UpdateHeroLevelUI();
         StartCoroutine(ResolveQuestionAfterDelay());
     }
@@ -333,97 +777,145 @@ public class HeroInMaking : MonoBehaviour
 
     private IEnumerator NextQuestionTransition()
     {
-        // Rotate + fade OUT
-        questionBoardGroup.DOFade(0.3f, boardRotateDuration / 2);
+        if (questionBoardGroup == null || questionBoard == null)
+        {
+            HideButtonsImmediate();
+            yield break;
+        }
+
+        questionBoardGroup.DOKill();
+        questionBoard.DOKill();
+
+        questionBoardGroup.DOFade(0.3f, boardRotateDuration / 2f);
 
         questionBoard
-            .DORotate(new Vector3(0, 90, 0), boardRotateDuration / 2)
+            .DORotate(new Vector3(0f, 90f, 0f), boardRotateDuration / 2f)
             .SetEase(Ease.InSine);
 
-        yield return new WaitForSeconds(boardRotateDuration / 2);
+        yield return new WaitForSeconds(boardRotateDuration / 2f);
 
-        // Reset rotation to opposite side
-        questionBoard.localRotation = Quaternion.Euler(0, -90, 0);
+        questionBoard.localRotation = Quaternion.Euler(0f, -90f, 0f);
 
-        // Fade + rotate IN
-        questionBoardGroup.DOFade(1f, boardRotateDuration / 2);
+        questionBoardGroup.DOFade(1f, boardRotateDuration / 2f);
 
         questionBoard
-            .DORotate(Vector3.zero, boardRotateDuration / 2)
+            .DORotate(Vector3.zero, boardRotateDuration / 2f)
             .SetEase(Ease.OutSine);
 
-        // Hide buttons AFTER rotation
-        yesButton.transform.DOScale(0, 0.2f);
-        noButton.transform.DOScale(0, 0.2f);
+        if (yesButton != null)
+        {
+            yesButton.transform.DOKill();
+            yesButton.transform.DOScale(0f, 0.2f);
+        }
+
+        if (noButton != null)
+        {
+            noButton.transform.DOKill();
+            noButton.transform.DOScale(0f, 0.2f);
+        }
 
         yield return new WaitForSeconds(0.2f);
-
-        yesButton.gameObject.SetActive(false);
-        noButton.gameObject.SetActive(false);
+        HideButtonsImmediate();
     }
 
     private IEnumerator ShowAnswerFeedback(bool correct)
     {
-        List<string> pool = correct ? correctFeedbackLines : wrongFeedbackLines;
+        List<DialogueData> pool = correct ? correctFeedbackDialogues : wrongFeedbackDialogues;
 
         if (pool == null || pool.Count == 0)
-            yield break;
-
-        string line = pool[Random.Range(0, pool.Count)];
-
-        // Show dialogue
-        dialogueGroup.gameObject.SetActive(true);
-        dialogueGroup.alpha = 0;
-
-        dialogueText.gameObject.SetActive(true);
-        dialogueText.text = "";
-
-        // Fade in
-        dialogueGroup.DOFade(1, feedbackFadeDuration);
-
-        // Talking ON
-        SetTalking(true);
-
-        // Typewriter animation (FAST)
-        float speed = 0.05f;
-        foreach (char c in line)
         {
-            dialogueText.text += c;
-            yield return new WaitForSeconds(speed);
+            yield break;
         }
 
-        // Small hold time
+        if (dialogueGroup == null || dialogueText == null)
+        {
+            yield break;
+        }
+
+        DialogueData selectedDialogue = pool[Random.Range(0, pool.Count)];
+
+        if (selectedDialogue == null || string.IsNullOrEmpty(selectedDialogue.text))
+        {
+            yield break;
+        }
+
+        dialogueGroup.gameObject.SetActive(true);
+        dialogueGroup.alpha = 0f;
+
+        dialogueText.gameObject.SetActive(true);
+        dialogueText.text = string.Empty;
+
+        dialogueGroup.DOKill();
+        dialogueGroup.DOFade(1f, feedbackFadeDuration);
+
+        yield return new WaitForSeconds(feedbackFadeDuration);
+
+        yield return PlayTextWithAudio(dialogueText, selectedDialogue);
+
         yield return new WaitForSeconds(1.5f);
 
-        // Talking OFF
-        SetTalking(false);
-
-        // Fade OUT
-        dialogueGroup.DOFade(0, feedbackFadeDuration);
+        dialogueGroup.DOFade(0f, feedbackFadeDuration);
         yield return new WaitForSeconds(feedbackFadeDuration);
 
         dialogueGroup.gameObject.SetActive(false);
     }
+
     #endregion
 
     #region Game Over
 
     private void ShowGameOverPanel()
     {
+        if (GameTimer.Instance != null)
+        {
+            timeTaken = GameTimer.Instance.StopTimer();
+        }
+        else
+        {
+            timeTaken = 0f;
+        }
+
+        _evaluationData.timeTaken = timeTaken;
+        _evaluationData.mistakeCount = mistakeCount;
+        _evaluationData.accuracyScore = GetAccuracyScore();
+        _evaluationData.timeScore = GameTimer.CalculateTimeScore(timeTaken, avgTime);
+
+        Debug.Log("User's Score " + timeTaken + "/" + avgTime);
+        Debug.Log("User's Accuracy Score is - " + _evaluationData.accuracyScore);
+        Debug.Log("User's Time Score is - " + _evaluationData.timeScore);
+
+        if (RewardManager.Instance != null)
+        {
+            RewardManager.Instance.ShowPostGame(_skills, _evaluationData);
+        }
+        else
+        {
+            Debug.LogWarning("RewardManager.Instance is missing. Showing fallback game over panel.");
+            ShowFallbackGameOverPanel();
+        }
+    }
+
+    private float GetAccuracyScore()
+    {
+        if (questions == null || questions.Count == 0)
+        {
+            return 0f;
+        }
+
+        return Mathf.Clamp01((float)correctAnswerCount / questions.Count);
+    }
+
+    private void ShowFallbackGameOverPanel()
+    {
+        if (gameOverGroup == null)
+        {
+            return;
+        }
+
         gameOverGroup.gameObject.SetActive(true);
-        gameOverGroup.alpha = 0;
-        gameOverGroup.transform.localScale = Vector3.one * 0.9f;
-
-        gameOverGroup.DOFade(1, gameOverFadeDuration);
-        gameOverGroup.transform.DOScale(1, gameOverFadeDuration).SetEase(Ease.OutBack);
-
-        playAgainButton.onClick.AddListener(() => { Debug.Log("Play Again"); LoadScene(); });
-        mainMenuButton.onClick.AddListener(() => { 
-            Debug.Log("Main Menu");
-            UnityAndroidMediator.Instance.PassDataToAndroid("Game Done");
-            GameLoader.Instance.SendEventToJS("Game Done", "Being Honest"); 
-            MainMenu(); 
-        });
+        gameOverGroup.alpha = 0f;
+        gameOverGroup.DOKill();
+        gameOverGroup.DOFade(1f, gameOverFadeDuration);
     }
 
     public void LoadScene()
@@ -440,26 +932,68 @@ public class HeroInMaking : MonoBehaviour
 
     #region Utility
 
+    private void ShuffleList<T>(List<T> list)
+    {
+        if (list == null || list.Count <= 1)
+        {
+            return;
+        }
+
+        for (int i = 0; i < list.Count; i++)
+        {
+            int randomIndex = Random.Range(i, list.Count);
+            T temp = list[i];
+            list[i] = list[randomIndex];
+            list[randomIndex] = temp;
+        }
+    }
+
+    private void ResetRuntimeState()
+    {
+        heroLevel = 1;
+        currentQuestionIndex = 0;
+        inputLocked = false;
+        questionResolved = false;
+        timeTaken = 0f;
+        correctAnswerCount = 0;
+        mistakeCount = 0;
+        _evaluationData = new GameEvaluationData();
+    }
+
     private void UpdateHeroLevelUI()
     {
-        heroLevelText.text = $"Hero Level: {heroLevel}";
+        if (heroLevelText != null)
+        {
+            heroLevelText.text = $"Hero Level: {heroLevel}";
+        }
     }
 
     private void ResetUI()
     {
-        dialogueGroup.gameObject.SetActive(false);
-        questionBoardGroup.gameObject.SetActive(false);
-        replayAudioGroup.gameObject.SetActive(false);
-        instruction.gameObject.SetActive(false);
-        gameOverGroup.gameObject.SetActive(false);
-        yesButton.gameObject.SetActive(false);
-        noButton.gameObject.SetActive(false);
+        SetCanvasGroupActive(dialogueGroup, false, 0f);
+        SetCanvasGroupActive(questionBoardGroup, false, 0f);
+        SetCanvasGroupActive(replayAudioGroup, false, 0f);
+        SetCanvasGroupActive(instruction, false, 0f);
+        SetCanvasGroupActive(gameOverGroup, false, 0f);
+
+        HideButtonsImmediate();
+    }
+
+    private void SetCanvasGroupActive(CanvasGroup group, bool active, float alpha)
+    {
+        if (group == null)
+        {
+            return;
+        }
+
+        group.DOKill();
+        group.alpha = alpha;
+        group.gameObject.SetActive(active);
     }
 
     private void StopNarration()
     {
-        narrationSource?.Stop();
-        SetTalking(false);
+        StopReplayQuestionAudio();
     }
 
     private void StopAllParticles()
@@ -471,23 +1005,155 @@ public class HeroInMaking : MonoBehaviour
 
     public void PlayCurrentQuestionAudio()
     {
-        if (currentQuestionIndex >= questions.Count) return;
+        if (inputLocked || questionResolved)
+        {
+            return;
+        }
 
-        var clip = questions[currentQuestionIndex].questionAudio;
-        if (clip == null) return;
+        if (questions == null || currentQuestionIndex >= questions.Count)
+        {
+            return;
+        }
 
-        narrationSource.Stop();
-        narrationSource.clip = clip;
-        narrationSource.Play();
+        QuestionData currentQuestion = questions[currentQuestionIndex];
+        if (currentQuestion == null || narrationSource == null)
+        {
+            return;
+        }
+
+        StopReplayQuestionAudio();
+
+        replayAudioCoroutine = StartCoroutine(ReplayCurrentQuestionAudioSequence(currentQuestion));
+    }
+
+    private IEnumerator ReplayCurrentQuestionAudioSequence(QuestionData currentQuestion)
+    {
+        if (currentQuestion == null)
+        {
+            replayAudioCoroutine = null;
+            yield break;
+        }
 
         SetTalking(true);
-        StartCoroutine(StopTalkingAfterAudio(clip.length));
+        yield return PlayQuestionAudioSequence(currentQuestion.questionAudio);
+        SetTalking(false);
+
+        replayAudioCoroutine = null;
     }
 
     private IEnumerator StopTalkingAfterAudio(float duration)
     {
         yield return new WaitForSeconds(duration);
         SetTalking(false);
+    }
+
+    private void StopReplayQuestionAudio()
+    {
+        if (replayAudioCoroutine != null)
+        {
+            StopCoroutine(replayAudioCoroutine);
+            replayAudioCoroutine = null;
+        }
+
+        if (narrationSource != null)
+        {
+            narrationSource.Stop();
+        }
+
+        SetTalking(false);
+    }
+
+    private void SetupButtonCallbacks()
+    {
+        if (playAgainButton != null)
+        {
+            playAgainButton.onClick.RemoveListener(OnPlayAgain);
+            playAgainButton.onClick.AddListener(OnPlayAgain);
+        }
+
+        if (mainMenuButton != null)
+        {
+            mainMenuButton.onClick.RemoveListener(OnHome);
+            mainMenuButton.onClick.AddListener(OnHome);
+        }
+    }
+
+    private void SetButtonsInteractable(bool interactable)
+    {
+        if (yesButton != null)
+        {
+            yesButton.interactable = interactable;
+        }
+
+        if (noButton != null)
+        {
+            noButton.interactable = interactable;
+        }
+    }
+
+    private void HideButtonsImmediate()
+    {
+        if (yesButton != null)
+        {
+            yesButton.transform.DOKill();
+            yesButton.transform.localScale = Vector3.zero;
+            yesButton.interactable = false;
+            yesButton.gameObject.SetActive(false);
+        }
+
+        if (noButton != null)
+        {
+            noButton.transform.DOKill();
+            noButton.transform.localScale = Vector3.zero;
+            noButton.interactable = false;
+            noButton.gameObject.SetActive(false);
+        }
+    }
+
+    private void KillTweens()
+    {
+        dialogueGroup?.DOKill();
+        questionBoardGroup?.DOKill();
+        replayAudioGroup?.DOKill();
+        instruction?.DOKill();
+        gameOverGroup?.DOKill();
+
+        if (questionBoard != null)
+        {
+            questionBoard.DOKill();
+        }
+
+        if (yesButton != null)
+        {
+            yesButton.transform.DOKill();
+        }
+
+        if (noButton != null)
+        {
+            noButton.transform.DOKill();
+        }
+    }
+
+    public void OnPlayAgain()
+    {
+        Debug.Log("Play Again");
+        LoadScene();
+    }
+
+    public void OnHome()
+    {
+        Debug.Log("Main Menu");
+        MainMenu();
+        UnityAndroidMediator.Instance?.PassDataToAndroid("Game Done");
+        GameLoader.Instance?.SendEventToJS("Game Done", "Being Honest");
+    }
+
+    public void OnRewardScreenOpen()
+    {
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.StopBGM();
+        }
     }
 
     #endregion

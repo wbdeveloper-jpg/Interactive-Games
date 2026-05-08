@@ -14,29 +14,43 @@ public class AudioManager : MonoBehaviour
     [Header("SFX Clips")]
     public AudioClip[] sfxClips;
 
+    [Header("Lifetime")]
+    [SerializeField] private bool persistAcrossScenes = false;
+
     private void Awake()
     {
-        // Singleton setup
-        if (Instance == null)
-        {
-            Instance = this;
-            //DontDestroyOnLoad(gameObject);
-        }
-        else
+        if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
+            return;
+        }
+
+        Instance = this;
+
+        if (persistAcrossScenes)
+        {
+            DontDestroyOnLoad(gameObject);
         }
     }
 
-    // =========================
-    // 🎵 BGM FUNCTIONS
-    // =========================
+    private void OnDestroy()
+    {
+        if (Instance == this)
+        {
+            Instance = null;
+        }
+    }
 
     public void PlayBGM(int index, bool loop = true)
     {
-        if (index < 0 || index >= bgmClips.Length)
+        if (!IsValidClipIndex(bgmClips, index, "BGM") || bgmSource == null)
         {
-            Debug.LogWarning("Invalid BGM index");
+            return;
+        }
+
+        if (bgmSource.clip == bgmClips[index] && bgmSource.isPlaying)
+        {
+            bgmSource.loop = loop;
             return;
         }
 
@@ -47,82 +61,99 @@ public class AudioManager : MonoBehaviour
 
     public void StopBGM()
     {
-        bgmSource.Stop();
+        if (bgmSource != null)
+        {
+            bgmSource.Stop();
+        }
     }
 
     public void PauseBGM()
     {
-        bgmSource.Pause();
+        if (bgmSource != null)
+        {
+            bgmSource.Pause();
+        }
     }
 
     public void ResumeBGM()
     {
-        bgmSource.UnPause();
+        if (bgmSource != null)
+        {
+            bgmSource.UnPause();
+        }
     }
 
-    // =========================
-    // 🔊 SFX FUNCTIONS
-    // =========================
-
-    // ✅ Normal SFX (always plays at full volume = 1)
     public void PlaySFX(int index)
     {
-        if (index < 0 || index >= sfxClips.Length)
-        {
-            Debug.LogWarning("Invalid SFX index");
-            return;
-        }
-
-        // Stop previous SFX (NO overlap)
-        if (sfxSource.isPlaying)
-        {
-            sfxSource.Stop();
-        }
-
-        // Reset volume to constant
-        sfxSource.volume = 1f;
-
-        sfxSource.clip = sfxClips[index];
-        sfxSource.Play();
+        PlaySFXInternal(index, 1f, true);
     }
 
-
-    // ✅ Custom Volume SFX (you control volume)
     public void PlaySFXWithVolume(int index, float volume)
     {
-        if (index < 0 || index >= sfxClips.Length)
+        PlaySFXInternal(index, Mathf.Clamp01(volume), true);
+    }
+
+    public void PlaySFXOneShot(int index, float volume = 1f)
+    {
+        if (!IsValidClipIndex(sfxClips, index, "SFX") || sfxSource == null)
         {
-            Debug.LogWarning("Invalid SFX index");
             return;
         }
 
-        // Clamp volume (safety)
-        volume = Mathf.Clamp01(volume);
+        sfxSource.PlayOneShot(sfxClips[index], Mathf.Clamp01(volume));
+    }
 
-        // Stop previous SFX (NO overlap)
-        if (sfxSource.isPlaying)
+    private void PlaySFXInternal(int index, float volume, bool stopCurrent)
+    {
+        if (!IsValidClipIndex(sfxClips, index, "SFX") || sfxSource == null)
+        {
+            return;
+        }
+
+        if (stopCurrent && sfxSource.isPlaying)
         {
             sfxSource.Stop();
         }
 
-        // Apply custom volume
         sfxSource.volume = volume;
-
         sfxSource.clip = sfxClips[index];
         sfxSource.Play();
     }
-
-    // =========================
-    // 🔊 VOLUME CONTROL
-    // =========================
 
     public void SetBGMVolume(float volume)
     {
-        bgmSource.volume = volume;
+        if (bgmSource != null)
+        {
+            bgmSource.volume = Mathf.Clamp01(volume);
+        }
     }
 
     public void SetSFXVolume(float volume)
     {
-        sfxSource.volume = volume;
+        if (sfxSource != null)
+        {
+            sfxSource.volume = Mathf.Clamp01(volume);
+        }
+    }
+
+    public bool HasSFXClip(int index)
+    {
+        return IsValidClipIndex(sfxClips, index, "SFX", false);
+    }
+
+    public bool HasBGMClip(int index)
+    {
+        return IsValidClipIndex(bgmClips, index, "BGM", false);
+    }
+
+    private bool IsValidClipIndex(AudioClip[] clips, int index, string label, bool logWarning = true)
+    {
+        bool valid = clips != null && index >= 0 && index < clips.Length && clips[index] != null;
+        if (!valid && logWarning)
+        {
+            Debug.LogWarning("Invalid " + label + " index: " + index, this);
+        }
+
+        return valid;
     }
 }

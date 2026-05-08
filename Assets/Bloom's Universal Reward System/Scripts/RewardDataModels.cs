@@ -47,15 +47,41 @@ namespace RewardSystem
 
         /// <summary>
         /// The maximum raw score this skill can earn in this specific game.
-        /// Used to weight the final score relative to other skills.
         /// Example: Remember = 100, Understand = 50 means Remember is twice as important.
         /// </summary>
         public float maxScore;
 
+        /// <summary>
+        /// How much TIME performance influences this skill's score (0-1).
+        /// Set to -1 to fall back to RewardManager global default.
+        /// Example: Remember cares less about speed → 0.2
+        /// </summary>
+        public float timeWeight = -1f;
+
+        /// <summary>
+        /// How much ACCURACY influences this skill's score (0-1).
+        /// Set to -1 to fall back to RewardManager global default.
+        /// Example: Remember cares more about correctness → 0.8
+        /// </summary>
+        public float accuracyWeight = -1f;
+
+        /// <summary>Basic constructor — uses RewardManager global weights.</summary>
         public SkillEntry(BloomSkillType type, float maxScore)
         {
             this.skillType = type;
-            this.maxScore  = maxScore;
+            this.maxScore = maxScore;
+        }
+
+        /// <summary>
+        /// Full constructor with per-skill metric weights.
+        /// Weights auto-normalize so they don't need to sum to 1.
+        /// </summary>
+        public SkillEntry(BloomSkillType type, float maxScore, float timeWeight, float accuracyWeight)
+        {
+            this.skillType = type;
+            this.maxScore = maxScore;
+            this.timeWeight = timeWeight;
+            this.accuracyWeight = accuracyWeight;
         }
     }
 
@@ -92,10 +118,11 @@ namespace RewardSystem
     public class SkillResult
     {
         public BloomSkillType skillType;
-        public float          finalScore;      // 0 - maxScore range
-        public float          normalizedScore; // 0.0 - 1.0 for medal/star logic
-        public int            starCount;       // 1, 2, or 3
-        public MedalTier      medal;
+        public float finalScore;      // 0 - maxScore range
+        public float normalizedScore; // 0.0 - 1.0 for medal/star logic
+        public float maxScore;        // stored here so UI card can display e.g. "80/100"
+        public int starCount;       // 1, 2, or 3
+        public MedalTier medal;
     }
 
     public enum MedalTier { Bronze, Silver, Gold }

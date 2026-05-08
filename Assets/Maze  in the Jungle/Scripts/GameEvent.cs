@@ -1,47 +1,58 @@
-using UnityEditor;
 using UnityEngine;
 
 public class GameEvent : MonoBehaviour
 {
-    bool alreadyEventSend ;
+    [SerializeField] private int requiredTouchCount = 5;
+    [SerializeField] private float eventCooldownSeconds = 0.012f;
+
+    private bool alreadyEventSend;
+    private int playerClickCount;
+    private float lastEventTime = -999f;
+
     public void GameEventCatcher()
     {
-        int playerClickCount = 0;
-        string movementMessage;
-        float decisiveFactorCoefficient;
-        bool playerTouched = false;
-        while (true)
+        if (Input.touchCount > 0 || Input.GetMouseButtonDown(0))
         {
-            if(playerTouched) playerClickCount += 1;
-            if(playerClickCount > 5)
-            {
-                // register this player response and update the file accordingly 
-                playerTouched = true;
-                break;
-            }
+            RegisterPlayerTouch();
         }
-
-
-        if (playerTouched) {
-            // invoke and outside word event that informs user that user has touched the screen 
-            SendEvent();
-
-        }
-
     }
-    //
-    // Summary: 
-    //          THis function sends and touch event from mobie to web and return and turth value as bollean engadment
+
+    public void RegisterPlayerTouch()
+    {
+        playerClickCount++;
+        if (playerClickCount >= requiredTouchCount)
+        {
+            SendEvent();
+        }
+    }
+
     public bool SendEvent()
     {
-        Debug.Log("Evennt is being send to the Panel");
-        if (alreadyEventSend != true) { 
-           alreadyEventSend = true;
-            // send the function whihc will thorw the outside event fromt his function
-            return true;
+        if (Time.unscaledTime - lastEventTime < eventCooldownSeconds)
+        {
+            return false;
         }
-        // if we hav e already send event with in some mili sec this event will not be send again atleast 12 mili sec gap for this each action
-        // why 12 sec as normal human to register a event the gap should be between 12 and 22
-        return false;
+
+        if (alreadyEventSend)
+        {
+            return false;
+        }
+
+        alreadyEventSend = true;
+        lastEventTime = Time.unscaledTime;
+        Debug.Log("Event is being sent to the panel", this);
+        return true;
+    }
+
+    public void ResetEventState()
+    {
+        alreadyEventSend = false;
+        playerClickCount = 0;
+    }
+
+    private void OnValidate()
+    {
+        requiredTouchCount = Mathf.Max(1, requiredTouchCount);
+        eventCooldownSeconds = Mathf.Max(0f, eventCooldownSeconds);
     }
 }

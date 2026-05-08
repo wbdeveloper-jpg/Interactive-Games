@@ -52,8 +52,8 @@ public class EntryFlowController : MonoBehaviour
 
     public List<SkillEntry> _skills = new()
    {
-       new SkillEntry(BloomSkillType.Remember,   100f),
-       new SkillEntry(BloomSkillType.Understand,  50f),
+       new SkillEntry(BloomSkillType.Remember,   100f, timeWeight: 0.2f, accuracyWeight: 0.8f),
+       new SkillEntry(BloomSkillType.Understand,  50f, timeWeight: 0.6f, accuracyWeight: 0.4f),
    };
 
     void Start()
@@ -74,15 +74,16 @@ public class EntryFlowController : MonoBehaviour
         gameplayUI.SetActive(false);
         dialogueBox.SetActive(false);
 
+        // 🔥 STEP 1: Assign dynamic colors
+        GirlsGameManager.instance.SetupColors();
+
+        // 🎬 Character pop
+        characterParent.localScale = Vector3.zero;
+
         yield return new WaitUntil(() => RewardManager.Instance.IsPreGameComplete);
 
         SetBackgroundAlpha(fullBgAlpha);
 
-        // 🔥 STEP 1: Assign dynamic colors
-        //GirlsGameManager.instance.SetupColors();
-
-        // 🎬 Character pop
-        //characterParent.localScale = Vector3.zero;
 
         yield return characterParent.DOScale(1.1f, 0.4f).SetEase(Ease.OutBack).WaitForCompletion();
         yield return characterParent.DOScale(1f, 0.2f).WaitForCompletion();
@@ -127,6 +128,7 @@ public class EntryFlowController : MonoBehaviour
             TutorialController.Instance.StartTutorial();
         }
         isGameActive = true;
+        GameTimer.Instance.StartTimer();
     }
     // =========================
     // Dialogue System

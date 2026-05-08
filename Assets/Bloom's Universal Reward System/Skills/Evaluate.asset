@@ -14,16 +14,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RewardSystem.BloomSkillData
   skillType: 4
   skillName: Evaluate
-  icon: {fileID: 21300000, guid: 362da2a492e0e554cb104ba421df2a9a, type: 3}
+  icon: {fileID: 21300000, guid: 66a5711139ce56942b7debb463f59416, type: 3}
+  skillColor: {r: 0.7294118, g: 0.40784314, b: 0.78431374, a: 1}
   definition: Evaluate is about making judgments based on criteria and reasoning.
-  details: 'You earn more points when you:
+  details: '1. Justify your answers or decisions
 
-    - justify your answers or decisions
+    2. Check correctness and accuracy
 
-    -
-    check correctness and accuracy
+    3.
+    Critique ideas or solutions
 
-    - critique ideas or solutions
-
-    - choose
-    the best option with reasoning'
+    4. Choose the best option with reasoning'

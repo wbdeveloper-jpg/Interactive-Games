@@ -44,23 +44,28 @@ namespace RewardSystem
     {
         [Header("Skill Buttons")]
         [SerializeField] private InfoSkillButton skillButtonPrefab;
-        [SerializeField] private Transform       skillButtonHolder;
+        [SerializeField] private Transform skillButtonHolder;
 
         [Header("Panel Close Button")]
         [SerializeField] private Button btnClose;
 
         [Header("Modal References")]
-        [SerializeField] private GameObject      modal;
-        [SerializeField] private Image           modalIcon;
+        [SerializeField] private GameObject modal;
+        [SerializeField] private Image modalIconBG;   // low alpha skill color background behind icon
+        [SerializeField] private Image modalIcon;     // icon tinted with skill color
         [SerializeField] private TextMeshProUGUI modalHeading;
         [SerializeField] private TextMeshProUGUI modalDefinition;
         [SerializeField] private TextMeshProUGUI modalDetails;
-        [SerializeField] private Button          btnModalGotIt;
+        [SerializeField] private Button btnModalGotIt;
+
+        [Header("Color Settings")]
+        [Range(0f, 0.3f)]
+        [SerializeField] private float iconBGAlpha = 0.12f;  // very low alpha for icon background
 
         // Callbacks set by RewardManager
         private System.Action _onOpenFromPreGame;
         private System.Action _onCloseToPreGame;
-        private bool          _openedFromPreGame;
+        private bool _openedFromPreGame;
 
         private List<BloomSkillData> _allSkillData = new();
 
@@ -81,12 +86,12 @@ namespace RewardSystem
         /// </summary>
         public void SetupSkills(
             List<BloomSkillData> skillDataList,
-            System.Action        onOpenFromPreGame,
-            System.Action        onCloseToPreGame)
+            System.Action onOpenFromPreGame,
+            System.Action onCloseToPreGame)
         {
-            _allSkillData      = skillDataList;
+            _allSkillData = skillDataList;
             _onOpenFromPreGame = onOpenFromPreGame;
-            _onCloseToPreGame  = onCloseToPreGame;
+            _onCloseToPreGame = onCloseToPreGame;
 
             // Clear old buttons
             foreach (Transform child in skillButtonHolder)
@@ -130,10 +135,16 @@ namespace RewardSystem
 
         private void OpenModal(BloomSkillData data)
         {
-            modalIcon.sprite       = data.icon;
-            modalHeading.text      = data.skillName;
-            modalDefinition.text   = data.definition;
-            modalDetails.text      = data.details;
+            modalIcon.sprite = data.icon;
+            modalHeading.text = data.skillName;
+            modalDefinition.text = data.definition;
+
+            // Apply skill color to icon tint and icon background
+            Color c = data.skillColor;
+            modalIcon.color = c;
+            if (modalIconBG != null)
+                modalIconBG.color = new Color(c.r, c.g, c.b, iconBGAlpha);
+            modalDetails.text = data.details;
             modal.SetActive(true);
         }
 
