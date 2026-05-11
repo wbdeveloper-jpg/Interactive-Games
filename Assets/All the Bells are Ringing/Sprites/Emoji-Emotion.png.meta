@@ -1,0 +1,562 @@
+fileFormatVersion: 2
+guid: b65ed0bdd1cd5ce44b336073afeac38d
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -1249403807491618660
+    second: Emoji-Emotion_0
+  - first:
+      213: -8283880673895653595
+    second: Emoji-Emotion_1
+  - first:
+      213: 1416120075601409543
+    second: Emoji-Emotion_2
+  - first:
+      213: 3382728458779488572
+    second: Emoji-Emotion_3
+  - first:
+      213: -8771424118603029274
+    second: Emoji-Emotion_4
+  - first:
+      213: 3931801374432144355
+    second: Emoji-Emotion_5
+  - first:
+      213: -5272668352301512602
+    second: Emoji-Emotion_6
+  - first:
+      213: -1554203978106675677
+    second: Emoji-Emotion_7
+  - first:
+      213: -769048883380161753
+    second: Emoji-Emotion_8
+  - first:
+      213: 2796573680134597050
+    second: Emoji-Emotion_9
+  - first:
+      213: 8578394358317437516
+    second: Emoji-Emotion_10
+  - first:
+      213: 6636565667616867489
+    second: Emoji-Emotion_11
+  - first:
+      213: -6475737753999986810
+    second: Emoji-Emotion_12
+  - first:
+      213: 3671521252662759485
+    second: Emoji-Emotion_13
+  - first:
+      213: -8267708454920430712
+    second: Emoji-Emotion_14
+  - first:
+      213: 1525755627414225043
+    second: Emoji-Emotion_15
+  - first:
+      213: -1351505147343507402
+    second: Emoji-Emotion_16
+  - first:
+      213: -4123275850008378348
+    second: Emoji-Emotion_17
+  - first:
+      213: -5761214898264069460
+    second: Emoji-Emotion_18
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 1024
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: iOS
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Emoji-Emotion_0
+      rect:
+        serializedVersion: 2
+        x: 43
+        y: 710
+        width: 229
+        height: 234
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c9801715bd939aee0800000000000000
+      internalID: -1249403807491618660
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Emoji-Emotion_1
+      rect:
+        serializedVersion: 2
+        x: 355
+        y: 708
+        width: 228
+        height: 236
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 52fd9beba6eb90d80800000000000000
+      internalID: -8283880673895653595
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Emoji-Emotion_2
+      rect:
+        serializedVersion: 2
+        x: 653
+        y: 709
+        width: 228
+        height: 234
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7067581b4b117a310800000000000000
+      internalID: 1416120075601409543
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Emoji-Emotion_3
+      rect:
+        serializedVersion: 2
+        x: 954
+        y: 709
+        width: 233
+        height: 233
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c31f72d5c9dd1fe20800000000000000
+      internalID: 3382728458779488572
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Emoji-Emotion_4
+      rect:
+        serializedVersion: 2
+        x: 1255
+        y: 710
+        width: 232
+        height: 233
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6e46f54bc34a54680800000000000000
+      internalID: -8771424118603029274
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Emoji-Emotion_5
+      rect:
+        serializedVersion: 2
+        x: 45
+        y: 402
+        width: 227
+        height: 233
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3ebab6ab480909630800000000000000
+      internalID: 3931801374432144355
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Emoji-Emotion_7
+      rect:
+        serializedVersion: 2
+        x: 354
+        y: 402
+        width: 227
+        height: 233
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 32ed37867bb5e6ae0800000000000000
+      internalID: -1554203978106675677
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Emoji-Emotion_8
+      rect:
+        serializedVersion: 2
+        x: 655
+        y: 402
+        width: 227
+        height: 232
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 723f63b7d1ac355f0800000000000000
+      internalID: -769048883380161753
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Emoji-Emotion_10
+      rect:
+        serializedVersion: 2
+        x: 958
+        y: 403
+        width: 227
+        height: 232
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c42d9b6f7349c0770800000000000000
+      internalID: 8578394358317437516
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Emoji-Emotion_13
+      rect:
+        serializedVersion: 2
+        x: 1255
+        y: 403
+        width: 230
+        height: 231
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d30d242702dd3f230800000000000000
+      internalID: 3671521252662759485
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Emoji-Emotion_14
+      rect:
+        serializedVersion: 2
+        x: 45
+        y: 94
+        width: 225
+        height: 233
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 88b59f5e6f2334d80800000000000000
+      internalID: -8267708454920430712
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Emoji-Emotion_15
+      rect:
+        serializedVersion: 2
+        x: 353
+        y: 94
+        width: 227
+        height: 233
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 390041ac8a29c2510800000000000000
+      internalID: 1525755627414225043
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Emoji-Emotion_16
+      rect:
+        serializedVersion: 2
+        x: 654
+        y: 95
+        width: 228
+        height: 231
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6307a74aa3d7e3de0800000000000000
+      internalID: -1351505147343507402
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Emoji-Emotion_17
+      rect:
+        serializedVersion: 2
+        x: 955
+        y: 96
+        width: 229
+        height: 231
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 414cd41e57e27c6c0800000000000000
+      internalID: -4123275850008378348
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Emoji-Emotion_18
+      rect:
+        serializedVersion: 2
+        x: 1255
+        y: 95
+        width: 230
+        height: 232
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: caa2842039d0c00b0800000000000000
+      internalID: -5761214898264069460
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 869a696e8e4831f43b8f5545a5d08257
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      Emoji-Emotion_0: -1249403807491618660
+      Emoji-Emotion_1: -8283880673895653595
+      Emoji-Emotion_10: 8578394358317437516
+      Emoji-Emotion_11: 6636565667616867489
+      Emoji-Emotion_12: -6475737753999986810
+      Emoji-Emotion_13: 3671521252662759485
+      Emoji-Emotion_14: -8267708454920430712
+      Emoji-Emotion_15: 1525755627414225043
+      Emoji-Emotion_16: -1351505147343507402
+      Emoji-Emotion_17: -4123275850008378348
+      Emoji-Emotion_18: -5761214898264069460
+      Emoji-Emotion_2: 1416120075601409543
+      Emoji-Emotion_3: 3382728458779488572
+      Emoji-Emotion_4: -8771424118603029274
+      Emoji-Emotion_5: 3931801374432144355
+      Emoji-Emotion_6: -5272668352301512602
+      Emoji-Emotion_7: -1554203978106675677
+      Emoji-Emotion_8: -769048883380161753
+      Emoji-Emotion_9: 2796573680134597050
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

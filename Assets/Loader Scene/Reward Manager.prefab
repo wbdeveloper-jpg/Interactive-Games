@@ -232,7 +232,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4294941214
-  m_fontColor: {r: 0.11764706, g: 0.6039216, b: 1, a: 1}
+  m_fontColor: {r: 0, g: 0.45882353, b: 0.83137256, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -6740,8 +6740,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294967295
-  m_fontColor: {r: 0.11792451, g: 0.6041291, b: 1, a: 1}
+    rgba: 4292113664
+  m_fontColor: {r: 0, g: 0.4575263, b: 0.8301887, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -12134,7 +12134,7 @@ MonoBehaviour:
   cardPrefab: {fileID: 8318007770715383064, guid: 93b3402b4d901cc4fb6b4c0aeb40fa4a, type: 3}
   cardHolder: {fileID: 518681655732325130}
   infoButton: {fileID: 2084759133745023340}
-  autoHideDelay: 5.5
+  autoHideDelay: 1
   fadeDuration: 0.8
   cardStagger: 0.15
 --- !u!1 &3663386679200009685
@@ -19761,7 +19761,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.16862746}
+  m_Color: {r: 0.5522873, g: 0.5901677, b: 0.5943396, a: 0.16862746}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1

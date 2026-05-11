@@ -757,7 +757,7 @@ public class HeroInMaking : MonoBehaviour, IGameSceneCallbacks, IGameAudioCallba
 
         yield return ShowAnswerFeedback(correct);
 
-        yield return new WaitForSeconds(1.5f);
+        yield return new WaitForSeconds(0.1f);
 
         if (currentHeroAnimator != null)
         {
