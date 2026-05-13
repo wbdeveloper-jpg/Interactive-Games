@@ -143,9 +143,9 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 1808
-        width: 1000
-        height: 904
+        y: 744
+        width: 400
+        height: 371
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -164,10 +164,10 @@ TextureImporter:
       name: Asset 3yoo_1
       rect:
         serializedVersion: 2
-        x: 1000
-        y: 1808
-        width: 1000
-        height: 904
+        x: 400
+        y: 744
+        width: 400
+        height: 371
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -176,7 +176,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 8ad0c5bca918c8b4b85222584715924d
+      spriteID: c2ed82bfa0bdfa949b51b8bb30ba24c4
       internalID: 574468377
       vertices: []
       indices: 
@@ -186,10 +186,10 @@ TextureImporter:
       name: Asset 3yoo_2
       rect:
         serializedVersion: 2
-        x: 2000
-        y: 1808
-        width: 1000
-        height: 904
+        x: 800
+        y: 744
+        width: 400
+        height: 371
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -198,7 +198,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: e6c894c4ff8e08b4b9413a5c469235fd
+      spriteID: fc8297bf70407ef44be5777107c5bf1c
       internalID: 250043794
       vertices: []
       indices: 
@@ -208,10 +208,10 @@ TextureImporter:
       name: Asset 3yoo_3
       rect:
         serializedVersion: 2
-        x: 3000
-        y: 1808
-        width: 1000
-        height: 904
+        x: 1200
+        y: 744
+        width: 400
+        height: 371
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -220,7 +220,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 886812ecb49c5bb4f9b44442e78d2ee0
+      spriteID: 31a7ef1b87083b94f9e1769e223a20d0
       internalID: -2133818874
       vertices: []
       indices: 
@@ -231,9 +231,9 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 904
-        width: 1000
-        height: 904
+        y: 373
+        width: 400
+        height: 371
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -242,7 +242,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: a74b75803be1f43449d9dad4e468212e
+      spriteID: 7f98d831256f1ca49b470b42de179b6c
       internalID: 23649547
       vertices: []
       indices: 
@@ -252,10 +252,10 @@ TextureImporter:
       name: Asset 3yoo_5
       rect:
         serializedVersion: 2
-        x: 1000
-        y: 904
-        width: 1000
-        height: 904
+        x: 400
+        y: 373
+        width: 400
+        height: 371
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -264,7 +264,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 86c860e1ac057844a98bfe2464c0f9a0
+      spriteID: 7e2592ec4f8ad4b4f81006b6b480630f
       internalID: 868412998
       vertices: []
       indices: 
@@ -274,10 +274,10 @@ TextureImporter:
       name: Asset 3yoo_6
       rect:
         serializedVersion: 2
-        x: 2000
-        y: 904
-        width: 1000
-        height: 904
+        x: 800
+        y: 373
+        width: 400
+        height: 371
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -286,7 +286,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 00c178a425063ed42a7225dc8303a309
+      spriteID: fdf3a294489fa174ab86618a9cca7db3
       internalID: -667816240
       vertices: []
       indices: 
@@ -296,10 +296,10 @@ TextureImporter:
       name: Asset 3yoo_7
       rect:
         serializedVersion: 2
-        x: 3000
-        y: 904
-        width: 1000
-        height: 904
+        x: 1200
+        y: 373
+        width: 400
+        height: 371
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -308,7 +308,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: ba475c45b21de2346accebe8ed2c06d4
+      spriteID: e68832c46c01fa5439368e0c8f41028d
       internalID: 1452534452
       vertices: []
       indices: 
@@ -319,9 +319,9 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 0
-        width: 1000
-        height: 904
+        y: 2
+        width: 400
+        height: 371
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -330,7 +330,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 6b8d5ef05d36bdc448764810e0144fc3
+      spriteID: 9383b54bb1c03dd43b421c46e750f97d
       internalID: 2011865953
       vertices: []
       indices: 
@@ -340,10 +340,10 @@ TextureImporter:
       name: Asset 3yoo_9
       rect:
         serializedVersion: 2
-        x: 1000
-        y: 0
-        width: 1000
-        height: 904
+        x: 400
+        y: 2
+        width: 400
+        height: 371
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -352,7 +352,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: f97d4ca65bf65834fb64af07a2b6c8c8
+      spriteID: f9fed258666c1a14cbab8cf1b4763044
       internalID: 458281143
       vertices: []
       indices: 
@@ -362,10 +362,10 @@ TextureImporter:
       name: Asset 3yoo_10
       rect:
         serializedVersion: 2
-        x: 2000
-        y: 0
-        width: 1000
-        height: 904
+        x: 800
+        y: 2
+        width: 400
+        height: 371
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -374,7 +374,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: d1bbedb86eea73c4584c299f63b97ebb
+      spriteID: 823f20e5a23ada748b2f9e7802cc1425
       internalID: -933821784
       vertices: []
       indices: 
@@ -384,10 +384,10 @@ TextureImporter:
       name: Asset 3yoo_11
       rect:
         serializedVersion: 2
-        x: 3000
-        y: 0
-        width: 1000
-        height: 904
+        x: 1200
+        y: 2
+        width: 400
+        height: 371
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -396,7 +396,7 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 77951eac3f0641b4bafbaef7391bab21
+      spriteID: 0563822d0361be445880b9bf7afde7eb
       internalID: 1817952260
       vertices: []
       indices: 
@@ -416,7 +416,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries:
       - key: SpriteEditor.SliceSettings
-        value: '{"sliceOnImport":false,"gridCellCount":{"x":4.0,"y":3.0},"gridSpriteSize":{"x":1000.0,"y":904.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":2,"keepEmptyRects":false,"isAlternate":false}'
+        value: '{"sliceOnImport":false,"gridCellCount":{"x":4.0,"y":3.0},"gridSpriteSize":{"x":400.0,"y":371.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":2,"keepEmptyRects":false,"isAlternate":false}'
     nameFileIdTable:
       Asset 3yoo_0: 759824961478135041
       Asset 3yoo_1: 574468377
