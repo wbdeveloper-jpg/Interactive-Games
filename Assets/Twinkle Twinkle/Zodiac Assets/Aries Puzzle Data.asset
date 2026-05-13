@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dca4dbc20cbc10b41843e4224a6dff0f, type: 3}
+  m_Name: Aries Puzzle Data
+  m_EditorClassIdentifier: Assembly-CSharp::ZodiacPuzzleData
+  sign: 3
+  displayNameOverride: Aries
+  descriptionOverride: March 21 - April 19
+  fullPuzzleSprite: {fileID: 21300000, guid: 3d4bfd74f2532104481850eebb85e0d9, type: 3}
+  pieceSprites:
+  - {fileID: 759824961478135041, guid: 1e0089a9141f0bb48a3d36cbb31d2fe4, type: 3}
+  - {fileID: 574468377, guid: 1e0089a9141f0bb48a3d36cbb31d2fe4, type: 3}
+  - {fileID: 250043794, guid: 1e0089a9141f0bb48a3d36cbb31d2fe4, type: 3}
+  - {fileID: -2133818874, guid: 1e0089a9141f0bb48a3d36cbb31d2fe4, type: 3}
+  - {fileID: 23649547, guid: 1e0089a9141f0bb48a3d36cbb31d2fe4, type: 3}
+  - {fileID: 868412998, guid: 1e0089a9141f0bb48a3d36cbb31d2fe4, type: 3}
+  - {fileID: -667816240, guid: 1e0089a9141f0bb48a3d36cbb31d2fe4, type: 3}
+  - {fileID: 1452534452, guid: 1e0089a9141f0bb48a3d36cbb31d2fe4, type: 3}
+  - {fileID: 2011865953, guid: 1e0089a9141f0bb48a3d36cbb31d2fe4, type: 3}
+  - {fileID: 458281143, guid: 1e0089a9141f0bb48a3d36cbb31d2fe4, type: 3}
+  - {fileID: -933821784, guid: 1e0089a9141f0bb48a3d36cbb31d2fe4, type: 3}
+  - {fileID: 1817952260, guid: 1e0089a9141f0bb48a3d36cbb31d2fe4, type: 3}
+  resultSprite: {fileID: 21300000, guid: 96968b28305e1644590bdb35883d22fa, type: 3}
+  constellationPrefab: {fileID: 1930216221692072424, guid: 61631b7b34386f84ba6e45dda36e6a7f, type: 3}
+  timeLimitSeconds: 60

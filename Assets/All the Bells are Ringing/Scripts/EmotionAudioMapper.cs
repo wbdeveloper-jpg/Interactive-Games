@@ -19,7 +19,7 @@ public class EmotionAudioMapper : MonoBehaviour
     [System.Serializable]
     public class EmotionAudio
     {
-        [Tooltip("Must match Draggable label. Example: Happy, Sad, Angry")]
+        [Tooltip("Must match Draggable.label. Example: Happy, Sad, Angry")]
         public string label;
 
         [Tooltip("Example: happy / sad / angry")]
@@ -31,7 +31,8 @@ public class EmotionAudioMapper : MonoBehaviour
     [SerializeField] private List<EmotionAudio> emotionAudios = new List<EmotionAudio>();
 
     [Header("Timing")]
-    [SerializeField] private float gapBetweenClips = 0.12f;
+    [Min(0f)] [SerializeField] private float gapBetweenClips = 0.12f;
+    [SerializeField] private bool useUnscaledTime = false;
 
     private Coroutine playRoutine;
 
@@ -46,6 +47,12 @@ public class EmotionAudioMapper : MonoBehaviour
         Instance = this;
     }
 
+    private void OnDestroy()
+    {
+        if (Instance == this)
+            Instance = null;
+    }
+
     public void PlayEmotionAudio(float intensity, string emotionLabel)
     {
         AudioClip intensityClip = GetIntensityClip(intensity);
@@ -53,46 +60,74 @@ public class EmotionAudioMapper : MonoBehaviour
 
         if (intensityClip == null)
         {
-            Debug.LogWarning($"EmotionAudioMapper: Missing intensity audio for {intensity}", this);
+            Debug.LogWarning("EmotionAudioMapper: Missing intensity audio for " + Draggable.NormalizeIntensity(intensity), this);
             return;
         }
 
         if (emotionClip == null)
         {
-            Debug.LogWarning($"EmotionAudioMapper: Missing emotion audio for label '{emotionLabel}'", this);
+            Debug.LogWarning("EmotionAudioMapper: Missing emotion audio for label '" + emotionLabel + "'", this);
             return;
         }
 
-        if (playRoutine != null)
-            StopCoroutine(playRoutine);
-
+        StopCurrentAudioSequence();
         playRoutine = StartCoroutine(PlaySequence(intensityClip, emotionClip));
+    }
+
+    public void StopCurrentAudioSequence()
+    {
+        if (playRoutine != null)
+        {
+            StopCoroutine(playRoutine);
+            playRoutine = null;
+        }
     }
 
     private IEnumerator PlaySequence(AudioClip intensityClip, AudioClip emotionClip)
     {
-        AudioManager.Instance.PlaySFXClip(intensityClip);
+        PlayClip(intensityClip);
+        yield return Wait(intensityClip.length + gapBetweenClips);
 
-        yield return new WaitForSeconds(intensityClip.length + gapBetweenClips);
-
-        AudioManager.Instance.PlaySFXClip(emotionClip);
-
-        yield return new WaitForSeconds(emotionClip.length);
+        PlayClip(emotionClip);
+        yield return Wait(emotionClip.length);
 
         playRoutine = null;
     }
 
+    private void PlayClip(AudioClip clip)
+    {
+        if (clip == null)
+            return;
+
+        if (AudioManager.Instance == null)
+        {
+            Debug.LogWarning("EmotionAudioMapper: AudioManager.Instance is missing.", this);
+            return;
+        }
+
+        AudioManager.Instance.PlaySFXClip(clip);
+    }
+
+    private IEnumerator Wait(float seconds)
+    {
+        if (useUnscaledTime)
+            yield return new WaitForSecondsRealtime(Mathf.Max(0f, seconds));
+        else
+            yield return new WaitForSeconds(Mathf.Max(0f, seconds));
+    }
+
     private AudioClip GetIntensityClip(float intensity)
     {
-        float normalized = NormalizeIntensity(intensity);
+        float normalized = Draggable.NormalizeIntensity(intensity);
 
         for (int i = 0; i < intensityAudios.Count; i++)
         {
-            if (intensityAudios[i] == null)
+            IntensityAudio entry = intensityAudios[i];
+            if (entry == null || entry.clip == null)
                 continue;
 
-            if (Mathf.Approximately(NormalizeIntensity(intensityAudios[i].intensity), normalized))
-                return intensityAudios[i].clip;
+            if (Mathf.Approximately(Draggable.NormalizeIntensity(entry.intensity), normalized))
+                return entry.clip;
         }
 
         return null;
@@ -103,24 +138,21 @@ public class EmotionAudioMapper : MonoBehaviour
         if (string.IsNullOrWhiteSpace(emotionLabel))
             return null;
 
-        string target = emotionLabel.Trim();
-
         for (int i = 0; i < emotionAudios.Count; i++)
         {
-            if (emotionAudios[i] == null)
+            EmotionAudio entry = emotionAudios[i];
+            if (entry == null || entry.clip == null)
                 continue;
 
-            if (string.Equals(emotionAudios[i].label?.Trim(), target, System.StringComparison.OrdinalIgnoreCase))
-                return emotionAudios[i].clip;
+            if (Draggable.LabelsMatch(entry.label, emotionLabel))
+                return entry.clip;
         }
 
         return null;
     }
 
-    private float NormalizeIntensity(float value)
+    private void OnValidate()
     {
-        int step = Mathf.RoundToInt(Mathf.Clamp01(value) / 0.2f);
-        step = Mathf.Clamp(step, 1, 5);
-        return step * 0.2f;
+        gapBetweenClips = Mathf.Max(0f, gapBetweenClips);
     }
 }

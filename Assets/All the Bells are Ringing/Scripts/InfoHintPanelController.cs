@@ -2,6 +2,7 @@ using System.Collections;
 using DG.Tweening;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
@@ -17,25 +18,32 @@ public class InfoHintPanelController : MonoBehaviour
     [Tooltip("Used only if PanelSwitcher is not assigned.")]
     [SerializeField] private bool enableGameplayPanelDirectly = true;
 
-    [Header("First-Time Info")]
-    [SerializeField] private bool showFirstTimeInfo = true;
-    [SerializeField] private bool rememberFirstTimeWithPlayerPrefs = true;
-    [SerializeField] private string firstTimePrefsKey = "EmotionGame_InfoPanel_Seen";
+    [Header("Start Info Panel")]
+    [FormerlySerializedAs("showFirstTimeInfo")]
+    [SerializeField] private bool showStartInfo = true;
+    [FormerlySerializedAs("rememberFirstTimeWithPlayerPrefs")]
+    [SerializeField] private bool rememberStartInfoWithPlayerPrefs = false;
+    [FormerlySerializedAs("firstTimePrefsKey")]
+    [SerializeField] private string startInfoPrefsKey = "EmotionGame_InfoPanel_Seen";
 
-    [Tooltip("How long the first-time info panel stays open.")]
-    [Min(0.1f)]
-    [SerializeField] private float firstTimeInfoDuration = 20f;
+    [Tooltip("How long the start info panel stays open.")]
+    [FormerlySerializedAs("firstTimeInfoDuration")]
+    [Min(0.1f)] [SerializeField] private float startInfoDuration = 20f;
+
+    [Header("Start Info Narration")]
+    [SerializeField] private bool playStartInfoNarration = true;
+    [SerializeField] private bool stopStartInfoNarrationWhenPanelCloses = true;
+    [SerializeField] private AudioClip startInfoNarrationClip;
+    [SerializeField] private AudioSource startInfoNarrationSource;
 
     [Header("Hint")]
     [SerializeField] private Button hintButton;
 
     [Tooltip("How long hint panel stays visible when opened using hint button.")]
-    [Min(0.1f)]
-    [SerializeField] private float hintPanelDuration = 5f;
+    [Min(0.1f)] [SerializeField] private float hintPanelDuration = 5f;
 
     [Tooltip("After user watches hint, hint becomes available again after this many seconds.")]
-    [Min(0f)]
-    [SerializeField] private float hintCooldownDuration = 20f;
+    [Min(0f)] [SerializeField] private float hintCooldownDuration = 20f;
 
     [Tooltip("Keep hint button clickable during cooldown so user gets feedback.")]
     [SerializeField] private bool keepHintButtonClickableDuringCooldown = true;
@@ -52,34 +60,34 @@ public class InfoHintPanelController : MonoBehaviour
     [Tooltip("Used for SpawnFloatingText messages.")]
     [SerializeField] private FillImage fillImage;
 
+    [Header("Hint Attention On Wrong Drop")]
+    [SerializeField] private bool animateHintButtonOnWrongDrop = true;
+    [Min(1)] [SerializeField] private int hintAttentionPulseCount = 2;
+    [Min(1f)] [SerializeField] private float hintAttentionScale = 1.16f;
+    [Min(0.05f)] [SerializeField] private float hintAttentionDuration = 0.42f;
+    [SerializeField] private bool showHintAvailableTextOnWrongDrop = false;
+    [SerializeField] private string hintAvailableWrongDropMessage = "Hint is available!";
+
     [Header("Info / Hint Panel UI")]
     [Tooltip("Full-screen background panel. This object should have Image + CanvasGroup + Button.")]
     [SerializeField] private GameObject infoPanel;
-
     [SerializeField] private CanvasGroup infoPanelCanvasGroup;
 
     [Tooltip("Child info card inside infoPanel.")]
     [SerializeField] private RectTransform infoCard;
-
     [SerializeField] private CanvasGroup infoCardCanvasGroup;
 
     [Tooltip("Text like: Closes in 20 seconds")]
     [SerializeField] private TextMeshProUGUI countdownText;
 
-    [Tooltip("Button on background panel, not on the card.")]
+    [Tooltip("Button on the background panel, not on the card.")]
     [SerializeField] private Button infoBackgroundCloseButton;
 
     [Header("Animation")]
     [SerializeField] private bool useUnscaledTime = true;
-
-    [Min(0f)]
-    [SerializeField] private float fadeInDuration = 0.28f;
-
-    [Min(0f)]
-    [SerializeField] private float fadeOutDuration = 0.18f;
-
+    [Min(0f)] [SerializeField] private float fadeInDuration = 0.28f;
+    [Min(0f)] [SerializeField] private float fadeOutDuration = 0.18f;
     [SerializeField] private float cardStartScale = 0.94f;
-
     [SerializeField] private Ease fadeInEase = Ease.OutCubic;
     [SerializeField] private Ease fadeOutEase = Ease.InCubic;
     [SerializeField] private Ease cardPopEase = Ease.OutBack;
@@ -91,30 +99,35 @@ public class InfoHintPanelController : MonoBehaviour
     public UnityEvent onHintOpened;
     public UnityEvent onHintCooldownStarted;
     public UnityEvent onHintAvailable;
+    public UnityEvent onHintAttentionPlayed;
 
     private Coroutine countdownRoutine;
     private Coroutine hintCooldownRoutine;
     private Sequence activePanelSequence;
+    private Tween hintButtonAttentionTween;
 
     private bool gameplayStarted;
     private bool startGameplayAfterPanelCloses;
     private bool isPanelOpen;
     private bool isClosingPanel;
     private bool currentPanelOpenedFromHint;
-
+    private bool currentPanelIsStartInfo;
     private bool hintAvailable = true;
     private float hintCooldownRemaining;
+    private Vector3 hintButtonOriginalScale = Vector3.one;
 
     private void Awake()
     {
         PrepareReferences();
         RegisterButtonEvents();
 
+        if (hintButton != null)
+            hintButtonOriginalScale = hintButton.transform.localScale;
+
         SetInfoPanelImmediate(false);
 
         hintAvailable = true;
         hintCooldownRemaining = 0f;
-
         SetHintButtonInteractable(false);
         UpdateHintButtonTimerText();
     }
@@ -125,6 +138,8 @@ public class InfoHintPanelController : MonoBehaviour
         StopCountdown();
         StopHintCooldown();
         KillPanelSequence();
+        StopHintButtonAttention();
+        StopStartInfoNarration();
     }
 
     /// <summary>
@@ -132,14 +147,10 @@ public class InfoHintPanelController : MonoBehaviour
     /// </summary>
     public void OnLoadingComplete()
     {
-        if (ShouldShowFirstTimeInfo())
+        if (ShouldShowStartInfo())
         {
-            MarkFirstTimeInfoSeen();
-            ShowPanel(
-                duration: firstTimeInfoDuration,
-                shouldStartGameplayAfterClose: true,
-                openedFromHint: false
-            );
+            MarkStartInfoSeen();
+            ShowPanel(startInfoDuration, shouldStartGameplayAfterClose: true, openedFromHint: false);
         }
         else
         {
@@ -148,8 +159,7 @@ public class InfoHintPanelController : MonoBehaviour
     }
 
     /// <summary>
-    /// Connect hint button OnClick to this method,
-    /// or assign hintButton in the inspector.
+    /// Connect hint button OnClick to this method, or assign hintButton in the inspector.
     /// </summary>
     public void OnHintButtonClicked()
     {
@@ -158,10 +168,7 @@ public class InfoHintPanelController : MonoBehaviour
 
     public void TryOpenHint()
     {
-        if (!gameplayStarted)
-            return;
-
-        if (isPanelOpen)
+        if (!gameplayStarted || isPanelOpen)
             return;
 
         if (!hintAvailable)
@@ -170,20 +177,31 @@ public class InfoHintPanelController : MonoBehaviour
             return;
         }
 
+        StopHintButtonAttention();
         hintAvailable = false;
 
         if (!keepHintButtonClickableDuringCooldown)
             SetHintButtonInteractable(false);
 
         UpdateHintButtonTimerText();
-
-        ShowPanel(
-            duration: hintPanelDuration,
-            shouldStartGameplayAfterClose: false,
-            openedFromHint: true
-        );
-
+        ShowPanel(hintPanelDuration, shouldStartGameplayAfterClose: false, openedFromHint: true);
         onHintOpened?.Invoke();
+    }
+
+    /// <summary>
+    /// Called by AnswerDrop after a wrong answer. If hint is currently available, the hint button gets attention animation.
+    /// </summary>
+    public void NotifyWrongDrop()
+    {
+        if (!animateHintButtonOnWrongDrop || !gameplayStarted || !hintAvailable || isPanelOpen)
+            return;
+
+        PlayHintButtonAttention();
+
+        if (showHintAvailableTextOnWrongDrop && fillImage != null && !string.IsNullOrWhiteSpace(hintAvailableWrongDropMessage))
+            fillImage.SpawnFloatingText(hintAvailableWrongDropMessage);
+
+        onHintAttentionPlayed?.Invoke();
     }
 
     public void ClosePanel()
@@ -192,6 +210,9 @@ public class InfoHintPanelController : MonoBehaviour
             return;
 
         isClosingPanel = true;
+
+        if (currentPanelIsStartInfo && stopStartInfoNarrationWhenPanelCloses)
+            StopStartInfoNarration();
 
         StopCountdown();
         KillPanelSequence();
@@ -204,23 +225,12 @@ public class InfoHintPanelController : MonoBehaviour
         {
             infoPanelCanvasGroup.interactable = false;
             infoPanelCanvasGroup.blocksRaycasts = false;
-
-            activePanelSequence.Join(
-                infoPanelCanvasGroup
-                    .DOFade(0f, fadeOutDuration)
-                    .SetEase(fadeOutEase)
-                    .SetUpdate(useUnscaledTime)
-            );
+            activePanelSequence.Join(infoPanelCanvasGroup.DOFade(0f, fadeOutDuration).SetEase(fadeOutEase).SetUpdate(useUnscaledTime));
         }
 
         if (infoCard != null)
         {
-            activePanelSequence.Join(
-                infoCard
-                    .DOScale(cardStartScale, fadeOutDuration)
-                    .SetEase(fadeOutEase)
-                    .SetUpdate(useUnscaledTime)
-            );
+            activePanelSequence.Join(infoCard.DOScale(cardStartScale, fadeOutDuration).SetEase(fadeOutEase).SetUpdate(useUnscaledTime));
         }
 
         activePanelSequence.OnComplete(() =>
@@ -232,6 +242,7 @@ public class InfoHintPanelController : MonoBehaviour
             isPanelOpen = false;
             isClosingPanel = false;
             currentPanelOpenedFromHint = false;
+            currentPanelIsStartInfo = false;
 
             onInfoPanelClosed?.Invoke();
 
@@ -247,10 +258,16 @@ public class InfoHintPanelController : MonoBehaviour
         });
     }
 
+    public void ResetStartInfoSave()
+    {
+        PlayerPrefs.DeleteKey(startInfoPrefsKey);
+        PlayerPrefs.Save();
+    }
+
+    // Legacy method name kept in case a button/event already points to it.
     public void ResetFirstTimeInfoSave()
     {
-        PlayerPrefs.DeleteKey(firstTimePrefsKey);
-        PlayerPrefs.Save();
+        ResetStartInfoSave();
     }
 
     private void ShowPanel(float duration, bool shouldStartGameplayAfterClose, bool openedFromHint)
@@ -270,7 +287,7 @@ public class InfoHintPanelController : MonoBehaviour
 
         startGameplayAfterPanelCloses = shouldStartGameplayAfterClose;
         currentPanelOpenedFromHint = openedFromHint;
-
+        currentPanelIsStartInfo = shouldStartGameplayAfterClose && !openedFromHint;
         isPanelOpen = true;
         isClosingPanel = false;
 
@@ -291,39 +308,21 @@ public class InfoHintPanelController : MonoBehaviour
 
         UpdateCountdownText(duration);
 
+        if (currentPanelIsStartInfo)
+            PlayStartInfoNarration();
+
         activePanelSequence = DOTween.Sequence()
             .SetUpdate(useUnscaledTime)
             .SetLink(gameObject, LinkBehaviour.KillOnDisable);
 
         if (infoPanelCanvasGroup != null)
-        {
-            activePanelSequence.Join(
-                infoPanelCanvasGroup
-                    .DOFade(1f, fadeInDuration)
-                    .SetEase(fadeInEase)
-                    .SetUpdate(useUnscaledTime)
-            );
-        }
+            activePanelSequence.Join(infoPanelCanvasGroup.DOFade(1f, fadeInDuration).SetEase(fadeInEase).SetUpdate(useUnscaledTime));
 
         if (infoCardCanvasGroup != null)
-        {
-            activePanelSequence.Join(
-                infoCardCanvasGroup
-                    .DOFade(1f, fadeInDuration)
-                    .SetEase(fadeInEase)
-                    .SetUpdate(useUnscaledTime)
-            );
-        }
+            activePanelSequence.Join(infoCardCanvasGroup.DOFade(1f, fadeInDuration).SetEase(fadeInEase).SetUpdate(useUnscaledTime));
 
         if (infoCard != null)
-        {
-            activePanelSequence.Join(
-                infoCard
-                    .DOScale(1f, fadeInDuration)
-                    .SetEase(cardPopEase)
-                    .SetUpdate(useUnscaledTime)
-            );
-        }
+            activePanelSequence.Join(infoCard.DOScale(1f, fadeInDuration).SetEase(cardPopEase).SetUpdate(useUnscaledTime));
 
         activePanelSequence.OnComplete(() =>
         {
@@ -346,7 +345,6 @@ public class InfoHintPanelController : MonoBehaviour
         while (remaining > 0f && isPanelOpen)
         {
             UpdateCountdownText(remaining);
-
             remaining -= useUnscaledTime ? Time.unscaledDeltaTime : Time.deltaTime;
             yield return null;
         }
@@ -360,9 +358,7 @@ public class InfoHintPanelController : MonoBehaviour
     private void StartHintCooldown()
     {
         StopHintCooldown();
-
         hintCooldownRemaining = hintCooldownDuration;
-
         onHintCooldownStarted?.Invoke();
 
         if (hintCooldownDuration <= 0f)
@@ -371,13 +367,8 @@ public class InfoHintPanelController : MonoBehaviour
             return;
         }
 
-        if (!keepHintButtonClickableDuringCooldown)
-            SetHintButtonInteractable(false);
-        else
-            SetHintButtonInteractable(gameplayStarted);
-
+        SetHintButtonInteractable(keepHintButtonClickableDuringCooldown && gameplayStarted);
         UpdateHintButtonTimerText();
-
         hintCooldownRoutine = StartCoroutine(HintCooldownRoutine());
     }
 
@@ -386,14 +377,12 @@ public class InfoHintPanelController : MonoBehaviour
         while (hintCooldownRemaining > 0f)
         {
             UpdateHintButtonTimerText();
-
             hintCooldownRemaining -= useUnscaledTime ? Time.unscaledDeltaTime : Time.deltaTime;
             yield return null;
         }
 
         hintCooldownRemaining = 0f;
         hintCooldownRoutine = null;
-
         MakeHintAvailable();
     }
 
@@ -419,7 +408,47 @@ public class InfoHintPanelController : MonoBehaviour
         if (fillImage != null)
             fillImage.SpawnFloatingText(message);
         else
-            Debug.Log(message);
+            Debug.Log(message, this);
+    }
+
+    private void PlayHintButtonAttention()
+    {
+        if (hintButton == null)
+            return;
+
+        Transform buttonTransform = hintButton.transform;
+        StopHintButtonAttention();
+        buttonTransform.localScale = hintButtonOriginalScale;
+        buttonTransform.localRotation = Quaternion.identity;
+
+        Sequence sequence = DOTween.Sequence()
+            .SetUpdate(useUnscaledTime)
+            .SetLink(hintButton.gameObject, LinkBehaviour.KillOnDisable);
+
+        int pulses = Mathf.Max(1, hintAttentionPulseCount);
+        for (int i = 0; i < pulses; i++)
+        {
+            sequence.Append(buttonTransform.DOScale(hintButtonOriginalScale * hintAttentionScale, hintAttentionDuration * 0.5f).SetEase(Ease.OutBack).SetUpdate(useUnscaledTime));
+            sequence.Append(buttonTransform.DOScale(hintButtonOriginalScale, hintAttentionDuration * 0.5f).SetEase(Ease.InOutSine).SetUpdate(useUnscaledTime));
+        }
+
+        sequence.Join(buttonTransform.DOPunchRotation(new Vector3(0f, 0f, 8f), hintAttentionDuration, 8, 0.75f).SetUpdate(useUnscaledTime));
+        sequence.OnKill(() => hintButtonAttentionTween = null);
+        hintButtonAttentionTween = sequence;
+    }
+
+    private void StopHintButtonAttention()
+    {
+        if (hintButtonAttentionTween != null && hintButtonAttentionTween.IsActive())
+            hintButtonAttentionTween.Kill(false);
+
+        hintButtonAttentionTween = null;
+
+        if (hintButton != null)
+        {
+            hintButton.transform.localScale = hintButtonOriginalScale;
+            hintButton.transform.localRotation = Quaternion.identity;
+        }
     }
 
     private void StartGameplay()
@@ -444,31 +473,54 @@ public class InfoHintPanelController : MonoBehaviour
 
         hintAvailable = true;
         hintCooldownRemaining = 0f;
-
         SetHintButtonInteractable(true);
         UpdateHintButtonTimerText();
 
         onGameplayStarted?.Invoke();
     }
 
-    private bool ShouldShowFirstTimeInfo()
+    private bool ShouldShowStartInfo()
     {
-        if (!showFirstTimeInfo)
+        if (!showStartInfo)
             return false;
 
-        if (!rememberFirstTimeWithPlayerPrefs)
+        if (!rememberStartInfoWithPlayerPrefs)
             return true;
 
-        return PlayerPrefs.GetInt(firstTimePrefsKey, 0) == 0;
+        return PlayerPrefs.GetInt(startInfoPrefsKey, 0) == 0;
     }
 
-    private void MarkFirstTimeInfoSeen()
+    private void MarkStartInfoSeen()
     {
-        if (!rememberFirstTimeWithPlayerPrefs)
+        if (!rememberStartInfoWithPlayerPrefs)
             return;
 
-        PlayerPrefs.SetInt(firstTimePrefsKey, 1);
+        PlayerPrefs.SetInt(startInfoPrefsKey, 1);
         PlayerPrefs.Save();
+    }
+
+    private void PlayStartInfoNarration()
+    {
+        if (!playStartInfoNarration || startInfoNarrationClip == null)
+            return;
+
+        if (startInfoNarrationSource == null)
+        {
+            startInfoNarrationSource = GetComponent<AudioSource>();
+            if (startInfoNarrationSource == null)
+                startInfoNarrationSource = gameObject.AddComponent<AudioSource>();
+        }
+
+        startInfoNarrationSource.playOnAwake = false;
+        startInfoNarrationSource.loop = false;
+        startInfoNarrationSource.clip = startInfoNarrationClip;
+        startInfoNarrationSource.Play();
+    }
+
+    private void StopStartInfoNarration()
+    {
+        if (startInfoNarrationSource != null && startInfoNarrationSource.isPlaying)
+            startInfoNarrationSource.Stop();
     }
 
     private void UpdateCountdownText(float remaining)
@@ -477,7 +529,7 @@ public class InfoHintPanelController : MonoBehaviour
             return;
 
         int seconds = Mathf.Max(0, Mathf.CeilToInt(remaining));
-        countdownText.text = $"Closes in {seconds} second{(seconds == 1 ? "" : "s")}";
+        countdownText.text = "Closes in " + seconds + " second" + (seconds == 1 ? "" : "s");
     }
 
     private void UpdateHintButtonTimerText()
@@ -581,12 +633,14 @@ public class InfoHintPanelController : MonoBehaviour
 
     private void OnValidate()
     {
-        firstTimeInfoDuration = Mathf.Max(0.1f, firstTimeInfoDuration);
+        startInfoDuration = Mathf.Max(0.1f, startInfoDuration);
         hintPanelDuration = Mathf.Max(0.1f, hintPanelDuration);
         hintCooldownDuration = Mathf.Max(0f, hintCooldownDuration);
-
         fadeInDuration = Mathf.Max(0f, fadeInDuration);
         fadeOutDuration = Mathf.Max(0f, fadeOutDuration);
         cardStartScale = Mathf.Max(0.01f, cardStartScale);
+        hintAttentionPulseCount = Mathf.Max(1, hintAttentionPulseCount);
+        hintAttentionScale = Mathf.Max(1f, hintAttentionScale);
+        hintAttentionDuration = Mathf.Max(0.05f, hintAttentionDuration);
     }
 }

@@ -15,6 +15,8 @@ public class FillImage : MonoBehaviour, IGameSceneCallbacks, IGameAudioCallbacks
     [Range(0f, 1f)] public float currentIntensity = 0.2f;
     public Image img;
     [Min(0f)] public float speed = 5f;
+
+    [Tooltip("If true, completing the 1.0 round starts the final reward/completion flow.")]
     public bool completeWhenReachingMax = true;
 
     public Dictionary<float, string> intensityDict;
@@ -44,6 +46,11 @@ public class FillImage : MonoBehaviour, IGameSceneCallbacks, IGameAudioCallbacks
     [Min(0f)] public float successPopDuration = 0.4f;
     [Min(0f)] public float continueFadeDuration = 0.6f;
 
+    [Header("Evaluation")]
+    public AnswerDrop answer;
+    public LoadingPage loading;
+    public float avgTime;
+
     [Header("Events")]
     public UnityEvent onMainMenuRequested;
 
@@ -54,12 +61,9 @@ public class FillImage : MonoBehaviour, IGameSceneCallbacks, IGameAudioCallbacks
     private bool completionSequenceStarted;
     private Button activeContinueButton;
     private UnityAction activeContinueClickAction;
+    private GameEvaluationData gameEvaluationData = new GameEvaluationData();
+    private float timeTaken;
 
-    GameEvaluationData gameEvaluationData = new GameEvaluationData();
-    public AnswerDrop answer;
-    public LoadingPage loading;
-    float timetaken;
-    public float avgTime;
     private void Awake()
     {
         BuildIntensityDictionary();
@@ -84,35 +88,30 @@ public class FillImage : MonoBehaviour, IGameSceneCallbacks, IGameAudioCallbacks
         };
     }
 
+    /// <summary>
+    /// Called after the player correctly completes the current round.
+    /// 1.0 is a playable final round. The game ends only after the correct 1.0 answer is dropped.
+    /// </summary>
     public void IncreaseIntensity()
     {
-        currentIntensity = NormalizeIntensity(currentIntensity);
+        currentIntensity = SnapIntensity(currentIntensity);
 
-        // If player has just correctly completed the 1.0 round,
-        // now the game should end.
         if (Mathf.Approximately(currentIntensity, 1.0f))
         {
-            HandleMaxIntensityReached();
+            if (completeWhenReachingMax)
+                HandleMaxIntensityReached();
+
             return;
         }
 
-        // Otherwise move to the next round.
-        currentIntensity = NormalizeIntensity(currentIntensity + 0.2f);
-
+        currentIntensity = SnapIntensity(currentIntensity + IntensityStep);
         AnimateFill(currentIntensity);
         ManageToolTip();
     }
 
-    private float NormalizeIntensity(float value)
-    {
-        int step = Mathf.RoundToInt(Mathf.Clamp01(value) / 0.2f);
-        step = Mathf.Clamp(step, 1, 5);
-        return step * 0.2f;
-    }
-
     public void ManageToolTip()
     {
-        currentIntensity = NormalizeIntensity(currentIntensity);
+        currentIntensity = SnapIntensity(currentIntensity);
 
         if (toolTipTxt != null)
             toolTipTxt.text = GetIntensityText(currentIntensity);
@@ -122,15 +121,17 @@ public class FillImage : MonoBehaviour, IGameSceneCallbacks, IGameAudioCallbacks
 
     public string GetIntensityText(float intensity)
     {
-        intensity = NormalizeIntensity(intensity);
+        if (intensityDict == null || intensityDict.Count == 0)
+            BuildIntensityDictionary();
 
-        foreach (var pair in intensityDict)
+        float normalized = SnapIntensity(intensity);
+        foreach (KeyValuePair<float, string> pair in intensityDict)
         {
-            if (Mathf.Approximately(NormalizeIntensity(pair.Key), intensity))
+            if (Mathf.Approximately(SnapIntensity(pair.Key), normalized))
                 return pair.Value;
         }
 
-        return intensity.ToString("0.0");
+        return normalized.ToString("0.0");
     }
 
     public void AnimateFill(float target)
@@ -186,7 +187,8 @@ public class FillImage : MonoBehaviour, IGameSceneCallbacks, IGameAudioCallbacks
 
         Camera cam = GetCanvasCamera(img.GetComponentInParent<Canvas>());
         Vector2 screen = RectTransformUtility.WorldToScreenPoint(cam, worldPos);
-        RectTransformUtility.ScreenPointToLocalPointInRectangle(parent, screen, cam, out Vector2 local);
+        Vector2 local;
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(parent, screen, cam, out local);
 
         local.x += tooltipXOffset;
         local.y += tooltipYOffset;
@@ -237,12 +239,7 @@ public class FillImage : MonoBehaviour, IGameSceneCallbacks, IGameAudioCallbacks
             });
     }
 
-    public void SpawnFloatingText(
-        string text,
-        RectTransform startParent = null,
-        Vector2? startAnchoredPos = null,
-        float moveDistance = 40f,
-        float duration = 1.2f)
+    public void SpawnFloatingText(string text, RectTransform startParent = null, Vector2? startAnchoredPos = null, float moveDistance = 40f, float duration = 1.2f)
     {
         if (prefab == null)
         {
@@ -279,7 +276,16 @@ public class FillImage : MonoBehaviour, IGameSceneCallbacks, IGameAudioCallbacks
 
     private IEnumerator FloatingRoutine(GameObject obj, CanvasGroup canvasGroup, float moveDistance, float duration)
     {
+        if (obj == null || canvasGroup == null)
+            yield break;
+
         RectTransform rect = obj.GetComponent<RectTransform>();
+        if (rect == null)
+        {
+            Destroy(obj);
+            yield break;
+        }
+
         Vector2 startPos = rect.anchoredPosition;
         Vector2 endPos = startPos + new Vector2(0f, moveDistance);
         float elapsed = 0f;
@@ -317,16 +323,13 @@ public class FillImage : MonoBehaviour, IGameSceneCallbacks, IGameAudioCallbacks
             yield break;
         }
 
-        timetaken = GameTimer.Instance.StopTimer();
-
-        gameEvaluationData.timeTaken = timetaken;
-        gameEvaluationData.timeScore = GameTimer.CalculateTimeScore(timetaken, avgTime);
-        answer = FindObjectOfType<AnswerDrop>();
-        gameEvaluationData.mistakeCount = answer.WrongDropCount;
-        gameEvaluationData.accuracyScore = 5f / (5f + answer.WrongDropCount);
+        BuildEvaluationData();
 
         yield return new WaitForSeconds(waitBeforePanel);
-        AudioManager.Instance.StopBGM();
+
+        if (AudioManager.Instance != null)
+            AudioManager.Instance.StopBGM();
+
         panel.gameObject.SetActive(true);
         panel.alpha = 0f;
         panel.interactable = false;
@@ -355,50 +358,34 @@ public class FillImage : MonoBehaviour, IGameSceneCallbacks, IGameAudioCallbacks
             AudioManager.Instance.PlaySFX(0);
 
         yield return new WaitForSeconds(1.5f);
-        RewardManager.Instance.ShowPostGame(loading._skills, gameEvaluationData);
 
-        // no need of this part
-        /**
-        continueImage.gameObject.SetActive(true);
-        CanvasGroup continueCanvasGroup = EnsureCanvasGroup(continueImage.gameObject);
-        continueCanvasGroup.alpha = 0f;
-
-        yield return continueCanvasGroup
-            .DOFade(1f, continueFadeDuration)
-            .SetEase(Ease.OutCubic)
-            .SetLink(continueImage.gameObject)
-            .WaitForCompletion();
-
-        continueBreathingTween = continueImage.transform
-            .DOScale(1.05f, 1.2f)
-            .SetEase(Ease.InOutSine)
-            .SetLoops(-1, LoopType.Yoyo)
-            .SetLink(continueImage.gameObject);
-
-        Button button = ResolveContinueButton();
-        bool clicked = false;
-        if (button != null)
+        if (RewardManager.Instance != null)
         {
-            RemoveContinueListener();
-            activeContinueButton = button;
-            activeContinueClickAction = () => clicked = true;
-            activeContinueButton.onClick.AddListener(activeContinueClickAction);
-            activeContinueButton.interactable = true;
-            panel.interactable = true;
-            panel.blocksRaycasts = true;
-        }
-        else
-        {
-            Debug.LogWarning("FillImage: no continue Button assigned/found. Calling OnMainButton automatically.", this);
-            clicked = true;
+            if (loading != null)
+                RewardManager.Instance.ShowPostGame(loading._skills, gameEvaluationData);
+            else
+                Debug.LogWarning("FillImage: loading reference is missing, cannot pass skills to RewardManager.ShowPostGame.", this);
         }
 
-        yield return new WaitUntil(() => clicked);
-        RemoveContinueListener();
-        OnMainButton();
-        **/
-        // no need of this part
         maxIntensityCoroutine = null;
+    }
+
+    private void BuildEvaluationData()
+    {
+        if (GameTimer.Instance != null)
+            timeTaken = GameTimer.Instance.StopTimer();
+        else
+            timeTaken = 0f;
+
+        if (answer == null)
+            answer = FindObjectOfType<AnswerDrop>();
+
+        int wrongDropCount = answer != null ? answer.WrongDropCount : 0;
+
+        gameEvaluationData.timeTaken = timeTaken;
+        gameEvaluationData.timeScore = GameTimer.CalculateTimeScore(timeTaken, avgTime);
+        gameEvaluationData.mistakeCount = wrongDropCount;
+        gameEvaluationData.accuracyScore = 5f / (5f + wrongDropCount);
     }
 
     private bool ValidateCompletionReferences()
@@ -414,12 +401,6 @@ public class FillImage : MonoBehaviour, IGameSceneCallbacks, IGameAudioCallbacks
         if (successImage == null)
         {
             Debug.LogWarning("FillImage: successImage is not assigned.", this);
-            valid = false;
-        }
-
-        if (continueImage == null)
-        {
-            Debug.LogWarning("FillImage: continueImage is not assigned.", this);
             valid = false;
         }
 
@@ -439,7 +420,7 @@ public class FillImage : MonoBehaviour, IGameSceneCallbacks, IGameAudioCallbacks
 
     public void OnMainButton()
     {
-        Debug.Log("FillImage: Main Menu requested.");
+        Debug.Log("FillImage: Main Menu requested.", this);
         onMainMenuRequested?.Invoke();
     }
 
@@ -450,18 +431,6 @@ public class FillImage : MonoBehaviour, IGameSceneCallbacks, IGameAudioCallbacks
 
         activeContinueButton = null;
         activeContinueClickAction = null;
-    }
-
-    private string GetIntensityLabel(float intensity)
-    {
-        float snapped = SnapIntensity(intensity);
-        if (intensityDict == null || intensityDict.Count == 0)
-            BuildIntensityDictionary();
-
-        if (intensityDict.TryGetValue(snapped, out string labelText))
-            return labelText;
-
-        return string.Empty;
     }
 
     private static float SnapIntensity(float value)
@@ -484,7 +453,6 @@ public class FillImage : MonoBehaviour, IGameSceneCallbacks, IGameAudioCallbacks
         return canvas.worldCamera;
     }
 
-    
     private void OnDisable()
     {
         if (fillCoroutine != null)
@@ -529,16 +497,24 @@ public class FillImage : MonoBehaviour, IGameSceneCallbacks, IGameAudioCallbacks
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
+
     public void MainMenu()
     {
-        RewardManager.Instance.HideAll();
+        if (RewardManager.Instance != null)
+            RewardManager.Instance.HideAll();
+
         SceneManager.LoadScene("Loader Scene");
-        UnityAndroidMediator.Instance.PassDataToAndroid("Game Done");
-        GameLoader.Instance.SendEventToJS("Game Done", "Girls are wiser than man");
+
+        if (UnityAndroidMediator.Instance != null)
+            UnityAndroidMediator.Instance.PassDataToAndroid("Game Done");
+
+        if (GameLoader.Instance != null)
+            GameLoader.Instance.SendEventToJS("Game Done", "Girls are wiser than man");
     }
 
     public void OnRewardScreenOpen()
     {
-        AudioManager.Instance.StopBGM();
+        if (AudioManager.Instance != null)
+            AudioManager.Instance.StopBGM();
     }
 }

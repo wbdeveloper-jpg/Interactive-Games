@@ -1,5 +1,4 @@
 using DG.Tweening;
-using RewardSystem;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -25,7 +24,17 @@ public class TouchHintFinal : MonoBehaviour
     public bool pingPong = false;
     public bool isUI = false;
     public bool showOnlyOnce = true;
-    public bool stopBgmOnUserTouch = true;
+
+    [Tooltip("Legacy field kept for existing inspector setup. Gameplay BGM is not stopped by this script.")]
+    public bool stopBgmOnUserTouch = false;
+
+    [Header("Timer")]
+    [SerializeField] private bool startGameTimerOnFirstInteraction = true;
+
+    [Header("Hand Hint Instruction Narration")]
+    [SerializeField] private bool playInstructionNarrationWithHandHint = true;
+    [SerializeField] private SetQuestions setQuestions;
+    [SerializeField] private InstructionNarrationPlayer instructionNarrationPlayer;
 
     [Header("Pointer Offset")]
     public float offsetX = 0f;
@@ -38,8 +47,12 @@ public class TouchHintFinal : MonoBehaviour
     private Sequence sequence;
     private bool hasShown;
     private bool pendingStop;
-    private bool stopAudioRequested;
-    GameEvaluationData gameEvaluationData = new GameEvaluationData();
+    private bool timerStarted;
+
+    private void Awake()
+    {
+        ResolveOptionalReferences();
+    }
 
     private void Update()
     {
@@ -64,12 +77,13 @@ public class TouchHintFinal : MonoBehaviour
         if (instance != null)
         {
             pendingStop = true;
-            StopHintAudioOnce();
             return;
         }
 
         if (showOnlyOnce)
             hasShown = true;
+
+        StartGameTimerOnce();
     }
 
     private bool IsUserTouching()
@@ -96,7 +110,6 @@ public class TouchHintFinal : MonoBehaviour
 
         hasShown = true;
         pendingStop = false;
-        stopAudioRequested = false;
 
         instance = Instantiate(pointerPrefab, transform);
         instance.SetActive(true);
@@ -104,6 +117,7 @@ public class TouchHintFinal : MonoBehaviour
         SetInstanceAlpha(instance, 1f);
 
         CreateAndPlaySequence();
+        PlayHandHintNarration();
     }
 
     private void CreateAndPlaySequence()
@@ -132,6 +146,9 @@ public class TouchHintFinal : MonoBehaviour
 
     private void AppendMoveToB(Sequence seq)
     {
+        if (instance == null)
+            return;
+
         if (isUI)
         {
             RectTransform rt = instance.GetComponent<RectTransform>();
@@ -154,6 +171,9 @@ public class TouchHintFinal : MonoBehaviour
 
     private void AppendInvisibleReturnToA(Sequence seq)
     {
+        if (instance == null)
+            return;
+
         if (isUI)
         {
             CanvasGroup canvasGroup = EnsureCanvasGroup(instance);
@@ -172,9 +192,9 @@ public class TouchHintFinal : MonoBehaviour
             return;
         }
 
-        seq.AppendCallback(() => instance.SetActive(false));
+        seq.AppendCallback(() => { if (instance != null) instance.SetActive(false); });
         seq.AppendCallback(() => SetPointerPosition(instance, pointA.position));
-        seq.AppendCallback(() => instance.SetActive(true));
+        seq.AppendCallback(() => { if (instance != null) instance.SetActive(true); });
     }
 
     private void CompleteCycleOrContinue()
@@ -183,18 +203,52 @@ public class TouchHintFinal : MonoBehaviour
             return;
 
         pendingStop = false;
-        HideHintImmediate();
+        HideHintImmediate(startTimer: true);
     }
 
-    private void HideHintImmediate()
+    private void HideHintImmediate(bool startTimer)
     {
+        StopHandHintNarration();
         KillSequenceOnly();
-        GameTimer.Instance.StartTimer();
+
+        if (startTimer)
+            StartGameTimerOnce();
+
         if (instance != null)
         {
             Destroy(instance);
             instance = null;
         }
+    }
+
+    private void StartGameTimerOnce()
+    {
+        if (!startGameTimerOnFirstInteraction || timerStarted)
+            return;
+
+        timerStarted = true;
+
+        if (GameTimer.Instance != null)
+            GameTimer.Instance.StartTimer();
+    }
+
+    private void PlayHandHintNarration()
+    {
+        if (!playInstructionNarrationWithHandHint)
+            return;
+
+        ResolveOptionalReferences();
+        if (instructionNarrationPlayer == null)
+            return;
+
+        string emotionLabel = setQuestions != null ? setQuestions.SelectedTargetEmotionLabel : string.Empty;
+        instructionNarrationPlayer.PlayInstruction(emotionLabel);
+    }
+
+    private void StopHandHintNarration()
+    {
+        if (instructionNarrationPlayer != null)
+            instructionNarrationPlayer.StopNarration();
     }
 
     private void KillSequenceOnly()
@@ -203,16 +257,6 @@ public class TouchHintFinal : MonoBehaviour
             sequence.Kill(false);
 
         sequence = null;
-    }
-
-    private void StopHintAudioOnce()
-    {
-        if (!stopBgmOnUserTouch || stopAudioRequested)
-            return;
-
-        stopAudioRequested = true;
-        if (AudioManager.Instance != null) { }
-            //AudioManager.Instance.StopBGM();
     }
 
     private void SetPointerPosition(GameObject go, Vector3 worldPos)
@@ -282,7 +326,8 @@ public class TouchHintFinal : MonoBehaviour
     private Vector2 WorldToLocalAnchored(RectTransform parent, Vector3 worldPos, Camera cam)
     {
         Vector2 screen = RectTransformUtility.WorldToScreenPoint(cam, worldPos);
-        RectTransformUtility.ScreenPointToLocalPointInRectangle(parent, screen, cam, out Vector2 local);
+        Vector2 local;
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(parent, screen, cam, out local);
         return local;
     }
 
@@ -295,8 +340,26 @@ public class TouchHintFinal : MonoBehaviour
         return false;
     }
 
+    private void ResolveOptionalReferences()
+    {
+        if (setQuestions == null)
+            setQuestions = FindObjectOfType<SetQuestions>();
+
+        if (instructionNarrationPlayer == null)
+            instructionNarrationPlayer = FindObjectOfType<InstructionNarrationPlayer>();
+    }
+
     private void OnDisable()
     {
-        HideHintImmediate();
+        HideHintImmediate(startTimer: false);
+    }
+
+    private void OnValidate()
+    {
+        idleTimeBeforeHint = Mathf.Max(0f, idleTimeBeforeHint);
+        grabHold = Mathf.Max(0f, grabHold);
+        moveDuration = Mathf.Max(0f, moveDuration);
+        releaseHold = Mathf.Max(0f, releaseHold);
+        pauseBetweenCycles = Mathf.Max(0f, pauseBetweenCycles);
     }
 }

@@ -1467,12 +1467,12 @@ MonoBehaviour:
   panelFadeDuration: 0.8
   successPopDuration: 0.4
   continueFadeDuration: 0.6
+  answer: {fileID: 1686252097}
+  loading: {fileID: 1420730652}
+  avgTime: 30
   onMainMenuRequested:
     m_PersistentCalls:
       m_Calls: []
-  answer: {fileID: 0}
-  loading: {fileID: 1420730652}
-  avgTime: 30
 --- !u!1 &924875535
 GameObject:
   m_ObjectHideFlags: 0
@@ -1884,6 +1884,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1167160611}
   - component: {fileID: 1167160612}
+  - component: {fileID: 1167160613}
   m_Layer: 5
   m_Name: Info Moudle
   m_TagString: Untagged
@@ -1926,10 +1927,14 @@ MonoBehaviour:
   panelSwitcher: {fileID: 1342956137}
   gameplayPanel: {fileID: 1595598604}
   enableGameplayPanelDirectly: 1
-  showFirstTimeInfo: 1
-  rememberFirstTimeWithPlayerPrefs: 1
-  firstTimePrefsKey: EmotionGame_InfoPanel_Seen
-  firstTimeInfoDuration: 20
+  showStartInfo: 1
+  rememberStartInfoWithPlayerPrefs: 0
+  startInfoPrefsKey: EmotionGame_InfoPanel_Seen
+  startInfoDuration: 30
+  playStartInfoNarration: 1
+  stopStartInfoNarrationWhenPanelCloses: 1
+  startInfoNarrationClip: {fileID: 8300000, guid: 3d6b866ea27692442bb0b7df852cc036, type: 3}
+  startInfoNarrationSource: {fileID: 1950879138}
   hintButton: {fileID: 1255963886}
   hintPanelDuration: 5
   hintCooldownDuration: 20
@@ -1938,6 +1943,12 @@ MonoBehaviour:
   hintAvailableMessage: Hint available!
   hintButtonTimerText: {fileID: 0}
   fillImage: {fileID: 679506225}
+  animateHintButtonOnWrongDrop: 1
+  hintAttentionPulseCount: 2
+  hintAttentionScale: 1.16
+  hintAttentionDuration: 0.42
+  showHintAvailableTextOnWrongDrop: 0
+  hintAvailableWrongDropMessage: Hint is available!
   infoPanel: {fileID: 1607868246}
   infoPanelCanvasGroup: {fileID: 1607868251}
   infoCard: {fileID: 1687181097}
@@ -1969,6 +1980,33 @@ MonoBehaviour:
   onHintAvailable:
     m_PersistentCalls:
       m_Calls: []
+  onHintAttentionPlayed:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!114 &1167160613
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1167160610}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8c07f9e032b2d8349bb47199c5ce5a43, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InstructionNarrationPlayer
+  audioSource: {fileID: 1950879138}
+  prefixClip: {fileID: 8300000, guid: a15c40b0dd4654a468e8fa8980ce933e, type: 3}
+  suffixClip: {fileID: 8300000, guid: 4448137ce4d236445bb848874ef3db0e, type: 3}
+  emotionClips:
+  - emotionLabel: Happy
+    clip: {fileID: 8300000, guid: 94228dfc432d4ce4aa46a0676e7e5b84, type: 3}
+  - emotionLabel: Sad
+    clip: {fileID: 8300000, guid: 62fa30b1eb92e144a94b97e8e816c293, type: 3}
+  - emotionLabel: Angry
+    clip: {fileID: 8300000, guid: f202265a1a33b074fa03f0e2aec985ab, type: 3}
+  gapBetweenClips: 0
+  useUnscaledTime: 0
 --- !u!1 &1186918165
 GameObject:
   m_ObjectHideFlags: 0
@@ -3431,7 +3469,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2603226916745369851, guid: cc53597368ef4cb4498612d05b549385, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 735.00006
+      value: 735.0001
       objectReference: {fileID: 0}
     - target: {fileID: 2603226916745369851, guid: cc53597368ef4cb4498612d05b549385, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -3732,15 +3770,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SetQuestions
   AllDraggable:
+  - {fileID: 2745128902198224455, guid: d244900912ca12e46830d34081a4eae2, type: 3}
+  - {fileID: 2745128902198224455, guid: 140ce58687503914c9e2dd12c4351152, type: 3}
+  - {fileID: 2745128902198224455, guid: 8e5ffdadab89b6649ac9bcfbc2ca448f, type: 3}
+  - {fileID: 2745128902198224455, guid: 11b7b5156a7d9d94d872305f71e833d4, type: 3}
+  - {fileID: 2745128902198224455, guid: d166f6c18be59c746bb96525ba9bd8ea, type: 3}
   - {fileID: 2745128902198224455, guid: ee3186d2fdd35394ba9de291073d7eef, type: 3}
   - {fileID: 2745128902198224455, guid: f4b2b87113d744340aecdbe60f877e75, type: 3}
   - {fileID: 2745128902198224455, guid: 7f9e85edfd8f47e44aeb02355c2a4df8, type: 3}
   - {fileID: 2745128902198224455, guid: 63f2afd27d3590b479b5955f8f583144, type: 3}
   - {fileID: 2745128902198224455, guid: f4227e2d1e6b3864d9aa76cf11c4decd, type: 3}
-  - {fileID: 2745128902198224455, guid: 140ce58687503914c9e2dd12c4351152, type: 3}
-  - {fileID: 2745128902198224455, guid: 8e5ffdadab89b6649ac9bcfbc2ca448f, type: 3}
-  - {fileID: 2745128902198224455, guid: 11b7b5156a7d9d94d872305f71e833d4, type: 3}
-  - {fileID: 2745128902198224455, guid: d166f6c18be59c746bb96525ba9bd8ea, type: 3}
+  - {fileID: 2745128902198224455, guid: da098795bfe08da48b2465c64273261c, type: 3}
   - {fileID: 2745128902198224455, guid: 69a195c13defa494aa354faafa1f2986, type: 3}
   - {fileID: 2745128902198224455, guid: cecd96f2e8dc7dc48bd07bf340f29f97, type: 3}
   - {fileID: 2745128902198224455, guid: 6043f41b627958f448390ea6c09f90a6, type: 3}
@@ -3750,6 +3790,19 @@ MonoBehaviour:
   spawnScaleDuration: 0.35
   delayBetweenSpawns: 0.12
   spawnSfxIndex: 4
+  lockOneEmotionPerGame: 1
+  preferEmotionWithCompleteIntensitySet: 0
+  selectedTargetEmotionLabel: 
+  updateInstructionWithTargetEmotion: 1
+  lockedEmotionInstructionFormat: Drag the {0} emoji that feels the same.
+  defaultInstructionText: Drag the emoji that feels the same.
+  instructionFadeDuration: 1
+  onQuestionsSpawnStarted:
+    m_PersistentCalls:
+      m_Calls: []
+  onQuestionsSpawnCompleted:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &1595598609
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3774,6 +3827,10 @@ MonoBehaviour:
   isUI: 0
   showOnlyOnce: 1
   stopBgmOnUserTouch: 1
+  startGameTimerOnFirstInteraction: 1
+  playInstructionNarrationWithHandHint: 1
+  setQuestions: {fileID: 0}
+  instructionNarrationPlayer: {fileID: 0}
   offsetX: 0
   offsetY: 0
 --- !u!1 &1607868246
@@ -4183,6 +4240,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AnswerDrop
   fillImage: {fileID: 679506225}
+  setQuestions: {fileID: 0}
+  requireEmotionMatch: 1
+  infoHintPanelController: {fileID: 0}
   mascotFace: {fileID: 1349366068}
   mascotHappy: {fileID: 21300000, guid: 89d14b28b83f251469d03b64aafcce35, type: 3}
   mascotSad: {fileID: 21300000, guid: f32632074430adf45bac1cc56aa82a60, type: 3}
@@ -4426,7 +4486,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2603226916745369851, guid: cc53597368ef4cb4498612d05b549385, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 735.00006
+      value: 735.0001
       objectReference: {fileID: 0}
     - target: {fileID: 2603226916745369851, guid: cc53597368ef4cb4498612d05b549385, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -4620,7 +4680,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2603226916745369851, guid: cc53597368ef4cb4498612d05b549385, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 485.00006
+      value: 485.00012
       objectReference: {fileID: 0}
     - target: {fileID: 2603226916745369851, guid: cc53597368ef4cb4498612d05b549385, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -4734,6 +4794,7 @@ MonoBehaviour:
   - label: Sad
     clip: {fileID: 8300000, guid: 62fa30b1eb92e144a94b97e8e816c293, type: 3}
   gapBetweenClips: 0
+  useUnscaledTime: 0
 --- !u!1 &1864097185
 GameObject:
   m_ObjectHideFlags: 0
@@ -10103,7 +10164,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2603226916745369851, guid: cc53597368ef4cb4498612d05b549385, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 485.00006
+      value: 485.00012
       objectReference: {fileID: 0}
     - target: {fileID: 2603226916745369851, guid: cc53597368ef4cb4498612d05b549385, type: 3}
       propertyPath: m_AnchoredPosition.y

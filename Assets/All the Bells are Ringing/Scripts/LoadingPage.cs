@@ -15,13 +15,8 @@ public class LoadingPage : MonoBehaviour
     public bool useUnscaledTime = false;
 
     [Header("UI References")]
-    [Tooltip("The bar RectTransform (background) - used to compute left/right edges")]
     public RectTransform barRect;
-
-    [Tooltip("Optional: an Image whose fillAmount should be updated (Image.Type.Filled)")]
     public Image barFill;
-
-    [Tooltip("The smiley image RectTransform that will move along the bar")]
     public RectTransform smileyRect;
     public Image smileyImage;
 
@@ -39,6 +34,13 @@ public class LoadingPage : MonoBehaviour
     [Header("Orientation")]
     public bool forceLandscapeLeft = true;
 
+    [Header("Reward Skills")]
+    public List<SkillEntry> _skills = new List<SkillEntry>
+    {
+        new SkillEntry(BloomSkillType.Apply, 100f, timeWeight: 0.1f, accuracyWeight: 0.9f),
+        new SkillEntry(BloomSkillType.Understand, 50f, timeWeight: 0.5f, accuracyWeight: 0.5f),
+    };
+
     [Header("Events")]
     public UnityEvent onComplete;
 
@@ -50,12 +52,6 @@ public class LoadingPage : MonoBehaviour
     private float leftX;
     private float rightX;
     private bool warnedBarFillType;
-
-    public List<SkillEntry> _skills = new()
-   {
-       new SkillEntry(BloomSkillType.Apply,   100f, timeWeight: 0.1f, accuracyWeight: 0.9f),
-       new SkillEntry(BloomSkillType.Understand,  50f, timeWeight: 0.5f, accuracyWeight: 0.5f),
-   };
 
     private void Reset()
     {
@@ -74,13 +70,17 @@ public class LoadingPage : MonoBehaviour
 
         if (!ValidateReferences())
             return;
+
         StartLoading();
     }
 
     public void StartLoading()
     {
         StopLoading();
-        RewardManager.Instance.ShowPreGame(_skills);
+
+        if (RewardManager.Instance != null)
+            RewardManager.Instance.ShowPreGame(_skills);
+
         loadingRoutine = StartCoroutine(AnimateLoadingRoutine());
     }
 
@@ -101,7 +101,9 @@ public class LoadingPage : MonoBehaviour
         CalculateBarPositions();
         ApplyProgress(0f);
         ResetSmileyVisuals();
-        yield return new WaitUntil(() => RewardManager.Instance.IsPreGameComplete);
+
+        if (RewardManager.Instance != null)
+            yield return new WaitUntil(() => RewardManager.Instance.IsPreGameComplete);
 
         if (startDelay > 0f)
             yield return useUnscaledTime ? WaitRealtime(startDelay) : new WaitForSeconds(startDelay);
@@ -131,8 +133,8 @@ public class LoadingPage : MonoBehaviour
 
         if (smileyRect != null)
             loadingSequence.Append(smileyRect.DOPunchScale(Vector3.one * 0.12f, 0.2f, 1, 0.5f).SetUpdate(useUnscaledTime));
-        loadingSequence.OnComplete(CompleteLoading);
 
+        loadingSequence.OnComplete(CompleteLoading);
         yield return loadingSequence.WaitForCompletion();
         loadingRoutine = null;
     }
@@ -155,7 +157,7 @@ public class LoadingPage : MonoBehaviour
             smileyRect.localScale = Vector3.one;
         }
 
-        Debug.Log("LoadingPage: animation complete.");
+        Debug.Log("LoadingPage: animation complete.", this);
         onComplete?.Invoke();
     }
 

@@ -18,7 +18,10 @@ public class PanelSwitcher : MonoBehaviour
         }
 
         if (switchRoutine != null)
+        {
             StopCoroutine(switchRoutine);
+            switchRoutine = null;
+        }
 
         switchRoutine = StartCoroutine(SwitchRoutine(newPanel));
     }
@@ -27,7 +30,10 @@ public class PanelSwitcher : MonoBehaviour
     {
         if (currentPanel == newPanel)
         {
-            PreparePanel(GetCanvasGroup(newPanel), true);
+            CanvasGroup sameGroup = GetCanvasGroup(newPanel);
+            newPanel.SetActive(true);
+            sameGroup.alpha = 1f;
+            PreparePanel(sameGroup, true);
             switchRoutine = null;
             yield break;
         }

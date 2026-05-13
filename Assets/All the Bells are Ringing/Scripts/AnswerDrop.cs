@@ -7,6 +7,16 @@ public class AnswerDrop : MonoBehaviour, IDropHandler
 {
     public FillImage fillImage;
 
+    [Header("Question Setup")]
+    [Tooltip("Assign the SetQuestions object from the gameplay panel. Used for target emotion matching.")]
+    [SerializeField] private SetQuestions setQuestions;
+
+    [Tooltip("Correct answer must match both current intensity and selected target emotion.")]
+    [SerializeField] private bool requireEmotionMatch = true;
+
+    [Header("Hint Feedback")]
+    [SerializeField] private InfoHintPanelController infoHintPanelController;
+
     [Header("Mascot")]
     public Image mascotFace;
     public Sprite mascotHappy;
@@ -23,8 +33,15 @@ public class AnswerDrop : MonoBehaviour, IDropHandler
 
     public int WrongDropCount { get; private set; }
 
+    private void Awake()
+    {
+        ResolveOptionalReferences();
+    }
+
     private void OnEnable()
     {
+        ResolveOptionalReferences();
+
         if (resetWrongCountOnEnable)
             ResetWrongDropCount();
         else
@@ -42,56 +59,107 @@ public class AnswerDrop : MonoBehaviour, IDropHandler
         if (draggable == null || fillImage == null)
             return;
 
-        float draggableIntensity = NormalizeIntensity(draggable.intensity);
-        float currentIntensity = NormalizeIntensity(fillImage.currentIntensity);
+        float draggableIntensity = Draggable.NormalizeIntensity(draggable.intensity);
+        float currentIntensity = Draggable.NormalizeIntensity(fillImage.currentIntensity);
+        string targetEmotion = GetTargetEmotionLabel();
 
-        if (Mathf.Approximately(draggableIntensity, currentIntensity))
+        bool intensityMatches = Mathf.Approximately(draggableIntensity, currentIntensity);
+        bool emotionMatches = IsEmotionCorrect(draggable.label, targetEmotion);
+
+        if (intensityMatches && emotionMatches)
         {
-            Debug.Log("Intensity Matched");
-
-            draggable.parentAfterDrag = transform;
-            Draggable.SetStretchWithMargins(draggable.GetComponent<RectTransform>(), 35f);
-
-            fillImage.ChangeEmotion(true, emojiFace, emojiHappy, emojiSad);
-            fillImage.ChangeEmotion(true, mascotFace, mascotHappy, mascotSad);
-
-            string intensityTxt = GetIntensityText(draggableIntensity) + " " + draggable.label;
-            fillImage.SpawnFloatingText(intensityTxt);
-
-            // New dynamic audio system.
-            if (EmotionAudioMapper.Instance != null)
-            {
-                EmotionAudioMapper.Instance.PlayEmotionAudio(draggableIntensity, draggable.label);
-            }
-            else
-            {
-                Debug.LogWarning("AnswerDrop: EmotionAudioMapper missing in scene.");
-            }
-
-            fillImage.FadeAndDestroy(dropped, 1f, () =>
-            {
-                fillImage.IncreaseIntensity();
-            });
+            HandleCorrectDrop(dropped, draggable, draggableIntensity);
         }
         else
         {
-            Debug.Log("Intensity Doesn't Match");
+            HandleWrongDrop(draggable, intensityMatches, emotionMatches, targetEmotion);
+        }
+    }
 
-            AddWrongDrop();
+    private void HandleCorrectDrop(GameObject dropped, Draggable draggable, float draggableIntensity)
+    {
+        Debug.Log("AnswerDrop: Correct answer. Intensity and emotion matched.", this);
 
+        draggable.parentAfterDrag = transform;
+        Draggable.SetStretchWithMargins(draggable.GetComponent<RectTransform>(), 35f);
+
+        fillImage.ChangeEmotion(true, emojiFace, emojiHappy, emojiSad);
+        fillImage.ChangeEmotion(true, mascotFace, mascotHappy, mascotSad);
+
+        string intensityText = fillImage.GetIntensityText(draggableIntensity);
+        string floatingText = intensityText + " " + draggable.label;
+        fillImage.SpawnFloatingText(floatingText);
+
+        if (EmotionAudioMapper.Instance != null)
+        {
+            EmotionAudioMapper.Instance.PlayEmotionAudio(draggableIntensity, draggable.label);
+        }
+        else
+        {
+            Debug.LogWarning("AnswerDrop: EmotionAudioMapper missing in scene.", this);
+        }
+
+        fillImage.FadeAndDestroy(dropped, 1f, () =>
+        {
+            if (fillImage != null)
+                fillImage.IncreaseIntensity();
+        });
+    }
+
+    private void HandleWrongDrop(Draggable draggable, bool intensityMatches, bool emotionMatches, string targetEmotion)
+    {
+        Debug.Log(
+            "AnswerDrop: Wrong answer. IntensityMatch=" + intensityMatches +
+            ", EmotionMatch=" + emotionMatches +
+            ", TargetEmotion=" + targetEmotion +
+            ", DroppedEmotion=" + (draggable != null ? draggable.label : "null"),
+            this
+        );
+
+        AddWrongDrop();
+
+        if (infoHintPanelController != null)
+            infoHintPanelController.NotifyWrongDrop();
+
+        if (AudioManager.Instance != null)
             AudioManager.Instance.PlaySFX(1);
 
-            fillImage.ChangeEmotion(false, emojiFace, emojiHappy, emojiSad);
-            fillImage.ChangeEmotion(false, mascotFace, mascotHappy, mascotSad);
+        fillImage.ChangeEmotion(false, emojiFace, emojiHappy, emojiSad);
+        fillImage.ChangeEmotion(false, mascotFace, mascotHappy, mascotSad);
+    }
+
+    private string GetTargetEmotionLabel()
+    {
+        if (setQuestions == null)
+            setQuestions = FindObjectOfType<SetQuestions>();
+
+        if (setQuestions == null)
+        {
+            if (requireEmotionMatch)
+                Debug.LogWarning("AnswerDrop: SetQuestions reference missing. Falling back to intensity-only validation.", this);
+
+            return string.Empty;
         }
+
+        return setQuestions.SelectedTargetEmotionLabel;
+    }
+
+    private bool IsEmotionCorrect(string droppedEmotion, string targetEmotion)
+    {
+        if (!requireEmotionMatch)
+            return true;
+
+        if (string.IsNullOrWhiteSpace(targetEmotion))
+            return true;
+
+        return Draggable.LabelsMatch(droppedEmotion, targetEmotion);
     }
 
     private void AddWrongDrop()
     {
         WrongDropCount++;
         UpdateWrongDropUI();
-
-        Debug.Log("Wrong Drop Count: " + WrongDropCount);
+        Debug.Log("Wrong Drop Count: " + WrongDropCount, this);
     }
 
     public void ResetWrongDropCount()
@@ -106,24 +174,12 @@ public class AnswerDrop : MonoBehaviour, IDropHandler
             wrongDropCountText.text = WrongDropCount.ToString();
     }
 
-    private string GetIntensityText(float intensity)
+    private void ResolveOptionalReferences()
     {
-        if (fillImage != null && fillImage.intensityDict != null)
-        {
-            foreach (var pair in fillImage.intensityDict)
-            {
-                if (Mathf.Approximately(NormalizeIntensity(pair.Key), intensity))
-                    return pair.Value;
-            }
-        }
+        if (setQuestions == null)
+            setQuestions = FindObjectOfType<SetQuestions>();
 
-        return intensity.ToString("0.0");
-    }
-
-    private float NormalizeIntensity(float value)
-    {
-        int step = Mathf.RoundToInt(Mathf.Clamp01(value) / 0.2f);
-        step = Mathf.Clamp(step, 1, 5);
-        return step * 0.2f;
+        if (infoHintPanelController == null)
+            infoHintPanelController = FindObjectOfType<InfoHintPanelController>();
     }
 }
