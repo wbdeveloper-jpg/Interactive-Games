@@ -1,0 +1,765 @@
+fileFormatVersion: 2
+guid: 8de7a1959aab06b449381b6d2982d1d0
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 4331303750645924921
+    second: SignsAsset 1Zodiac_0
+  - first:
+      213: 4446572022881858667
+    second: SignsAsset 1Zodiac_1
+  - first:
+      213: -7858418415072703691
+    second: SignsAsset 1Zodiac_2
+  - first:
+      213: -6003519855946977132
+    second: SignsAsset 1Zodiac_3
+  - first:
+      213: 531460256806761123
+    second: SignsAsset 1Zodiac_4
+  - first:
+      213: 3856501481673874300
+    second: SignsAsset 1Zodiac_5
+  - first:
+      213: 5105319534977842517
+    second: SignsAsset 1Zodiac_6
+  - first:
+      213: 8971692524157352959
+    second: SignsAsset 1Zodiac_7
+  - first:
+      213: 454047186738769552
+    second: SignsAsset 1Zodiac_8
+  - first:
+      213: -6822804613904063477
+    second: SignsAsset 1Zodiac_9
+  - first:
+      213: -8821286180403117243
+    second: SignsAsset 1Zodiac_10
+  - first:
+      213: 7127118759040737253
+    second: SignsAsset 1Zodiac_11
+  - first:
+      213: -3156070152641173028
+    second: SignsAsset 1Zodiac_12
+  - first:
+      213: 9149348764311569740
+    second: SignsAsset 1Zodiac_13
+  - first:
+      213: 6015766432569575663
+    second: SignsAsset 1Zodiac_14
+  - first:
+      213: 7354647551348867806
+    second: SignsAsset 1Zodiac_15
+  - first:
+      213: -1801420052260850082
+    second: SignsAsset 1Zodiac_16
+  - first:
+      213: -1334380093149901115
+    second: SignsAsset 1Zodiac_17
+  - first:
+      213: 3527117209515886447
+    second: SignsAsset 1Zodiac_18
+  - first:
+      213: 4141143922858317202
+    second: SignsAsset 1Zodiac_19
+  - first:
+      213: -4177258186519335427
+    second: SignsAsset 1Zodiac_20
+  - first:
+      213: 4234344893529494464
+    second: SignsAsset 1Zodiac_21
+  - first:
+      213: 4775430151369999137
+    second: SignsAsset 1Zodiac_22
+  - first:
+      213: 8702635797660022689
+    second: SignsAsset 1Zodiac_23
+  - first:
+      213: -4977105616837224581
+    second: SignsAsset 1Zodiac_24
+  - first:
+      213: -5696002460689224975
+    second: SignsAsset 1Zodiac_25
+  - first:
+      213: -324052802968539574
+    second: SignsAsset 1Zodiac_26
+  - first:
+      213: -7713421556692712752
+    second: SignsAsset 1Zodiac_27
+  - first:
+      213: 2951777596862639063
+    second: SignsAsset 1Zodiac_28
+  - first:
+      213: 3994385151844511018
+    second: SignsAsset 1Zodiac_29
+  - first:
+      213: -2334043366345606724
+    second: SignsAsset 1Zodiac_30
+  - first:
+      213: 2850050182680157559
+    second: SignsAsset 1Zodiac_31
+  - first:
+      213: 1718068917628085713
+    second: SignsAsset 1Zodiac_32
+  - first:
+      213: -8967436313672781459
+    second: SignsAsset 1Zodiac_33
+  - first:
+      213: 8228040676445867318
+    second: SignsAsset 1Zodiac_34
+  - first:
+      213: -3535373866265329253
+    second: SignsAsset 1Zodiac_35
+  - first:
+      213: 2553852076701786673
+    second: SignsAsset 1Zodiac_36
+  - first:
+      213: 5667311248414262237
+    second: SignsAsset 1Zodiac_37
+  - first:
+      213: -983239686457750056
+    second: SignsAsset 1Zodiac_38
+  - first:
+      213: -7170872794194791263
+    second: SignsAsset 1Zodiac_39
+  - first:
+      213: -3373040820543893489
+    second: SignsAsset 1Zodiac_40
+  - first:
+      213: -8776143748206546127
+    second: SignsAsset 1Zodiac_41
+  - first:
+      213: -8419190659227058152
+    second: SignsAsset 1Zodiac_42
+  - first:
+      213: 8630827122167483009
+    second: SignsAsset 1Zodiac_43
+  - first:
+      213: 1162796356763728773
+    second: SignsAsset 1Zodiac_44
+  - first:
+      213: 6959939919279159397
+    second: SignsAsset 1Zodiac_45
+  - first:
+      213: 9126273156976318686
+    second: SignsAsset 1Zodiac_46
+  - first:
+      213: -3324122992286330609
+    second: SignsAsset 1Zodiac_47
+  - first:
+      213: 2064692662814867936
+    second: SignsAsset 1Zodiac_48
+  - first:
+      213: 4972315468735917156
+    second: SignsAsset 1Zodiac_49
+  - first:
+      213: -6551067719322128775
+    second: SignsAsset 1Zodiac_50
+  - first:
+      213: -2177783790664394035
+    second: SignsAsset 1Zodiac_51
+  - first:
+      213: -78756403503401542
+    second: SignsAsset 1Zodiac_52
+  - first:
+      213: -7591915165496152675
+    second: SignsAsset 1Zodiac_53
+  - first:
+      213: -7453437012827203213
+    second: SignsAsset 1Zodiac_54
+  - first:
+      213: -5152861271872647803
+    second: SignsAsset 1Zodiac_55
+  - first:
+      213: 2388007836121393282
+    second: SignsAsset 1Zodiac_56
+  - first:
+      213: -3835557010055402812
+    second: SignsAsset 1Zodiac_57
+  - first:
+      213: 3217635335992203494
+    second: SignsAsset 1Zodiac_58
+  - first:
+      213: -3924307117582099601
+    second: SignsAsset 1Zodiac_59
+  - first:
+      213: -5646947736621793651
+    second: SignsAsset 1Zodiac_60
+  - first:
+      213: -422870468100937141
+    second: SignsAsset 1Zodiac_61
+  - first:
+      213: -2538285319913718518
+    second: SignsAsset 1Zodiac_62
+  - first:
+      213: 2763302717888307942
+    second: SignsAsset 1Zodiac_63
+  - first:
+      213: 1467394654196386476
+    second: SignsAsset 1Zodiac_64
+  - first:
+      213: -8885677227417724304
+    second: SignsAsset 1Zodiac_65
+  - first:
+      213: 5060960558712491850
+    second: SignsAsset 1Zodiac_66
+  - first:
+      213: -1750139965494354485
+    second: SignsAsset 1Zodiac_67
+  - first:
+      213: -5312545901906483072
+    second: SignsAsset 1Zodiac_68
+  - first:
+      213: -8632758109723601666
+    second: SignsAsset 1Zodiac_69
+  - first:
+      213: -8778330359100036793
+    second: SignsAsset 1Zodiac_70
+  - first:
+      213: -3695582420427769108
+    second: SignsAsset 1Zodiac_71
+  - first:
+      213: -5047621765078782446
+    second: SignsAsset 1Zodiac_72
+  - first:
+      213: -2335282603226173491
+    second: SignsAsset 1Zodiac_73
+  - first:
+      213: 3524263755327257937
+    second: SignsAsset 1Zodiac_74
+  - first:
+      213: -3410628643270024968
+    second: SignsAsset 1Zodiac_75
+  - first:
+      213: 1739258781393319558
+    second: SignsAsset 1Zodiac_76
+  - first:
+      213: 7536806052403882513
+    second: SignsAsset 1Zodiac_77
+  - first:
+      213: 5670376207497028416
+    second: SignsAsset 1Zodiac_78
+  - first:
+      213: -8011575942012311334
+    second: SignsAsset 1Zodiac_79
+  - first:
+      213: 5679231644633477728
+    second: SignsAsset 1Zodiac_80
+  - first:
+      213: 5302207739159811419
+    second: SignsAsset 1Zodiac_81
+  - first:
+      213: 7306686664202572234
+    second: SignsAsset 1Zodiac_82
+  - first:
+      213: 8940905213735339942
+    second: SignsAsset 1Zodiac_83
+  - first:
+      213: 8025842737465420498
+    second: SignsAsset 1Zodiac_84
+  - first:
+      213: -2490186872011360985
+    second: SignsAsset 1Zodiac_85
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: iOS
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: SignsAsset 1Zodiac_0
+      rect:
+        serializedVersion: 2
+        x: 8
+        y: 1589
+        width: 546
+        height: 510
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 934419f10d1eb1c30800000000000000
+      internalID: 4331303750645924921
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SignsAsset 1Zodiac_1
+      rect:
+        serializedVersion: 2
+        x: 868
+        y: 1607
+        width: 601
+        height: 497
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b64301422b565bd30800000000000000
+      internalID: 4446572022881858667
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SignsAsset 1Zodiac_2
+      rect:
+        serializedVersion: 2
+        x: 1747
+        y: 1603
+        width: 651
+        height: 492
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 53b0431561a41f290800000000000000
+      internalID: -7858418415072703691
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SignsAsset 1Zodiac_3
+      rect:
+        serializedVersion: 2
+        x: 2721
+        y: 1553
+        width: 501
+        height: 546
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 490b640cf763faca0800000000000000
+      internalID: -6003519855946977132
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SignsAsset 1Zodiac_4
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 779
+        width: 568
+        height: 551
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3a2743ba940206700800000000000000
+      internalID: 531460256806761123
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SignsAsset 1Zodiac_5
+      rect:
+        serializedVersion: 2
+        x: 954
+        y: 797
+        width: 447
+        height: 519
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c7b50fa3aab058530800000000000000
+      internalID: 3856501481673874300
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SignsAsset 1Zodiac_6
+      rect:
+        serializedVersion: 2
+        x: 1760
+        y: 747
+        width: 628
+        height: 592
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 55d7733611db9d640800000000000000
+      internalID: 5105319534977842517
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SignsAsset 1Zodiac_7
+      rect:
+        serializedVersion: 2
+        x: 2675
+        y: 743
+        width: 547
+        height: 600
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ffb3d6011dad18c70800000000000000
+      internalID: 8971692524157352959
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SignsAsset 1Zodiac_8
+      rect:
+        serializedVersion: 2
+        x: 44
+        y: 0
+        width: 501
+        height: 556
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 09e64dcb2891d4600800000000000000
+      internalID: 454047186738769552
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SignsAsset 1Zodiac_9
+      rect:
+        serializedVersion: 2
+        x: 904
+        y: 0
+        width: 533
+        height: 551
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b042a583a578051a0800000000000000
+      internalID: -6822804613904063477
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SignsAsset 1Zodiac_10
+      rect:
+        serializedVersion: 2
+        x: 1806
+        y: 0
+        width: 546
+        height: 560
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5438203c4fe749580800000000000000
+      internalID: -8821286180403117243
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SignsAsset 1Zodiac_11
+      rect:
+        serializedVersion: 2
+        x: 2703
+        y: 0
+        width: 519
+        height: 565
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5ef55a010cc98e260800000000000000
+      internalID: 7127118759040737253
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: d0739592dd7010a41835ba30070ff575
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      SignsAsset 1Zodiac_0: 4331303750645924921
+      SignsAsset 1Zodiac_1: 4446572022881858667
+      SignsAsset 1Zodiac_10: -8821286180403117243
+      SignsAsset 1Zodiac_11: 7127118759040737253
+      SignsAsset 1Zodiac_12: -3156070152641173028
+      SignsAsset 1Zodiac_13: 9149348764311569740
+      SignsAsset 1Zodiac_14: 6015766432569575663
+      SignsAsset 1Zodiac_15: 7354647551348867806
+      SignsAsset 1Zodiac_16: -1801420052260850082
+      SignsAsset 1Zodiac_17: -1334380093149901115
+      SignsAsset 1Zodiac_18: 3527117209515886447
+      SignsAsset 1Zodiac_19: 4141143922858317202
+      SignsAsset 1Zodiac_2: -7858418415072703691
+      SignsAsset 1Zodiac_20: -4177258186519335427
+      SignsAsset 1Zodiac_21: 4234344893529494464
+      SignsAsset 1Zodiac_22: 4775430151369999137
+      SignsAsset 1Zodiac_23: 8702635797660022689
+      SignsAsset 1Zodiac_24: -4977105616837224581
+      SignsAsset 1Zodiac_25: -5696002460689224975
+      SignsAsset 1Zodiac_26: -324052802968539574
+      SignsAsset 1Zodiac_27: -7713421556692712752
+      SignsAsset 1Zodiac_28: 2951777596862639063
+      SignsAsset 1Zodiac_29: 3994385151844511018
+      SignsAsset 1Zodiac_3: -6003519855946977132
+      SignsAsset 1Zodiac_30: -2334043366345606724
+      SignsAsset 1Zodiac_31: 2850050182680157559
+      SignsAsset 1Zodiac_32: 1718068917628085713
+      SignsAsset 1Zodiac_33: -8967436313672781459
+      SignsAsset 1Zodiac_34: 8228040676445867318
+      SignsAsset 1Zodiac_35: -3535373866265329253
+      SignsAsset 1Zodiac_36: 2553852076701786673
+      SignsAsset 1Zodiac_37: 5667311248414262237
+      SignsAsset 1Zodiac_38: -983239686457750056
+      SignsAsset 1Zodiac_39: -7170872794194791263
+      SignsAsset 1Zodiac_4: 531460256806761123
+      SignsAsset 1Zodiac_40: -3373040820543893489
+      SignsAsset 1Zodiac_41: -8776143748206546127
+      SignsAsset 1Zodiac_42: -8419190659227058152
+      SignsAsset 1Zodiac_43: 8630827122167483009
+      SignsAsset 1Zodiac_44: 1162796356763728773
+      SignsAsset 1Zodiac_45: 6959939919279159397
+      SignsAsset 1Zodiac_46: 9126273156976318686
+      SignsAsset 1Zodiac_47: -3324122992286330609
+      SignsAsset 1Zodiac_48: 2064692662814867936
+      SignsAsset 1Zodiac_49: 4972315468735917156
+      SignsAsset 1Zodiac_5: 3856501481673874300
+      SignsAsset 1Zodiac_50: -6551067719322128775
+      SignsAsset 1Zodiac_51: -2177783790664394035
+      SignsAsset 1Zodiac_52: -78756403503401542
+      SignsAsset 1Zodiac_53: -7591915165496152675
+      SignsAsset 1Zodiac_54: -7453437012827203213
+      SignsAsset 1Zodiac_55: -5152861271872647803
+      SignsAsset 1Zodiac_56: 2388007836121393282
+      SignsAsset 1Zodiac_57: -3835557010055402812
+      SignsAsset 1Zodiac_58: 3217635335992203494
+      SignsAsset 1Zodiac_59: -3924307117582099601
+      SignsAsset 1Zodiac_6: 5105319534977842517
+      SignsAsset 1Zodiac_60: -5646947736621793651
+      SignsAsset 1Zodiac_61: -422870468100937141
+      SignsAsset 1Zodiac_62: -2538285319913718518
+      SignsAsset 1Zodiac_63: 2763302717888307942
+      SignsAsset 1Zodiac_64: 1467394654196386476
+      SignsAsset 1Zodiac_65: -8885677227417724304
+      SignsAsset 1Zodiac_66: 5060960558712491850
+      SignsAsset 1Zodiac_67: -1750139965494354485
+      SignsAsset 1Zodiac_68: -5312545901906483072
+      SignsAsset 1Zodiac_69: -8632758109723601666
+      SignsAsset 1Zodiac_7: 8971692524157352959
+      SignsAsset 1Zodiac_70: -8778330359100036793
+      SignsAsset 1Zodiac_71: -3695582420427769108
+      SignsAsset 1Zodiac_72: -5047621765078782446
+      SignsAsset 1Zodiac_73: -2335282603226173491
+      SignsAsset 1Zodiac_74: 3524263755327257937
+      SignsAsset 1Zodiac_75: -3410628643270024968
+      SignsAsset 1Zodiac_76: 1739258781393319558
+      SignsAsset 1Zodiac_77: 7536806052403882513
+      SignsAsset 1Zodiac_78: 5670376207497028416
+      SignsAsset 1Zodiac_79: -8011575942012311334
+      SignsAsset 1Zodiac_8: 454047186738769552
+      SignsAsset 1Zodiac_80: 5679231644633477728
+      SignsAsset 1Zodiac_81: 5302207739159811419
+      SignsAsset 1Zodiac_82: 7306686664202572234
+      SignsAsset 1Zodiac_83: 8940905213735339942
+      SignsAsset 1Zodiac_84: 8025842737465420498
+      SignsAsset 1Zodiac_85: -2490186872011360985
+      SignsAsset 1Zodiac_86: 20314597
+      SignsAsset 1Zodiac_9: -6822804613904063477
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

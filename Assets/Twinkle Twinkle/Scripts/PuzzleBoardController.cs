@@ -208,7 +208,21 @@ public class PuzzleBoardController : MonoBehaviour
 
         if (introMessageText != null)
         {
-            introMessageText.text = data.DisplayName + " Puzzle";
+            introMessageText.text = "You got " +data.DisplayName + " Puzzle";
+        }
+
+        yield return new WaitForSeconds(fullImagePreviewSeconds);
+
+        if (introMessageText != null)
+        {
+            introMessageText.text = "Carefully look the image!";
+        }
+
+        yield return new WaitForSeconds(fullImagePreviewSeconds);
+
+        if (introMessageText != null)
+        {
+            introMessageText.text = "You have to rearrange it.";
         }
 
         yield return new WaitForSeconds(fullImagePreviewSeconds);

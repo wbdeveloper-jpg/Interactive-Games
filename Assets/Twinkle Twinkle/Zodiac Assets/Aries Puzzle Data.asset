@@ -15,20 +15,20 @@ MonoBehaviour:
   sign: 3
   displayNameOverride: Aries
   descriptionOverride: March 21 - April 19
-  fullPuzzleSprite: {fileID: 21300000, guid: 3d4bfd74f2532104481850eebb85e0d9, type: 3}
+  fullPuzzleSprite: {fileID: 21300000, guid: 8bd63f5380916fd418d2f7d44ff6d0e1, type: 3}
   pieceSprites:
-  - {fileID: 759824961478135041, guid: 1e0089a9141f0bb48a3d36cbb31d2fe4, type: 3}
-  - {fileID: 574468377, guid: 1e0089a9141f0bb48a3d36cbb31d2fe4, type: 3}
-  - {fileID: 250043794, guid: 1e0089a9141f0bb48a3d36cbb31d2fe4, type: 3}
-  - {fileID: -2133818874, guid: 1e0089a9141f0bb48a3d36cbb31d2fe4, type: 3}
-  - {fileID: 23649547, guid: 1e0089a9141f0bb48a3d36cbb31d2fe4, type: 3}
-  - {fileID: 868412998, guid: 1e0089a9141f0bb48a3d36cbb31d2fe4, type: 3}
-  - {fileID: -667816240, guid: 1e0089a9141f0bb48a3d36cbb31d2fe4, type: 3}
-  - {fileID: 1452534452, guid: 1e0089a9141f0bb48a3d36cbb31d2fe4, type: 3}
-  - {fileID: 2011865953, guid: 1e0089a9141f0bb48a3d36cbb31d2fe4, type: 3}
-  - {fileID: 458281143, guid: 1e0089a9141f0bb48a3d36cbb31d2fe4, type: 3}
-  - {fileID: -933821784, guid: 1e0089a9141f0bb48a3d36cbb31d2fe4, type: 3}
-  - {fileID: 1817952260, guid: 1e0089a9141f0bb48a3d36cbb31d2fe4, type: 3}
-  resultSprite: {fileID: 21300000, guid: 96968b28305e1644590bdb35883d22fa, type: 3}
+  - {fileID: 535112104041116636, guid: d6c1ae2c15842d64785d22761e37c261, type: 3}
+  - {fileID: 1220115473, guid: d6c1ae2c15842d64785d22761e37c261, type: 3}
+  - {fileID: 1355381631, guid: d6c1ae2c15842d64785d22761e37c261, type: 3}
+  - {fileID: -1214071404, guid: d6c1ae2c15842d64785d22761e37c261, type: 3}
+  - {fileID: -298097727, guid: d6c1ae2c15842d64785d22761e37c261, type: 3}
+  - {fileID: -2104375055, guid: d6c1ae2c15842d64785d22761e37c261, type: 3}
+  - {fileID: -859576175, guid: d6c1ae2c15842d64785d22761e37c261, type: 3}
+  - {fileID: 2145564700, guid: d6c1ae2c15842d64785d22761e37c261, type: 3}
+  - {fileID: 646290425, guid: d6c1ae2c15842d64785d22761e37c261, type: 3}
+  - {fileID: -2090981339, guid: d6c1ae2c15842d64785d22761e37c261, type: 3}
+  - {fileID: -1725312307, guid: d6c1ae2c15842d64785d22761e37c261, type: 3}
+  - {fileID: -319190828, guid: d6c1ae2c15842d64785d22761e37c261, type: 3}
+  resultSprite: {fileID: -7858418415072703691, guid: 8de7a1959aab06b449381b6d2982d1d0, type: 3}
   constellationPrefab: {fileID: 1930216221692072424, guid: 61631b7b34386f84ba6e45dda36e6a7f, type: 3}
   timeLimitSeconds: 60

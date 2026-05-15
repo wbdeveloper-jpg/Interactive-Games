@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dca4dbc20cbc10b41843e4224a6dff0f, type: 3}
+  m_Name: Sagittarius Puzzle Data
+  m_EditorClassIdentifier: Assembly-CSharp::ZodiacPuzzleData
+  sign: 11
+  displayNameOverride: Sagittarius
+  descriptionOverride: I am Mythical
+  fullPuzzleSprite: {fileID: 21300000, guid: 52e9d1fbcf4b6fd4d886be2dc8863329, type: 3}
+  pieceSprites:
+  - {fileID: 1790304728446450321, guid: 67e66cb3db5c3f04688d8647fd8348d3, type: 3}
+  - {fileID: -1630102248, guid: 67e66cb3db5c3f04688d8647fd8348d3, type: 3}
+  - {fileID: 796241974, guid: 67e66cb3db5c3f04688d8647fd8348d3, type: 3}
+  - {fileID: 1838146695, guid: 67e66cb3db5c3f04688d8647fd8348d3, type: 3}
+  - {fileID: -802015019, guid: 67e66cb3db5c3f04688d8647fd8348d3, type: 3}
+  - {fileID: 477948812, guid: 67e66cb3db5c3f04688d8647fd8348d3, type: 3}
+  - {fileID: -1934971899, guid: 67e66cb3db5c3f04688d8647fd8348d3, type: 3}
+  - {fileID: -1708388445, guid: 67e66cb3db5c3f04688d8647fd8348d3, type: 3}
+  - {fileID: -197527243, guid: 67e66cb3db5c3f04688d8647fd8348d3, type: 3}
+  - {fileID: -2060413411, guid: 67e66cb3db5c3f04688d8647fd8348d3, type: 3}
+  - {fileID: 687139653, guid: 67e66cb3db5c3f04688d8647fd8348d3, type: 3}
+  - {fileID: -344481008, guid: 67e66cb3db5c3f04688d8647fd8348d3, type: 3}
+  resultSprite: {fileID: -6822804613904063477, guid: 8de7a1959aab06b449381b6d2982d1d0, type: 3}
+  constellationPrefab: {fileID: 1253463118659272957, guid: 561e95d96a812e34e96d743e71cf8be7, type: 3}
+  timeLimitSeconds: 60

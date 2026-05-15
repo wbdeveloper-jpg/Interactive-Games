@@ -1,13 +1,19 @@
+using DG.Tweening;
+using RewardSystem;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 /// <summary>
 /// Owns the high-level game flow.
-/// Important hierarchy rule:
-/// - This object should live on an always-active object under the Canvas, not inside Selection/Puzzle/Reveal/GameOver panels.
-/// - The constellation reveal screen is allowed to be a child of the puzzle screen.
-/// - For that reason this script does NOT use "only one screen active" anymore.
+/// 
+/// Production rules:
+/// - This object must live on an always-active GameObject.
+/// - Do not place this inside SelectionScreen, PuzzleScreen, RevealScreen, or GameOverScreen.
+/// - RewardManager integration belongs here, not inside puzzle pieces or constellation scripts.
 /// </summary>
-public class GameFlowController : MonoBehaviour
+public class GameFlowController : MonoBehaviour, IGameSceneCallbacks, IGameAudioCallbacks
 {
     [Header("Screens / Panels")]
     public GameObject zodiacSelectionScreen;
@@ -22,19 +28,39 @@ public class GameFlowController : MonoBehaviour
     public GameOverScreen gameOverController;
 
     [Header("Startup")]
-    [Tooltip("When true, Start() forces the birthday selection page to be visible.")]
+    [Tooltip("When true, game waits for RewardManager pre-game, then opens birthday selection.")]
     public bool showSelectionOnStart = true;
+
+    [Header("Reward Module")]
+    [Tooltip("Turn OFF only for local testing without RewardManager in scene.")]
+    [SerializeField] private bool useRewardModule = true;
+
+    [Tooltip("Reward skills passed into RewardManager pre-game and post-game screens.")]
+    [SerializeField]
+    private List<SkillEntry> rewardSkills = new()
+    {
+        new SkillEntry(BloomSkillType.Understand, 100f, timeWeight: 0.7f, accuracyWeight: 0.3f),
+        new SkillEntry(BloomSkillType.Apply, 100f, timeWeight: 0.5f, accuracyWeight: 0.5f)
+    };
 
     [Header("Overlay Behaviour")]
     [Tooltip("Keep puzzleScreen active while the constellation reveal is showing. Keep this ON if reveal is under puzzleScreen.")]
     public bool keepPuzzleScreenActiveDuringReveal = true;
 
-    [Tooltip("Keep puzzleScreen active behind GameOver. Turn this ON if GameOver is also under puzzleScreen or you want the solved puzzle visible behind the result.")]
+    [Tooltip("Keep puzzleScreen active behind GameOver/reward. Turn this ON if you want the solved puzzle visible behind final overlay.")]
     public bool keepPuzzleScreenActiveDuringGameOver = true;
 
     private ZodiacPuzzleData currentData;
+
     private bool gameStarted;
     private bool eventsHooked;
+    private bool bootFlowStarted;
+
+    private bool lastPuzzleCompleted;
+    private float lastPuzzleTimeTaken;
+    private float lastPuzzleMaxTime;
+
+    private GameEvaluationData rewardEvaluationData = new();
 
     private void Awake()
     {
@@ -48,10 +74,14 @@ public class GameFlowController : MonoBehaviour
 
     private void Start()
     {
-        if (showSelectionOnStart)
-        {
-            ReturnToMainMenu();
-        }
+        if (!showSelectionOnStart)
+            return;
+
+        if (bootFlowStarted)
+            return;
+
+        bootFlowStarted = true;
+        StartCoroutine(BootGameFlowRoutine());
     }
 
     private void OnDestroy()
@@ -59,9 +89,28 @@ public class GameFlowController : MonoBehaviour
         UnhookEvents();
     }
 
+    private IEnumerator BootGameFlowRoutine()
+    {
+        HideAllScreens();
+
+        if (useRewardModule && RewardManager.Instance != null)
+        {
+            RewardManager.Instance.ShowPreGame(rewardSkills);
+
+            yield return new WaitUntil(() => RewardManager.Instance.IsPreGameComplete);
+        }
+        else
+        {
+            Debug.LogWarning("[GameFlowController] RewardManager missing or disabled. Opening selection screen directly.");
+        }
+
+        ReturnToMainMenu();
+    }
+
     private void HookEvents()
     {
-        if (eventsHooked) return;
+        if (eventsHooked)
+            return;
 
         if (zodiacSelectionUI != null)
         {
@@ -85,7 +134,8 @@ public class GameFlowController : MonoBehaviour
 
     private void UnhookEvents()
     {
-        if (!eventsHooked) return;
+        if (!eventsHooked)
+            return;
 
         if (zodiacSelectionUI != null)
         {
@@ -111,12 +161,14 @@ public class GameFlowController : MonoBehaviour
     {
         if (data == null)
         {
-            Debug.LogError("GameFlowController: Cannot start. ZodiacPuzzleData is null.");
+            Debug.LogError("[GameFlowController] Cannot start. ZodiacPuzzleData is null.");
             return;
         }
 
         currentData = data;
         gameStarted = true;
+
+        ResetLastResultData();
 
         ShowPuzzleState();
 
@@ -126,43 +178,121 @@ public class GameFlowController : MonoBehaviour
         }
         else
         {
-            Debug.LogError("GameFlowController: PuzzleBoardController is not assigned.");
+            Debug.LogError("[GameFlowController] PuzzleBoardController is not assigned.");
         }
     }
 
     private void HandlePuzzleSolved(float timeTakenSeconds)
     {
-        if (!gameStarted || currentData == null) return;
+        if (!gameStarted || currentData == null)
+            return;
+
+        StorePuzzleResult(
+            completed: true,
+            timeTakenSeconds: timeTakenSeconds
+        );
 
         if (constellationRevealController != null && currentData.constellationPrefab != null)
         {
             ShowRevealState();
-            constellationRevealController.Play(currentData, () => ShowGameOver(true, timeTakenSeconds));
+
+            // Continue button inside ConstellationRevealController will call this callback.
+            constellationRevealController.Play(currentData, ShowRewardPostGame);
         }
         else
         {
-            ShowGameOver(true, timeTakenSeconds);
+            // Fallback: if no reveal exists, go directly to reward post-game.
+            ShowRewardPostGame();
         }
     }
 
     private void HandlePuzzleFailed(float timeTakenSeconds)
     {
-        if (!gameStarted || currentData == null) return;
-        ShowGameOver(false, timeTakenSeconds);
+        if (!gameStarted || currentData == null)
+            return;
+
+        StorePuzzleResult(
+            completed: false,
+            timeTakenSeconds: timeTakenSeconds
+        );
+
+        // Fail has no constellation reveal in this flow.
+        ShowRewardPostGame();
     }
 
-    private void ShowGameOver(bool completed, float timeTakenSeconds)
+    private void StorePuzzleResult(bool completed, float timeTakenSeconds)
+    {
+        lastPuzzleCompleted = completed;
+        lastPuzzleTimeTaken = Mathf.Max(0f, timeTakenSeconds);
+        lastPuzzleMaxTime = currentData != null
+            ? Mathf.Max(1f, currentData.timeLimitSeconds)
+            : Mathf.Max(1f, timeTakenSeconds);
+    }
+
+    private void ShowRewardPostGame()
+    {
+        ShowFinalOverlayState();
+
+        rewardEvaluationData = BuildRewardEvaluationData();
+
+        if (useRewardModule && RewardManager.Instance != null)
+        {
+            RewardManager.Instance.ShowPostGame(rewardSkills, rewardEvaluationData);
+            return;
+        }
+
+        Debug.LogWarning("[GameFlowController] RewardManager missing or disabled. Showing fallback GameOverScreen.");
+
+        ShowFallbackGameOver();
+    }
+
+    private GameEvaluationData BuildRewardEvaluationData()
+    {
+        float safeMaxTime = Mathf.Max(1f, lastPuzzleMaxTime);
+        float safeTimeTaken = Mathf.Clamp(lastPuzzleTimeTaken, 0f, safeMaxTime);
+
+        float accuracyScore = lastPuzzleCompleted ? 1f : 0f;
+
+        float timeScore = lastPuzzleCompleted
+            ? Mathf.Clamp01(1f - (safeTimeTaken / safeMaxTime))
+            : 0f;
+
+        GameEvaluationData data = new GameEvaluationData
+        {
+            timeTaken = safeTimeTaken,
+            mistakeCount = lastPuzzleCompleted ? 0 : 1,
+            accuracyScore = accuracyScore,
+            timeScore = timeScore
+        };
+
+        Debug.Log(
+            "[GameFlowController] Reward Evaluation Data -> " +
+            $"Completed: {lastPuzzleCompleted}, " +
+            $"TimeTaken: {safeTimeTaken}, " +
+            $"MaxTime: {safeMaxTime}, " +
+            $"AccuracyScore: {accuracyScore}, " +
+            $"TimeScore: {timeScore}"
+        );
+
+        return data;
+    }
+
+    private void ShowFallbackGameOver()
     {
         ShowGameOverState();
 
         if (gameOverController != null)
         {
-            float maxTime = currentData != null ? currentData.timeLimitSeconds : timeTakenSeconds;
-            gameOverController.Show(currentData, completed, timeTakenSeconds, maxTime);
+            gameOverController.Show(
+                currentData,
+                lastPuzzleCompleted,
+                lastPuzzleTimeTaken,
+                lastPuzzleMaxTime
+            );
         }
         else
         {
-            Debug.LogError("GameFlowController: GameOverScreen is not assigned.");
+            Debug.LogError("[GameFlowController] Fallback GameOverScreen is not assigned.");
         }
     }
 
@@ -182,6 +312,8 @@ public class GameFlowController : MonoBehaviour
         gameStarted = false;
         currentData = null;
 
+        ResetLastResultData();
+
         if (puzzleBoardController != null)
         {
             puzzleBoardController.StopPuzzleAndClear();
@@ -198,6 +330,25 @@ public class GameFlowController : MonoBehaviour
         }
 
         ShowSelectionState();
+    }
+
+    private void ResetLastResultData()
+    {
+        lastPuzzleCompleted = false;
+        lastPuzzleTimeTaken = 0f;
+        lastPuzzleMaxTime = currentData != null
+            ? Mathf.Max(1f, currentData.timeLimitSeconds)
+            : 1f;
+
+        rewardEvaluationData = new GameEvaluationData();
+    }
+
+    private void HideAllScreens()
+    {
+        SetActiveSafe(zodiacSelectionScreen, false);
+        SetActiveSafe(puzzleScreen, false);
+        SetActiveSafe(constellationRevealScreen, false);
+        SetActiveSafe(gameOverScreen, false);
     }
 
     private void ShowSelectionState()
@@ -224,6 +375,17 @@ public class GameFlowController : MonoBehaviour
         SetActiveSafe(gameOverScreen, false);
     }
 
+    private void ShowFinalOverlayState()
+    {
+        SetActiveSafe(zodiacSelectionScreen, false);
+        SetActiveSafe(puzzleScreen, keepPuzzleScreenActiveDuringGameOver);
+        SetActiveSafe(constellationRevealScreen, false);
+
+        // RewardManager has its own post-game UI.
+        // Keep old gameOverScreen hidden unless fallback is needed.
+        SetActiveSafe(gameOverScreen, false);
+    }
+
     private void ShowGameOverState()
     {
         SetActiveSafe(zodiacSelectionScreen, false);
@@ -237,6 +399,28 @@ public class GameFlowController : MonoBehaviour
         if (obj != null && obj.activeSelf != active)
         {
             obj.SetActive(active);
+        }
+    }
+    public void MainMenu()
+    {
+        DOTween.KillAll(false);
+        SceneManager.LoadScene("Loader Scene");
+    }
+    public void OnPlayAgain()
+    {
+        ReturnToMainMenu();
+    }
+
+    public void OnHome()
+    {
+        MainMenu();
+    }
+
+    public void OnRewardScreenOpen()
+    {
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.StopBGM();
         }
     }
 }

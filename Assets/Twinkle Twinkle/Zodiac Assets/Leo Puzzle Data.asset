@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dca4dbc20cbc10b41843e4224a6dff0f, type: 3}
+  m_Name: Leo Puzzle Data
+  m_EditorClassIdentifier: Assembly-CSharp::ZodiacPuzzleData
+  sign: 7
+  displayNameOverride: Leon
+  descriptionOverride: I am dangerous Lion
+  fullPuzzleSprite: {fileID: 21300000, guid: 97451fadbc5a17b42bb34c5653ba699f, type: 3}
+  pieceSprites:
+  - {fileID: 4213765768500658908, guid: 7a1ac5bce221c634cb0dc69b0264d429, type: 3}
+  - {fileID: -339770210, guid: 7a1ac5bce221c634cb0dc69b0264d429, type: 3}
+  - {fileID: 1852195167, guid: 7a1ac5bce221c634cb0dc69b0264d429, type: 3}
+  - {fileID: 1803533216, guid: 7a1ac5bce221c634cb0dc69b0264d429, type: 3}
+  - {fileID: -1955320310, guid: 7a1ac5bce221c634cb0dc69b0264d429, type: 3}
+  - {fileID: -1143250780, guid: 7a1ac5bce221c634cb0dc69b0264d429, type: 3}
+  - {fileID: 489987344, guid: 7a1ac5bce221c634cb0dc69b0264d429, type: 3}
+  - {fileID: 209833552, guid: 7a1ac5bce221c634cb0dc69b0264d429, type: 3}
+  - {fileID: -2035421808, guid: 7a1ac5bce221c634cb0dc69b0264d429, type: 3}
+  - {fileID: -1333688606, guid: 7a1ac5bce221c634cb0dc69b0264d429, type: 3}
+  - {fileID: 1772557993, guid: 7a1ac5bce221c634cb0dc69b0264d429, type: 3}
+  - {fileID: 395693881, guid: 7a1ac5bce221c634cb0dc69b0264d429, type: 3}
+  resultSprite: {fileID: -8821286180403117243, guid: 8de7a1959aab06b449381b6d2982d1d0, type: 3}
+  constellationPrefab: {fileID: 3448699679971293429, guid: 1d24be8553a73174a92d20735670b385, type: 3}
+  timeLimitSeconds: 60

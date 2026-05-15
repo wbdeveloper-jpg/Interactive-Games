@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dca4dbc20cbc10b41843e4224a6dff0f, type: 3}
+  m_Name: Scorpio Puzzle Data
+  m_EditorClassIdentifier: Assembly-CSharp::ZodiacPuzzleData
+  sign: 10
+  displayNameOverride: Scorpio
+  descriptionOverride: I am Poison Type
+  fullPuzzleSprite: {fileID: 21300000, guid: 278f9c8f799adbf4ba2591c135b2c73f, type: 3}
+  pieceSprites:
+  - {fileID: -5796239808565678260, guid: 5a3e352d244edf34489c736e7b85ae95, type: 3}
+  - {fileID: -1288001062, guid: 5a3e352d244edf34489c736e7b85ae95, type: 3}
+  - {fileID: -136450520, guid: 5a3e352d244edf34489c736e7b85ae95, type: 3}
+  - {fileID: 1582914400, guid: 5a3e352d244edf34489c736e7b85ae95, type: 3}
+  - {fileID: -1151735024, guid: 5a3e352d244edf34489c736e7b85ae95, type: 3}
+  - {fileID: 1977216701, guid: 5a3e352d244edf34489c736e7b85ae95, type: 3}
+  - {fileID: 1893648656, guid: 5a3e352d244edf34489c736e7b85ae95, type: 3}
+  - {fileID: 1075915583, guid: 5a3e352d244edf34489c736e7b85ae95, type: 3}
+  - {fileID: 448027105, guid: 5a3e352d244edf34489c736e7b85ae95, type: 3}
+  - {fileID: 2087462935, guid: 5a3e352d244edf34489c736e7b85ae95, type: 3}
+  - {fileID: -1882429030, guid: 5a3e352d244edf34489c736e7b85ae95, type: 3}
+  - {fileID: -17569552, guid: 5a3e352d244edf34489c736e7b85ae95, type: 3}
+  resultSprite: {fileID: 454047186738769552, guid: 8de7a1959aab06b449381b6d2982d1d0, type: 3}
+  constellationPrefab: {fileID: 73940810301444589, guid: 76c933f6ce2cbc044965869ef59aa9ed, type: 3}
+  timeLimitSeconds: 60
