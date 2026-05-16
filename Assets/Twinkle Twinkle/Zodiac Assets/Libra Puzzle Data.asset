@@ -14,7 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ZodiacPuzzleData
   sign: 9
   displayNameOverride: Libra
-  descriptionOverride: I am Very balanced
+  descriptionOverride: 'Do you know?
+
+    Libras are represented by the Scales because
+    they always try to make sure everything is fair and peaceful for everyone.'
   fullPuzzleSprite: {fileID: 21300000, guid: 9856ec5ed12a7e44fbafd1c93ee9f312, type: 3}
   pieceSprites:
   - {fileID: -5217370738105972662, guid: debeff3e6e8eaed458938ae10757d49c, type: 3}

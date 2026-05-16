@@ -14,7 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ZodiacPuzzleData
   sign: 2
   displayNameOverride: Pisces
-  descriptionOverride: I just some fish
+  descriptionOverride: 'Do you know?
+
+    Pisces is the sign of the Fish and is known
+    for being the most imaginative, artistic, and dreamy sign of the zodiac.'
   fullPuzzleSprite: {fileID: 21300000, guid: 9c8b0d73f5a41b04b9e72ba542770b88, type: 3}
   pieceSprites:
   - {fileID: -5619150752979459227, guid: d85bbe6edaf5bd44596da1f182363ee5, type: 3}

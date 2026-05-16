@@ -25,6 +25,13 @@ public class GameOverScreen : MonoBehaviour
     public float starPopDuration = 0.25f;
     public float typewriterCharDelay = 0.025f;
 
+    [Header("Audio")]
+    public bool playAudio = true;
+    [Tooltip("Played when the fallback result screen is a win. Original project used SFX 2.")]
+    public int winSfxId = 2;
+    [Tooltip("Played when the fallback result screen is a fail. Original project used SFX 3.")]
+    public int failSfxId = 3;
+
     public event Action PlayAgainRequested;
     public event Action MainMenuRequested;
 
@@ -75,6 +82,7 @@ public class GameOverScreen : MonoBehaviour
         }
 
         int stars = ComputeStarCount(completed, timeTakenSeconds, maxTimeSeconds);
+        PlaySfx(stars > 0 ? winSfxId : failSfxId);
 
         if (zodiacImage != null)
         {
@@ -191,6 +199,15 @@ public class GameOverScreen : MonoBehaviour
 
         if (playAgainButton != null) playAgainButton.gameObject.SetActive(false);
         if (mainMenuButton != null) mainMenuButton.gameObject.SetActive(false);
+    }
+
+    private void PlaySfx(int sfxId)
+    {
+        if (!playAudio || sfxId < 0) return;
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlaySFX(sfxId);
+        }
     }
 
     private int ComputeStarCount(bool completed, float timeTakenSeconds, float maxTimeSeconds)

@@ -32,6 +32,11 @@ public class ConstellationRevealController : MonoBehaviour
     [SerializeField] private float delayBeforeContinue = 0.25f;
     [SerializeField] private float continueFadeDuration = 0.25f;
 
+    [Header("Audio")]
+    [SerializeField] private bool playAudio = true;
+    [Tooltip("Played when the win message starts falling. Original project used SFX 2 for success.")]
+    [SerializeField] private int winMessageSfxId = 2;
+
     private GameObject spawnedConstellation;
     private ConstellationAnimator activeAnimator;
 
@@ -218,6 +223,8 @@ public class ConstellationRevealController : MonoBehaviour
             ? cachedMessageFinalPosition
             : messageRect.anchoredPosition;
 
+        revealSequence.AppendCallback(() => PlaySfx(winMessageSfxId));
+
         // Fall from top and fade in.
         revealSequence.Append(
             messageRect.DOAnchorPos(finalPosition, messageFallDuration)
@@ -362,6 +369,15 @@ public class ConstellationRevealController : MonoBehaviour
 
         canContinue = true;
         enableContinueCoroutine = null;
+    }
+
+    private void PlaySfx(int sfxId)
+    {
+        if (!playAudio || sfxId < 0) return;
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlaySFX(sfxId);
+        }
     }
 
     private void ResetWinMessageHidden()

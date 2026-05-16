@@ -14,7 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ZodiacPuzzleData
   sign: 6
   displayNameOverride: Cancer
-  descriptionOverride: I am just pure cancer
+  descriptionOverride: 'Do you know?
+
+    Cancers are like crabs because they might
+    have a tough shell, but they have the biggest and kindest hearts of all.'
   fullPuzzleSprite: {fileID: 21300000, guid: 6c32b3d708a1eba46bd931bfbcca2737, type: 3}
   pieceSprites:
   - {fileID: -8176709062493211827, guid: 9b5e9a1aea7e8fb4997c3652f574ebdb, type: 3}

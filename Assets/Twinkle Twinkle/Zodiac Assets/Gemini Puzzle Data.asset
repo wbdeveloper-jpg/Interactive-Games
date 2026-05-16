@@ -14,7 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ZodiacPuzzleData
   sign: 5
   displayNameOverride: Gemini
-  descriptionOverride: I am just Gemini
+  descriptionOverride: 'Do you know?
+
+    Gemini is the sign of the Twins and people
+    born under it are often amazing at learning new languages and telling great stories.'
   fullPuzzleSprite: {fileID: 21300000, guid: 2cbffec9024bcf646977ef54e9e426a3, type: 3}
   pieceSprites:
   - {fileID: -919373166903837290, guid: 97ff4566a8d65804c8fe10c1f062982c, type: 3}

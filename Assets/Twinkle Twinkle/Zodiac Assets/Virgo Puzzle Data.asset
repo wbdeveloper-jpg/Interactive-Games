@@ -14,7 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ZodiacPuzzleData
   sign: 8
   displayNameOverride: Virgo
-  descriptionOverride: I am female
+  descriptionOverride: 'Do you know?
+
+    Virgos are the ultimate "puzzle masters"
+    because they are incredibly good at noticing small details that others might
+    miss.'
   fullPuzzleSprite: {fileID: 21300000, guid: 60c8fd663f1c58d4592761a1d7fe3a3f, type: 3}
   pieceSprites:
   - {fileID: 322554724442796835, guid: 5d42eef2ee255594aa381d7a905ce5c9, type: 3}

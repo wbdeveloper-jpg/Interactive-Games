@@ -14,7 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ZodiacPuzzleData
   sign: 1
   displayNameOverride: Aquarius
-  descriptionOverride: Goat
+  descriptionOverride: 'Do you know?
+
+    Aquarius is the sign of the inventor and
+    people born under it usually have the most creative and "outside the box" ideas
+    in class.'
   fullPuzzleSprite: {fileID: 21300000, guid: e3c8f9026c7bd484381a41c49276394a, type: 3}
   pieceSprites:
   - {fileID: 8805449408647456953, guid: d8d7ed74c3f9c0746b7efbab56925eef, type: 3}

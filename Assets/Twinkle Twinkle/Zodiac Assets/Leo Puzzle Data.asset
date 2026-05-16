@@ -14,7 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ZodiacPuzzleData
   sign: 7
   displayNameOverride: Leon
-  descriptionOverride: I am dangerous Lion
+  descriptionOverride: 'Do you know?
+
+    Leos are the Lions of the zodiac and love
+    to lead the pack with their big smiles and "star power" personalities.'
   fullPuzzleSprite: {fileID: 21300000, guid: 97451fadbc5a17b42bb34c5653ba699f, type: 3}
   pieceSprites:
   - {fileID: 4213765768500658908, guid: 7a1ac5bce221c634cb0dc69b0264d429, type: 3}

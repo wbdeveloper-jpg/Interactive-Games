@@ -14,7 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ZodiacPuzzleData
   sign: 3
   displayNameOverride: Aries
-  descriptionOverride: March 21 - April 19
+  descriptionOverride: 'Do you know?
+
+    Aries is the very first sign of the zodiac
+    and is known for being as brave and energetic as a superhero!'
   fullPuzzleSprite: {fileID: 21300000, guid: 8bd63f5380916fd418d2f7d44ff6d0e1, type: 3}
   pieceSprites:
   - {fileID: 535112104041116636, guid: d6c1ae2c15842d64785d22761e37c261, type: 3}

@@ -261,6 +261,17 @@ public class AudioManager : MonoBehaviour
         sfxSource.Play();
     }
 
+    /// <summary>
+    /// Stops the currently playing background music.
+    /// </summary>
+    public void StopSFX()
+    {
+        if (sfxSource != null)
+        {
+            sfxSource.Stop();
+        }
+    }
+
     // -------------------------------------------------------------------------
     // VOLUME METHODS
     // -------------------------------------------------------------------------

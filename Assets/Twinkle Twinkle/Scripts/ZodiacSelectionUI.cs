@@ -32,6 +32,13 @@ public class ZodiacSelectionUI : MonoBehaviour
     public float invalidPopupDuration = 1.5f;
     public float invalidPopupFloatDistance = 40f;
 
+    [Header("Audio")]
+    public bool playAudio = true;
+    [Tooltip("Played when an invalid birthday popup is shown. Original project used SFX 4.")]
+    public int invalidDateSfxId = 4;
+    [Tooltip("Optional start button sound. Set to -1 to disable.")]
+    public int startButtonSfxId = -1;
+
     public event Action<ZodiacPuzzleData> StartRequested;
 
     private ZodiacPuzzleData selectedData;
@@ -82,7 +89,6 @@ public class ZodiacSelectionUI : MonoBehaviour
     private void ValidateAndPreview()
     {
         selectedData = null;
-        lastInvalidTextShown = string.Empty;
 
         if (startButton != null) startButton.interactable = false;
 
@@ -136,12 +142,15 @@ public class ZodiacSelectionUI : MonoBehaviour
         if (showPopup && !string.Equals(lastInvalidTextShown, dayInput.text, StringComparison.Ordinal))
         {
             ShowInvalidPopup(message);
+            PlaySfx(invalidDateSfxId);
             lastInvalidTextShown = dayInput.text;
         }
     }
 
     private void SetValidVisualState()
     {
+        lastInvalidTextShown = string.Empty;
+
         if (dayInput != null && dayInput.textComponent != null)
         {
             dayInput.textComponent.color = validDateColor;
@@ -218,7 +227,17 @@ public class ZodiacSelectionUI : MonoBehaviour
     private void HandleStartClicked()
     {
         if (selectedData == null) return;
+        PlaySfx(startButtonSfxId);
         StartRequested?.Invoke(selectedData);
+    }
+
+    private void PlaySfx(int sfxId)
+    {
+        if (!playAudio || sfxId < 0) return;
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlaySFX(sfxId);
+        }
     }
 
     private void ShowInvalidPopup(string message)

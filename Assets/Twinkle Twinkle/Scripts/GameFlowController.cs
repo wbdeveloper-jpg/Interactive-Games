@@ -31,6 +31,11 @@ public class GameFlowController : MonoBehaviour, IGameSceneCallbacks, IGameAudio
     [Tooltip("When true, game waits for RewardManager pre-game, then opens birthday selection.")]
     public bool showSelectionOnStart = true;
 
+    [Header("Selection Audio")]
+    public bool playSelectionAudio = true;
+    [Tooltip("BGM played when selection screen opens. It continues through intro/shuffle until PuzzleBoardController starts gameplay BGM.")]
+    public int selectionBgmId = 0;
+
     [Header("Reward Module")]
     [Tooltip("Turn OFF only for local testing without RewardManager in scene.")]
     [SerializeField] private bool useRewardModule = true;
@@ -55,6 +60,7 @@ public class GameFlowController : MonoBehaviour, IGameSceneCallbacks, IGameAudio
     private bool gameStarted;
     private bool eventsHooked;
     private bool bootFlowStarted;
+    private bool selectionBgmRequested;
 
     private bool lastPuzzleCompleted;
     private float lastPuzzleTimeTaken;
@@ -167,6 +173,9 @@ public class GameFlowController : MonoBehaviour, IGameSceneCallbacks, IGameAudio
 
         currentData = data;
         gameStarted = true;
+
+        // Do not stop selection BGM here. It should continue until gameplay BGM starts after the post-shuffle click prompt.
+        selectionBgmRequested = false;
 
         ResetLastResultData();
 
@@ -357,6 +366,8 @@ public class GameFlowController : MonoBehaviour, IGameSceneCallbacks, IGameAudio
         SetActiveSafe(puzzleScreen, false);
         SetActiveSafe(constellationRevealScreen, false);
         SetActiveSafe(gameOverScreen, false);
+
+        PlaySelectionBgmIfNeeded();
     }
 
     private void ShowPuzzleState()
@@ -394,6 +405,18 @@ public class GameFlowController : MonoBehaviour, IGameSceneCallbacks, IGameAudio
         SetActiveSafe(gameOverScreen, true);
     }
 
+    private void PlaySelectionBgmIfNeeded()
+    {
+        if (!playSelectionAudio || selectionBgmId < 0) return;
+        if (selectionBgmRequested) return;
+
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlayBGM(selectionBgmId);
+            selectionBgmRequested = true;
+        }
+    }
+
     private static void SetActiveSafe(GameObject obj, bool active)
     {
         if (obj != null && obj.activeSelf != active)
@@ -418,6 +441,8 @@ public class GameFlowController : MonoBehaviour, IGameSceneCallbacks, IGameAudio
 
     public void OnRewardScreenOpen()
     {
+        selectionBgmRequested = false;
+
         if (AudioManager.Instance != null)
         {
             AudioManager.Instance.StopBGM();

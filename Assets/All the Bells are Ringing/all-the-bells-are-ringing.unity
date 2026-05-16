@@ -705,8 +705,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Mood  o  Meter
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8af4b0db4d1437342b031cb336b34799, type: 2}
-  m_sharedMaterial: {fileID: 1324646103231669527, guid: 8af4b0db4d1437342b031cb336b34799, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 36049e0d8b760bf45b167f5e1d497c5c, type: 2}
+  m_sharedMaterial: {fileID: 1324646103231669527, guid: 36049e0d8b760bf45b167f5e1d497c5c, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -3790,19 +3790,17 @@ MonoBehaviour:
   spawnScaleDuration: 0.35
   delayBetweenSpawns: 0.12
   spawnSfxIndex: 4
+  playBgmOnEnable: 1
+  gameplayBgmIndex: 0
   lockOneEmotionPerGame: 1
   preferEmotionWithCompleteIntensitySet: 0
   selectedTargetEmotionLabel: 
   updateInstructionWithTargetEmotion: 1
   lockedEmotionInstructionFormat: Drag the {0} emoji that feels the same.
   defaultInstructionText: Drag the emoji that feels the same.
-  instructionFadeDuration: 1
-  onQuestionsSpawnStarted:
-    m_PersistentCalls:
-      m_Calls: []
-  onQuestionsSpawnCompleted:
-    m_PersistentCalls:
-      m_Calls: []
+  avoidRecentMoods: 1
+  recentMoodMemoryCount: 2
+  recentMoodPrefsKey: EmotionGame_RecentMoods
 --- !u!114 &1595598609
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4027,7 +4025,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: Too Good
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8af4b0db4d1437342b031cb336b34799, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 36049e0d8b760bf45b167f5e1d497c5c, type: 2}
   m_sharedMaterial: {fileID: 1324646103231669527, guid: 8af4b0db4d1437342b031cb336b34799, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -4094,7 +4092,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 0
+  m_hasFontAssetChanged: 1
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
 --- !u!222 &1627547911
@@ -10299,7 +10297,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -901.9999, y: -370}
+  m_AnchoredPosition: {x: -902, y: -370}
   m_SizeDelta: {x: 1791.469, y: 1180.198}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!198 &9077187424841288300

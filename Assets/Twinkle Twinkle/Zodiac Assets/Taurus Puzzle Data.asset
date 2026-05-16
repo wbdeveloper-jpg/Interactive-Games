@@ -14,7 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ZodiacPuzzleData
   sign: 4
   displayNameOverride: Taurus
-  descriptionOverride: I am just a grass feeder
+  descriptionOverride: 'Do you know?
+
+    Taurus is ruled by the Bull and is famous
+    for being the most patient and reliable friend in the whole zodiac.'
   fullPuzzleSprite: {fileID: 21300000, guid: 3128a00a927c3704495ebd2fd0d23ac5, type: 3}
   pieceSprites:
   - {fileID: -2931684817194156921, guid: c8ecc8bc9d1db8a46a048766520e344f, type: 3}

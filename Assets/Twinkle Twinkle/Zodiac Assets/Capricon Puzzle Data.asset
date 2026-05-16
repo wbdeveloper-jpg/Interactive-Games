@@ -14,10 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ZodiacPuzzleData
   sign: 0
   displayNameOverride: Capricon
-  descriptionOverride: 'Did you know?
+  descriptionOverride: 'Do you know?
 
-    You are a black neegar you have less value
-    than a grazing pig you better suicide early. '
+    Capricorns are represented by a "Sea-Goat,"
+    a magical creature that is half-goat and half-fish so it can climb mountains
+    and swim oceans!'
   fullPuzzleSprite: {fileID: 21300000, guid: 65544aca1e08f084085426421d131947, type: 3}
   pieceSprites:
   - {fileID: 7745569791001099767, guid: 79580ec0db38ba7429acb9f8df5b7e48, type: 3}

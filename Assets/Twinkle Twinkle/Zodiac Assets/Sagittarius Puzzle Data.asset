@@ -14,7 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ZodiacPuzzleData
   sign: 11
   displayNameOverride: Sagittarius
-  descriptionOverride: I am Mythical
+  descriptionOverride: 'Do you know?
+
+    Sagittarius is the Archer and is always
+    looking for a new adventure, a funny joke, or a fun place to explore.'
   fullPuzzleSprite: {fileID: 21300000, guid: 52e9d1fbcf4b6fd4d886be2dc8863329, type: 3}
   pieceSprites:
   - {fileID: 1790304728446450321, guid: 67e66cb3db5c3f04688d8647fd8348d3, type: 3}

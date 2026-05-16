@@ -30,6 +30,13 @@ public class ConstellationAnimator : MonoBehaviour
     [Tooltip("Keep false for this project. RevealController manually plays this animation.")]
     public bool playOnEnable = false;
 
+    [Header("Audio")]
+    public bool playAudio = true;
+    [Tooltip("Played before every star pop. Original project used SFX 1.")]
+    public int starPopSfxId = 1;
+    [Tooltip("Played before every stick/line draw. Original project used SFX 0.")]
+    public int stickDrawSfxId = 0;
+
     [Header("Events")]
     public UnityEvent onComplete;
 
@@ -91,6 +98,8 @@ public class ConstellationAnimator : MonoBehaviour
 
             sequence.AppendCallback(() =>
             {
+                PlaySfx(starPopSfxId);
+
                 if (star != null)
                     star.gameObject.SetActive(true);
             });
@@ -120,6 +129,8 @@ public class ConstellationAnimator : MonoBehaviour
 
                     sequence.AppendCallback(() =>
                     {
+                        PlaySfx(stickDrawSfxId);
+
                         if (stick != null)
                             stick.gameObject.SetActive(true);
                     });
@@ -315,6 +326,15 @@ public class ConstellationAnimator : MonoBehaviour
         }
 
         cached = true;
+    }
+
+    private void PlaySfx(int sfxId)
+    {
+        if (!playAudio || sfxId < 0) return;
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlaySFX(sfxId);
+        }
     }
 
     private Vector3 GetStarTargetScale(int index)
