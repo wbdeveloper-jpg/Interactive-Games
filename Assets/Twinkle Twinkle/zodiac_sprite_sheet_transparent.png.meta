@@ -1,0 +1,857 @@
+fileFormatVersion: 2
+guid: 0d1b531ffc2b9bf4e8fa3a0bd6a67b87
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -6040046734072729789
+    second: zodiac_sprite_sheet_transparent_0
+  - first:
+      213: 2466063689881916804
+    second: zodiac_sprite_sheet_transparent_1
+  - first:
+      213: -3437374179197825628
+    second: zodiac_sprite_sheet_transparent_2
+  - first:
+      213: -282181847226083627
+    second: zodiac_sprite_sheet_transparent_3
+  - first:
+      213: 9161225763630299772
+    second: zodiac_sprite_sheet_transparent_4
+  - first:
+      213: -2182252558341886114
+    second: zodiac_sprite_sheet_transparent_5
+  - first:
+      213: 7281114689245938497
+    second: zodiac_sprite_sheet_transparent_6
+  - first:
+      213: 5379199228496669209
+    second: zodiac_sprite_sheet_transparent_7
+  - first:
+      213: 1249423543637192047
+    second: zodiac_sprite_sheet_transparent_8
+  - first:
+      213: 1180750424469125086
+    second: zodiac_sprite_sheet_transparent_9
+  - first:
+      213: 1660725113046356257
+    second: zodiac_sprite_sheet_transparent_10
+  - first:
+      213: -5367953664417436011
+    second: zodiac_sprite_sheet_transparent_11
+  - first:
+      213: -1682856337617883777
+    second: zodiac_sprite_sheet_transparent_12
+  - first:
+      213: -5131684249742991410
+    second: zodiac_sprite_sheet_transparent_13
+  - first:
+      213: -1164521883546555345
+    second: zodiac_sprite_sheet_transparent_14
+  - first:
+      213: 8412283655268819018
+    second: zodiac_sprite_sheet_transparent_15
+  - first:
+      213: -6243804757708655906
+    second: zodiac_sprite_sheet_transparent_16
+  - first:
+      213: -202067755689197785
+    second: zodiac_sprite_sheet_transparent_17
+  - first:
+      213: 4343268006272714206
+    second: zodiac_sprite_sheet_transparent_18
+  - first:
+      213: 5955542445910451330
+    second: zodiac_sprite_sheet_transparent_19
+  - first:
+      213: 1338701667185737386
+    second: zodiac_sprite_sheet_transparent_20
+  - first:
+      213: -4031976614324818966
+    second: zodiac_sprite_sheet_transparent_21
+  - first:
+      213: -1500588455629582218
+    second: zodiac_sprite_sheet_transparent_22
+  - first:
+      213: 6472826954280007002
+    second: zodiac_sprite_sheet_transparent_23
+  - first:
+      213: -8001741055894260231
+    second: zodiac_sprite_sheet_transparent_24
+  - first:
+      213: -7901266882465916557
+    second: zodiac_sprite_sheet_transparent_25
+  - first:
+      213: -7213699737294218600
+    second: zodiac_sprite_sheet_transparent_26
+  - first:
+      213: 7665688435396362696
+    second: zodiac_sprite_sheet_transparent_27
+  - first:
+      213: -1699961722604406666
+    second: zodiac_sprite_sheet_transparent_28
+  - first:
+      213: 4790838879293673077
+    second: zodiac_sprite_sheet_transparent_29
+  - first:
+      213: -8419708589547131726
+    second: zodiac_sprite_sheet_transparent_30
+  - first:
+      213: -2398746594974305574
+    second: zodiac_sprite_sheet_transparent_31
+  - first:
+      213: -7813796146045929148
+    second: zodiac_sprite_sheet_transparent_32
+  - first:
+      213: -9080146367645634534
+    second: zodiac_sprite_sheet_transparent_33
+  - first:
+      213: 5360061369893579696
+    second: zodiac_sprite_sheet_transparent_34
+  - first:
+      213: -5444362900215713418
+    second: zodiac_sprite_sheet_transparent_35
+  - first:
+      213: 8223825171444465721
+    second: zodiac_sprite_sheet_transparent_36
+  - first:
+      213: 7935890990726552374
+    second: zodiac_sprite_sheet_transparent_37
+  - first:
+      213: 340153469362393302
+    second: zodiac_sprite_sheet_transparent_38
+  - first:
+      213: 6426594074418669874
+    second: zodiac_sprite_sheet_transparent_39
+  - first:
+      213: -1777566815893500918
+    second: zodiac_sprite_sheet_transparent_40
+  - first:
+      213: -1350571317512081150
+    second: zodiac_sprite_sheet_transparent_41
+  - first:
+      213: 7930500361819755808
+    second: zodiac_sprite_sheet_transparent_42
+  - first:
+      213: -776400750521291626
+    second: zodiac_sprite_sheet_transparent_43
+  - first:
+      213: 2783070876013079237
+    second: zodiac_sprite_sheet_transparent_44
+  - first:
+      213: -7831283367167990775
+    second: zodiac_sprite_sheet_transparent_45
+  - first:
+      213: 4557343254213958099
+    second: zodiac_sprite_sheet_transparent_46
+  - first:
+      213: 5113707819800600070
+    second: zodiac_sprite_sheet_transparent_47
+  - first:
+      213: 6483112436377198411
+    second: zodiac_sprite_sheet_transparent_48
+  - first:
+      213: 451416864762851546
+    second: zodiac_sprite_sheet_transparent_49
+  - first:
+      213: -363258344462449977
+    second: zodiac_sprite_sheet_transparent_50
+  - first:
+      213: -4723688712639362467
+    second: zodiac_sprite_sheet_transparent_51
+  - first:
+      213: -2926127719537540856
+    second: zodiac_sprite_sheet_transparent_52
+  - first:
+      213: -2419992424624069567
+    second: zodiac_sprite_sheet_transparent_53
+  - first:
+      213: 7284976892242724386
+    second: zodiac_sprite_sheet_transparent_54
+  - first:
+      213: 8144455588591858142
+    second: zodiac_sprite_sheet_transparent_55
+  - first:
+      213: -7450696663933702676
+    second: zodiac_sprite_sheet_transparent_56
+  - first:
+      213: 9101273490121870178
+    second: zodiac_sprite_sheet_transparent_57
+  - first:
+      213: 4243963201590351309
+    second: zodiac_sprite_sheet_transparent_58
+  - first:
+      213: -2089935788316459561
+    second: zodiac_sprite_sheet_transparent_59
+  - first:
+      213: 530000195284527089
+    second: zodiac_sprite_sheet_transparent_60
+  - first:
+      213: 8332849613450666073
+    second: zodiac_sprite_sheet_transparent_61
+  - first:
+      213: -5268391818418386696
+    second: zodiac_sprite_sheet_transparent_62
+  - first:
+      213: -4621529809798381848
+    second: zodiac_sprite_sheet_transparent_63
+  - first:
+      213: -3218622601906108346
+    second: zodiac_sprite_sheet_transparent_64
+  - first:
+      213: 925006956378167905
+    second: zodiac_sprite_sheet_transparent_65
+  - first:
+      213: -2296775197567476953
+    second: zodiac_sprite_sheet_transparent_66
+  - first:
+      213: 1819933746754609789
+    second: zodiac_sprite_sheet_transparent_67
+  - first:
+      213: 7920292057804288980
+    second: zodiac_sprite_sheet_transparent_68
+  - first:
+      213: 7717331741809049485
+    second: zodiac_sprite_sheet_transparent_69
+  - first:
+      213: -775649967680742154
+    second: zodiac_sprite_sheet_transparent_70
+  - first:
+      213: 8911054480240468545
+    second: zodiac_sprite_sheet_transparent_71
+  - first:
+      213: 6962870821802422114
+    second: zodiac_sprite_sheet_transparent_72
+  - first:
+      213: 4823318385801175371
+    second: zodiac_sprite_sheet_transparent_73
+  - first:
+      213: 7396706944640798415
+    second: zodiac_sprite_sheet_transparent_74
+  - first:
+      213: 7430557814949028625
+    second: zodiac_sprite_sheet_transparent_75
+  - first:
+      213: 4858077284042292279
+    second: zodiac_sprite_sheet_transparent_76
+  - first:
+      213: 8457283244239105861
+    second: zodiac_sprite_sheet_transparent_77
+  - first:
+      213: -4088131882603924813
+    second: zodiac_sprite_sheet_transparent_78
+  - first:
+      213: -5896580814182047557
+    second: zodiac_sprite_sheet_transparent_79
+  - first:
+      213: -3943001417282486030
+    second: zodiac_sprite_sheet_transparent_80
+  - first:
+      213: -6650943734914656347
+    second: zodiac_sprite_sheet_transparent_81
+  - first:
+      213: 3415347097865980066
+    second: zodiac_sprite_sheet_transparent_82
+  - first:
+      213: 965548384732246549
+    second: zodiac_sprite_sheet_transparent_83
+  - first:
+      213: -4724471260745228955
+    second: zodiac_sprite_sheet_transparent_84
+  - first:
+      213: -7615932189638988965
+    second: zodiac_sprite_sheet_transparent_85
+  - first:
+      213: 6346027597383417610
+    second: zodiac_sprite_sheet_transparent_86
+  - first:
+      213: 4417324593909067691
+    second: zodiac_sprite_sheet_transparent_87
+  - first:
+      213: -6728622787414823985
+    second: zodiac_sprite_sheet_transparent_88
+  - first:
+      213: -7766916056626852663
+    second: zodiac_sprite_sheet_transparent_89
+  - first:
+      213: 2603724927722607894
+    second: zodiac_sprite_sheet_transparent_90
+  - first:
+      213: -5211318681857536771
+    second: zodiac_sprite_sheet_transparent_91
+  - first:
+      213: 451270188208743019
+    second: zodiac_sprite_sheet_transparent_92
+  - first:
+      213: -2807116728900574275
+    second: zodiac_sprite_sheet_transparent_93
+  - first:
+      213: 985298960125898328
+    second: zodiac_sprite_sheet_transparent_94
+  - first:
+      213: -4883624601887695053
+    second: zodiac_sprite_sheet_transparent_95
+  - first:
+      213: -9082728891173088233
+    second: zodiac_sprite_sheet_transparent_96
+  - first:
+      213: 680606465555945335
+    second: zodiac_sprite_sheet_transparent_97
+  - first:
+      213: 407883461550936160
+    second: zodiac_sprite_sheet_transparent_98
+  - first:
+      213: -7428483870084795434
+    second: zodiac_sprite_sheet_transparent_99
+  - first:
+      213: -1258784741792264730
+    second: zodiac_sprite_sheet_transparent_100
+  - first:
+      213: 194316954383927012
+    second: zodiac_sprite_sheet_transparent_101
+  - first:
+      213: -3130583647501272224
+    second: zodiac_sprite_sheet_transparent_102
+  - first:
+      213: -3972080297645184239
+    second: zodiac_sprite_sheet_transparent_103
+  - first:
+      213: 3199706362042989139
+    second: zodiac_sprite_sheet_transparent_104
+  - first:
+      213: -5243487324319008076
+    second: zodiac_sprite_sheet_transparent_105
+  - first:
+      213: -4384621478951780375
+    second: zodiac_sprite_sheet_transparent_106
+  - first:
+      213: -328794052615751616
+    second: zodiac_sprite_sheet_transparent_107
+  - first:
+      213: 3790266153897697892
+    second: zodiac_sprite_sheet_transparent_108
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 1024
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: iOS
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: zodiac_sprite_sheet_transparent_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 742
+        width: 262
+        height: 266
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 34f26d43f717d2ca0800000000000000
+      internalID: -6040046734072729789
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zodiac_sprite_sheet_transparent_1
+      rect:
+        serializedVersion: 2
+        x: 418
+        y: 748
+        width: 283
+        height: 260
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 48596e43cd7393220800000000000000
+      internalID: 2466063689881916804
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zodiac_sprite_sheet_transparent_2
+      rect:
+        serializedVersion: 2
+        x: 833
+        y: 748
+        width: 307
+        height: 259
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4ad40d0656efb40d0800000000000000
+      internalID: -3437374179197825628
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zodiac_sprite_sheet_transparent_4
+      rect:
+        serializedVersion: 2
+        x: 1284
+        y: 746
+        width: 275
+        height: 261
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c7a37543b46332f70800000000000000
+      internalID: 9161225763630299772
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zodiac_sprite_sheet_transparent_5
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 379
+        width: 274
+        height: 243
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e5f28d93cd417b1e0800000000000000
+      internalID: -2182252558341886114
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zodiac_sprite_sheet_transparent_6
+      rect:
+        serializedVersion: 2
+        x: 436
+        y: 371
+        width: 243
+        height: 255
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 143026d9b37bb0560800000000000000
+      internalID: 7281114689245938497
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zodiac_sprite_sheet_transparent_7
+      rect:
+        serializedVersion: 2
+        x: 843
+        y: 373
+        width: 301
+        height: 265
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 91a6996b231c6aa40800000000000000
+      internalID: 5379199228496669209
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zodiac_sprite_sheet_transparent_8
+      rect:
+        serializedVersion: 2
+        x: 1286
+        y: 365
+        width: 273
+        height: 281
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f6d218cd718d65110800000000000000
+      internalID: 1249423543637192047
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zodiac_sprite_sheet_transparent_9
+      rect:
+        serializedVersion: 2
+        x: 5
+        y: 0
+        width: 262
+        height: 266
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ed7bfd2514ed26010800000000000000
+      internalID: 1180750424469125086
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zodiac_sprite_sheet_transparent_10
+      rect:
+        serializedVersion: 2
+        x: 432
+        y: 1
+        width: 263
+        height: 263
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 121d2b001b41c0710800000000000000
+      internalID: 1660725113046356257
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zodiac_sprite_sheet_transparent_11
+      rect:
+        serializedVersion: 2
+        x: 855
+        y: 0
+        width: 271
+        height: 259
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 59e64a535923185b0800000000000000
+      internalID: -5367953664417436011
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: zodiac_sprite_sheet_transparent_12
+      rect:
+        serializedVersion: 2
+        x: 1283
+        y: 0
+        width: 277
+        height: 265
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f7d654cb31b45a8e0800000000000000
+      internalID: -1682856337617883777
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: dbc2ff6fd2233894fb58e8c0628a60db
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      zodiac_sprite_sheet_transparent_0: -6040046734072729789
+      zodiac_sprite_sheet_transparent_1: 2466063689881916804
+      zodiac_sprite_sheet_transparent_10: 1660725113046356257
+      zodiac_sprite_sheet_transparent_100: -1258784741792264730
+      zodiac_sprite_sheet_transparent_101: 194316954383927012
+      zodiac_sprite_sheet_transparent_102: -3130583647501272224
+      zodiac_sprite_sheet_transparent_103: -3972080297645184239
+      zodiac_sprite_sheet_transparent_104: 3199706362042989139
+      zodiac_sprite_sheet_transparent_105: -5243487324319008076
+      zodiac_sprite_sheet_transparent_106: -4384621478951780375
+      zodiac_sprite_sheet_transparent_107: -328794052615751616
+      zodiac_sprite_sheet_transparent_108: 3790266153897697892
+      zodiac_sprite_sheet_transparent_109: -33995882
+      zodiac_sprite_sheet_transparent_11: -5367953664417436011
+      zodiac_sprite_sheet_transparent_12: -1682856337617883777
+      zodiac_sprite_sheet_transparent_13: -5131684249742991410
+      zodiac_sprite_sheet_transparent_14: -1164521883546555345
+      zodiac_sprite_sheet_transparent_15: 8412283655268819018
+      zodiac_sprite_sheet_transparent_16: -6243804757708655906
+      zodiac_sprite_sheet_transparent_17: -202067755689197785
+      zodiac_sprite_sheet_transparent_18: 4343268006272714206
+      zodiac_sprite_sheet_transparent_19: 5955542445910451330
+      zodiac_sprite_sheet_transparent_2: -3437374179197825628
+      zodiac_sprite_sheet_transparent_20: 1338701667185737386
+      zodiac_sprite_sheet_transparent_21: -4031976614324818966
+      zodiac_sprite_sheet_transparent_22: -1500588455629582218
+      zodiac_sprite_sheet_transparent_23: 6472826954280007002
+      zodiac_sprite_sheet_transparent_24: -8001741055894260231
+      zodiac_sprite_sheet_transparent_25: -7901266882465916557
+      zodiac_sprite_sheet_transparent_26: -7213699737294218600
+      zodiac_sprite_sheet_transparent_27: 7665688435396362696
+      zodiac_sprite_sheet_transparent_28: -1699961722604406666
+      zodiac_sprite_sheet_transparent_29: 4790838879293673077
+      zodiac_sprite_sheet_transparent_3: -282181847226083627
+      zodiac_sprite_sheet_transparent_30: -8419708589547131726
+      zodiac_sprite_sheet_transparent_31: -2398746594974305574
+      zodiac_sprite_sheet_transparent_32: -7813796146045929148
+      zodiac_sprite_sheet_transparent_33: -9080146367645634534
+      zodiac_sprite_sheet_transparent_34: 5360061369893579696
+      zodiac_sprite_sheet_transparent_35: -5444362900215713418
+      zodiac_sprite_sheet_transparent_36: 8223825171444465721
+      zodiac_sprite_sheet_transparent_37: 7935890990726552374
+      zodiac_sprite_sheet_transparent_38: 340153469362393302
+      zodiac_sprite_sheet_transparent_39: 6426594074418669874
+      zodiac_sprite_sheet_transparent_4: 9161225763630299772
+      zodiac_sprite_sheet_transparent_40: -1777566815893500918
+      zodiac_sprite_sheet_transparent_41: -1350571317512081150
+      zodiac_sprite_sheet_transparent_42: 7930500361819755808
+      zodiac_sprite_sheet_transparent_43: -776400750521291626
+      zodiac_sprite_sheet_transparent_44: 2783070876013079237
+      zodiac_sprite_sheet_transparent_45: -7831283367167990775
+      zodiac_sprite_sheet_transparent_46: 4557343254213958099
+      zodiac_sprite_sheet_transparent_47: 5113707819800600070
+      zodiac_sprite_sheet_transparent_48: 6483112436377198411
+      zodiac_sprite_sheet_transparent_49: 451416864762851546
+      zodiac_sprite_sheet_transparent_5: -2182252558341886114
+      zodiac_sprite_sheet_transparent_50: -363258344462449977
+      zodiac_sprite_sheet_transparent_51: -4723688712639362467
+      zodiac_sprite_sheet_transparent_52: -2926127719537540856
+      zodiac_sprite_sheet_transparent_53: -2419992424624069567
+      zodiac_sprite_sheet_transparent_54: 7284976892242724386
+      zodiac_sprite_sheet_transparent_55: 8144455588591858142
+      zodiac_sprite_sheet_transparent_56: -7450696663933702676
+      zodiac_sprite_sheet_transparent_57: 9101273490121870178
+      zodiac_sprite_sheet_transparent_58: 4243963201590351309
+      zodiac_sprite_sheet_transparent_59: -2089935788316459561
+      zodiac_sprite_sheet_transparent_6: 7281114689245938497
+      zodiac_sprite_sheet_transparent_60: 530000195284527089
+      zodiac_sprite_sheet_transparent_61: 8332849613450666073
+      zodiac_sprite_sheet_transparent_62: -5268391818418386696
+      zodiac_sprite_sheet_transparent_63: -4621529809798381848
+      zodiac_sprite_sheet_transparent_64: -3218622601906108346
+      zodiac_sprite_sheet_transparent_65: 925006956378167905
+      zodiac_sprite_sheet_transparent_66: -2296775197567476953
+      zodiac_sprite_sheet_transparent_67: 1819933746754609789
+      zodiac_sprite_sheet_transparent_68: 7920292057804288980
+      zodiac_sprite_sheet_transparent_69: 7717331741809049485
+      zodiac_sprite_sheet_transparent_7: 5379199228496669209
+      zodiac_sprite_sheet_transparent_70: -775649967680742154
+      zodiac_sprite_sheet_transparent_71: 8911054480240468545
+      zodiac_sprite_sheet_transparent_72: 6962870821802422114
+      zodiac_sprite_sheet_transparent_73: 4823318385801175371
+      zodiac_sprite_sheet_transparent_74: 7396706944640798415
+      zodiac_sprite_sheet_transparent_75: 7430557814949028625
+      zodiac_sprite_sheet_transparent_76: 4858077284042292279
+      zodiac_sprite_sheet_transparent_77: 8457283244239105861
+      zodiac_sprite_sheet_transparent_78: -4088131882603924813
+      zodiac_sprite_sheet_transparent_79: -5896580814182047557
+      zodiac_sprite_sheet_transparent_8: 1249423543637192047
+      zodiac_sprite_sheet_transparent_80: -3943001417282486030
+      zodiac_sprite_sheet_transparent_81: -6650943734914656347
+      zodiac_sprite_sheet_transparent_82: 3415347097865980066
+      zodiac_sprite_sheet_transparent_83: 965548384732246549
+      zodiac_sprite_sheet_transparent_84: -4724471260745228955
+      zodiac_sprite_sheet_transparent_85: -7615932189638988965
+      zodiac_sprite_sheet_transparent_86: 6346027597383417610
+      zodiac_sprite_sheet_transparent_87: 4417324593909067691
+      zodiac_sprite_sheet_transparent_88: -6728622787414823985
+      zodiac_sprite_sheet_transparent_89: -7766916056626852663
+      zodiac_sprite_sheet_transparent_9: 1180750424469125086
+      zodiac_sprite_sheet_transparent_90: 2603724927722607894
+      zodiac_sprite_sheet_transparent_91: -5211318681857536771
+      zodiac_sprite_sheet_transparent_92: 451270188208743019
+      zodiac_sprite_sheet_transparent_93: -2807116728900574275
+      zodiac_sprite_sheet_transparent_94: 985298960125898328
+      zodiac_sprite_sheet_transparent_95: -4883624601887695053
+      zodiac_sprite_sheet_transparent_96: -9082728891173088233
+      zodiac_sprite_sheet_transparent_97: 680606465555945335
+      zodiac_sprite_sheet_transparent_98: 407883461550936160
+      zodiac_sprite_sheet_transparent_99: -7428483870084795434
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

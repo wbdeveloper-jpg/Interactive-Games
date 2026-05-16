@@ -33,6 +33,6 @@ MonoBehaviour:
   - {fileID: 574679140, guid: 79580ec0db38ba7429acb9f8df5b7e48, type: 3}
   - {fileID: 931538657, guid: 79580ec0db38ba7429acb9f8df5b7e48, type: 3}
   - {fileID: 1897210766, guid: 79580ec0db38ba7429acb9f8df5b7e48, type: 3}
-  resultSprite: {fileID: 531460256806761123, guid: 8de7a1959aab06b449381b6d2982d1d0, type: 3}
+  resultSprite: {fileID: -2182252558341886114, guid: 0d1b531ffc2b9bf4e8fa3a0bd6a67b87, type: 3}
   constellationPrefab: {fileID: 867926797749011172, guid: ef585c1c142b38b418e93b052c0b2911, type: 3}
   timeLimitSeconds: 60

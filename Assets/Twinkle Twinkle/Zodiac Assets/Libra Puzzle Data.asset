@@ -32,6 +32,6 @@ MonoBehaviour:
   - {fileID: -1749144668, guid: debeff3e6e8eaed458938ae10757d49c, type: 3}
   - {fileID: 1697037428, guid: debeff3e6e8eaed458938ae10757d49c, type: 3}
   - {fileID: -810631607, guid: debeff3e6e8eaed458938ae10757d49c, type: 3}
-  resultSprite: {fileID: 7127118759040737253, guid: 8de7a1959aab06b449381b6d2982d1d0, type: 3}
+  resultSprite: {fileID: -1682856337617883777, guid: 0d1b531ffc2b9bf4e8fa3a0bd6a67b87, type: 3}
   constellationPrefab: {fileID: 4626231968283204751, guid: eb6cc36d814bc534b8ffc2e3fb6c23bc, type: 3}
   timeLimitSeconds: 60
