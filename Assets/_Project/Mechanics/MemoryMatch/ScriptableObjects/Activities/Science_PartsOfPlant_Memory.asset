@@ -1,0 +1,93 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 64fc57db2bd926341836a1952e358fb2, type: 3}
+  m_Name: Science_PartsOfPlant_Memory
+  m_EditorClassIdentifier: Assembly-CSharp::NG.EduGames.MemoryMatch.MemoryActivityConfig
+  activityId: ' class4_science_chapter3_activity1'
+  activityTitle: Parts of a Plant
+  instructionText: Match each plant part with its function.
+  classLevel: 4
+  subject: Science
+  chapterName: Parts of Plant
+  themeConfig: {fileID: 11400000, guid: 552ad996304067244b77a7e03b757c99, type: 2}
+  difficultyConfig: {fileID: 11400000, guid: f6d9316b22878e844b13017be6c99ee3, type: 2}
+  gridColumns: 4
+  gridRows: 3
+  cardAspectRatio: 1
+  maxPairsToUse: 0
+  pairs:
+  - pairId: plant_root_absorbs_water
+    cardAContentType: 0
+    cardAText: Root
+    cardAImage: {fileID: 5392366845728315304, guid: 096a2997071fd0c4d9ff51d09fd29b28, type: 3}
+    cardBContentType: 0
+    cardBText: Absorbs water
+    cardBImage: {fileID: 0}
+    learningTitle: Root
+    learningText: Correct! Roots absorb water and minerals from the soil.
+    learningImage: {fileID: 0}
+    narrationAudio: {fileID: 8300000, guid: c5f99a4b48b4c3145a32d195f5a43f66, type: 3}
+  - pairId: plant_stem_carries_water
+    cardAContentType: 0
+    cardAText: Stem
+    cardAImage: {fileID: 21300000, guid: cf18c51176a7c0142b08862e7c8ec6cc, type: 3}
+    cardBContentType: 0
+    cardBText: Carries water
+    cardBImage: {fileID: 0}
+    learningTitle: Stem
+    learningText: Correct! The stem carries water to different parts of the plant.
+    learningImage: {fileID: 0}
+    narrationAudio: {fileID: 8300000, guid: 0fc2fbfc0d110d344b5013f8771a909e, type: 3}
+  - pairId: ' plant_leaf_makes_food'
+    cardAContentType: 0
+    cardAText: Leaf
+    cardAImage: {fileID: 0}
+    cardBContentType: 0
+    cardBText: Makes food
+    cardBImage: {fileID: 0}
+    learningTitle: Leaf
+    learningText: Correct! Leaves make food for the plant using sunlight.
+    learningImage: {fileID: 0}
+    narrationAudio: {fileID: 8300000, guid: f2eeff1682e127c44b6e664ae389ae49, type: 3}
+  - pairId: plant_flower_makes_fruit
+    cardAContentType: 0
+    cardAText: Flower
+    cardAImage: {fileID: 0}
+    cardBContentType: 0
+    cardBText: Makes fruit
+    cardBImage: {fileID: 0}
+    learningTitle: Flower
+    learningText: Correct! Flowers help plants form fruits and seeds.
+    learningImage: {fileID: 0}
+    narrationAudio: {fileID: 8300000, guid: 36311d0806c164448b758161956e71bf, type: 3}
+  - pairId: plant_fruit_holds_seeds
+    cardAContentType: 0
+    cardAText: Fruit
+    cardAImage: {fileID: 0}
+    cardBContentType: 0
+    cardBText: Holds seeds
+    cardBImage: {fileID: 0}
+    learningTitle: Fruit
+    learningText: Correct! Fruits protect seeds and help new plants grow.
+    learningImage: {fileID: 0}
+    narrationAudio: {fileID: 8300000, guid: 8055c02da76248643bf0d2d2147e183c, type: 3}
+  - pairId: plant_seed_new_plant
+    cardAContentType: 0
+    cardAText: Seed
+    cardAImage: {fileID: 0}
+    cardBContentType: 0
+    cardBText: New plant
+    cardBImage: {fileID: 0}
+    learningTitle: Seed
+    learningText: Correct! A seed can grow into a new plant.
+    learningImage: {fileID: 0}
+    narrationAudio: {fileID: 8300000, guid: 71e906a2b3e88a54e86f9ece7fe85f95, type: 3}

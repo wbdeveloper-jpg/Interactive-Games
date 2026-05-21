@@ -1,0 +1,58 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c76383814a1b7454385192055db84bc2, type: 3}
+  m_Name: Science_GreenTheme
+  m_EditorClassIdentifier: Assembly-CSharp::NGEducation.MemoryMatch.MemoryThemeConfig
+  themeId: default_theme
+  displayName: Default Theme
+  backgroundSprite: {fileID: 0}
+  backgroundColor: {r: 0.6556604, g: 1, b: 0.8652794, a: 1}
+  titleBackgroundSprite: {fileID: 0}
+  titleBackgroundColor: {r: 0.3301887, g: 0.09346345, b: 0, a: 1}
+  instructionBackgroundSprite: {fileID: 0}
+  instructionBackgroundColor: {r: 0.3679245, g: 0.07604814, b: 0, a: 1}
+  cardFrontSprite: {fileID: 0}
+  cardFrontColor: {r: 1, g: 0.7028302, b: 0.7028302, a: 1}
+  cardBackSprite: {fileID: 0}
+  cardBackColor: {r: 0.2741634, g: 0.5754717, b: 0.4590571, a: 1}
+  cardFont: {fileID: 0}
+  cardTextColor: {r: 0.10573158, g: 0.2264151, b: 0.17782822, a: 1}
+  headerFont: {fileID: 0}
+  titleTextColor: {r: 0.514151, g: 1, b: 0.798959, a: 1}
+  instructionTextColor: {r: 0.8962264, g: 0.8962264, b: 0.8962264, a: 1}
+  timerBackgroundSprite: {fileID: 0}
+  timerBackgroundColor: {r: 0.24056602, g: 0.55049384, b: 1, a: 0.85}
+  clockIconSprite: {fileID: 0}
+  clockIconColor: {r: 1, g: 0.3537736, b: 0.79760003, a: 1}
+  timerTextColor: {r: 0, g: 0.17339332, b: 0.41509432, a: 1}
+  timerWarningTextColor: {r: 1, g: 0.25, b: 0.15, a: 1}
+  timerWarningTickingLoop: {fileID: 8300000, guid: cea2cfd7c6fb0e24898333b74a0c1dbb, type: 3}
+  hintBackgroundSprite: {fileID: 0}
+  hintBackgroundColor: {r: 1, g: 0.33225366, b: 0.2028302, a: 0.85}
+  hintIconSprite: {fileID: 0}
+  hintIconColor: {r: 1, g: 1, b: 1, a: 1}
+  hintTextColor: {r: 0.066037714, g: 0.066037714, b: 0.066037714, a: 1}
+  hintDisabledTextColor: {r: 0.7, g: 0.7, b: 0.7, a: 1}
+  hintVisualColor: {r: 1, g: 0.85, b: 0.15, a: 0.85}
+  pauseOverlayBackgroundSprite: {fileID: 0}
+  pauseOverlayBackgroundColor: {r: 0.764151, g: 0.764151, b: 0.764151, a: 0.21960784}
+  pausePanelSprite: {fileID: 0}
+  pausePanelColor: {r: 1, g: 1, b: 1, a: 1}
+  pauseTitleColor: {r: 1, g: 0.4431373, b: 0.4431373, a: 1}
+  pauseBodyColor: {r: 0.3647059, g: 0.6, b: 1, a: 1}
+  popupPanelSprite: {fileID: 0}
+  popupPanelColor: {r: 0.7971698, g: 1, b: 0.9216338, a: 1}
+  popupTitleColor: {r: 0.27450982, g: 0.5764706, b: 0.454902, a: 1}
+  popupBodyColor: {r: 0.098039225, g: 0.21176472, b: 0.16470589, a: 1}
+  popupDefaultIllustrationSprite: {fileID: 21300000, guid: 3d1e951f31d9e154e8130b443e5586e8, type: 3}
+  popupDefaultIllustrationColor: {r: 1, g: 1, b: 1, a: 1}
+  useDefaultIllustrationWhenPairImageMissing: 1

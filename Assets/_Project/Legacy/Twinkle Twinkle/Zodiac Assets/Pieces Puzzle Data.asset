@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dca4dbc20cbc10b41843e4224a6dff0f, type: 3}
+  m_Name: Pieces Puzzle Data
+  m_EditorClassIdentifier: Assembly-CSharp::ZodiacPuzzleData
+  sign: 2
+  displayNameOverride: Pisces
+  descriptionOverride: 'Do you know?
+
+    Pisces is the sign of the Fish and is known
+    for being the most imaginative, artistic, and dreamy sign of the zodiac.'
+  fullPuzzleSprite: {fileID: 21300000, guid: 9c8b0d73f5a41b04b9e72ba542770b88, type: 3}
+  pieceSprites:
+  - {fileID: -5619150752979459227, guid: d85bbe6edaf5bd44596da1f182363ee5, type: 3}
+  - {fileID: -1814715983, guid: d85bbe6edaf5bd44596da1f182363ee5, type: 3}
+  - {fileID: -890126273, guid: d85bbe6edaf5bd44596da1f182363ee5, type: 3}
+  - {fileID: -1476372531, guid: d85bbe6edaf5bd44596da1f182363ee5, type: 3}
+  - {fileID: -1690303393, guid: d85bbe6edaf5bd44596da1f182363ee5, type: 3}
+  - {fileID: -1488559842, guid: d85bbe6edaf5bd44596da1f182363ee5, type: 3}
+  - {fileID: -558555065, guid: d85bbe6edaf5bd44596da1f182363ee5, type: 3}
+  - {fileID: 1246382927, guid: d85bbe6edaf5bd44596da1f182363ee5, type: 3}
+  - {fileID: 105077278, guid: d85bbe6edaf5bd44596da1f182363ee5, type: 3}
+  - {fileID: 1839288549, guid: d85bbe6edaf5bd44596da1f182363ee5, type: 3}
+  - {fileID: -1170582199, guid: d85bbe6edaf5bd44596da1f182363ee5, type: 3}
+  - {fileID: 47078901, guid: d85bbe6edaf5bd44596da1f182363ee5, type: 3}
+  resultSprite: {fileID: 5379199228496669209, guid: 0d1b531ffc2b9bf4e8fa3a0bd6a67b87, type: 3}
+  constellationPrefab: {fileID: 7524577301250418863, guid: f47fb70d2cdafa44b9bcbc450f07ff9e, type: 3}
+  timeLimitSeconds: 75

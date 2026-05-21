@@ -9,22 +9,23 @@ EditorBuildSettings:
     path: Assets/Loader Scene/Loader Scene.unity
     guid: 98af264abec0a2d48aa661452128d39f
   - enabled: 1
-    path: Assets/Maze  in the Jungle/Scenes/maze-in-the-jungle.unity
+    path: Assets/_Project/Legacy/Maze  in the Jungle/Scenes/maze-in-the-jungle.unity
     guid: 8c9cfa26abfee488c85f1582747f6a02
   - enabled: 0
-    path: Assets/Old man with Beard/Old Man with beard.unity
+    path: Assets/_Project/Legacy/Old man with Beard/Old Man with beard.unity
     guid: 0088ca4f999d3f048b5d382866aba8c5
   - enabled: 1
-    path: Assets/Being Honest/Game 8/being-honest.unity
+    path: Assets/_Project/Legacy/Being Honest/Game 8/being-honest.unity
     guid: 248157980acebf247aeebc7f906fb8e1
   - enabled: 1
-    path: Assets/Girls are Smarter than Men/Girls are Smarter than Mans.unity
+    path: Assets/_Project/Legacy/Girls are Smarter than Men/Girls are Smarter than
+      Mans.unity
     guid: 361ff62dfac946541aecb4fe1caea4cb
   - enabled: 1
-    path: Assets/All the Bells are Ringing/all-the-bells-are-ringing.unity
+    path: Assets/_Project/Legacy/All the Bells are Ringing/all-the-bells-are-ringing.unity
     guid: 6600a85aeed9b144897ff2f1ce47b02d
   - enabled: 1
-    path: Assets/Twinkle Twinkle/twinkle-twinkle.unity
+    path: Assets/_Project/Legacy/Twinkle Twinkle/twinkle-twinkle.unity
     guid: ca001fe2b8662af4c82014884510e88b
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}

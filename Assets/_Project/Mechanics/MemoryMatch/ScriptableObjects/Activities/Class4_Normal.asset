@@ -1,0 +1,42 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff925e2844cc05b459a8d39ce72ab3b5, type: 3}
+  m_Name: Class4_Normal
+  m_EditorClassIdentifier: Assembly-CSharp::NGEducation.MemoryMatch.MemoryDifficultyConfig
+  difficultyId: class4_normal
+  displayName: Class 4 Normal
+  classLevel: 4
+  gridColumns: 4
+  gridRows: 3
+  cardAspectRatio: 0.9
+  matchCheckDelay: 0.25
+  wrongFlipBackDelay: 0.65
+  enablePopupAutoContinue: 1
+  delayAfterNarrationBeforeAutoContinue: 1.25
+  noAudioAutoContinueDelay: 2.5
+  timerEnabled: 1
+  countdownSeconds: 60
+  warningRemainingPercent: 0.15
+  pauseTimerDuringLearningPopup: 1
+  showTimerText: 1
+  showTimerBackground: 1
+  showClockIcon: 0
+  pulseTimerOnWarning: 1
+  playTickingSoundOnWarning: 1
+  hintsEnabled: 1
+  maxHints: 3
+  hintRevealDuration: 1.5
+  pauseTimerDuringHintReveal: 1
+  showHintButton: 1
+  showHintsRemainingText: 1
+  showHintBackground: 1
+  showHintIcon: 1
