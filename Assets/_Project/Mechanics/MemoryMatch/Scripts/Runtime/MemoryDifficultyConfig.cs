@@ -53,8 +53,6 @@ namespace NGEducation.MemoryMatch
         [SerializeField] private bool pulseTimerOnWarning = true;
         [SerializeField] private bool playTickingSoundOnWarning = true;
 
-
-
         [Header("Hints")]
         [SerializeField] private bool hintsEnabled = true;
 
@@ -72,6 +70,49 @@ namespace NGEducation.MemoryMatch
         [SerializeField] private bool showHintsRemainingText = true;
         [SerializeField] private bool showHintBackground = true;
         [SerializeField] private bool showHintIcon = true;
+
+        [Header("Scoring")]
+        [SerializeField] private bool scoringEnabled = true;
+
+        [Tooltip("Initial score when the activity starts.")]
+        [SerializeField, Min(0)] private int startingScore = 0;
+
+        [Tooltip("Points added for each correct match.")]
+        [SerializeField, Min(0)] private int scorePerCorrectMatch = 10;
+
+        [Tooltip("Points subtracted for each wrong match.")]
+        [SerializeField, Min(0)] private int wrongMatchPenalty = 2;
+
+        [Tooltip("Points subtracted whenever a hint is used.")]
+        [SerializeField, Min(0)] private int hintPenalty = 5;
+
+        [Tooltip("If true, score will never go below zero.")]
+        [SerializeField] private bool clampScoreAtZero = true;
+
+        [Header("Time Bonus")]
+        [SerializeField] private bool enableTimeBonus = true;
+
+        [Tooltip("Final bonus = remaining seconds x this value. Set 0 to disable bonus without hiding UI.")]
+        [SerializeField, Min(0)] private int timeBonusPointsPerRemainingSecond = 1;
+
+        [Header("Score UI Visibility")]
+        [SerializeField] private bool showScoreUI = true;
+        [SerializeField] private bool showScoreBackground = true;
+        [SerializeField] private bool showScoreDeltaPopup = true;
+        [SerializeField] private bool playCorrectScoreParticle = true;
+
+        [Header("Completion Panel")]
+        [SerializeField] private bool showCompletionPanel = true;
+        [SerializeField] private bool showCompletionStars = true;
+
+        [Tooltip("Final score percentage needed for three stars.")]
+        [SerializeField, Range(0f, 1f)] private float threeStarPercent = 0.8f;
+
+        [Tooltip("Final score percentage needed for two stars.")]
+        [SerializeField, Range(0f, 1f)] private float twoStarPercent = 0.55f;
+
+        [Tooltip("Final score percentage needed for one star.")]
+        [SerializeField, Range(0f, 1f)] private float oneStarPercent = 0.25f;
 
         public string DifficultyId => difficultyId;
         public string DisplayName => displayName;
@@ -110,6 +151,26 @@ namespace NGEducation.MemoryMatch
         public bool ShowHintBackground => showHintBackground;
         public bool ShowHintIcon => showHintIcon;
 
+        public bool ScoringEnabled => scoringEnabled;
+        public int StartingScore => Mathf.Max(0, startingScore);
+        public int ScorePerCorrectMatch => Mathf.Max(0, scorePerCorrectMatch);
+        public int WrongMatchPenalty => Mathf.Max(0, wrongMatchPenalty);
+        public int HintPenalty => Mathf.Max(0, hintPenalty);
+        public bool ClampScoreAtZero => clampScoreAtZero;
+
+        public bool EnableTimeBonus => enableTimeBonus;
+        public int TimeBonusPointsPerRemainingSecond => Mathf.Max(0, timeBonusPointsPerRemainingSecond);
+
+        public bool ShowScoreUI => showScoreUI;
+        public bool ShowScoreBackground => showScoreBackground;
+        public bool ShowScoreDeltaPopup => showScoreDeltaPopup;
+        public bool PlayCorrectScoreParticle => playCorrectScoreParticle;
+
+        public bool ShowCompletionPanel => showCompletionPanel;
+        public bool ShowCompletionStars => showCompletionStars;
+        public float ThreeStarPercent => Mathf.Clamp01(threeStarPercent);
+        public float TwoStarPercent => Mathf.Clamp01(twoStarPercent);
+        public float OneStarPercent => Mathf.Clamp01(oneStarPercent);
 
 #if UNITY_EDITOR
         private void OnValidate()
@@ -121,10 +182,18 @@ namespace NGEducation.MemoryMatch
             wrongFlipBackDelay = Mathf.Max(0f, wrongFlipBackDelay);
             delayAfterNarrationBeforeAutoContinue = Mathf.Max(0f, delayAfterNarrationBeforeAutoContinue);
             noAudioAutoContinueDelay = Mathf.Max(0f, noAudioAutoContinueDelay);
-            maxHints = Mathf.Max(0, maxHints);
-            hintRevealDuration = Mathf.Max(0.25f, hintRevealDuration);
             countdownSeconds = Mathf.Max(5f, countdownSeconds);
             warningRemainingPercent = Mathf.Clamp(warningRemainingPercent, 0.01f, 0.75f);
+            maxHints = Mathf.Max(0, maxHints);
+            hintRevealDuration = Mathf.Max(0.25f, hintRevealDuration);
+            startingScore = Mathf.Max(0, startingScore);
+            scorePerCorrectMatch = Mathf.Max(0, scorePerCorrectMatch);
+            wrongMatchPenalty = Mathf.Max(0, wrongMatchPenalty);
+            hintPenalty = Mathf.Max(0, hintPenalty);
+            timeBonusPointsPerRemainingSecond = Mathf.Max(0, timeBonusPointsPerRemainingSecond);
+            threeStarPercent = Mathf.Clamp01(threeStarPercent);
+            twoStarPercent = Mathf.Clamp01(twoStarPercent);
+            oneStarPercent = Mathf.Clamp01(oneStarPercent);
         }
 #endif
     }

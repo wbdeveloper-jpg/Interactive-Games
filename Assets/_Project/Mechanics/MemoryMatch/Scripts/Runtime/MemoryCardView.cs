@@ -52,6 +52,10 @@ namespace NGEducation.MemoryMatch
         [SerializeField] private GameObject selectedVisual;
         [SerializeField] private GameObject matchedVisual;
         [SerializeField] private GameObject hintVisual;
+
+        [Header("State Visual Images - Optional")]
+        [SerializeField] private Image selectedVisualImage;
+        [SerializeField] private Image matchedVisualImage;
         [SerializeField] private Image hintVisualImage;
 
         private Action<MemoryCardView> onClicked;
@@ -149,10 +153,9 @@ namespace NGEducation.MemoryMatch
                 }
             }
 
-            if (hintVisualImage != null)
-            {
-                hintVisualImage.color = theme.HintVisualColor;
-            }
+            ApplyStateImage(selectedVisualImage, theme.SelectedVisualSprite, theme.SelectedVisualColor);
+            ApplyStateImage(matchedVisualImage, theme.MatchedVisualSprite, theme.MatchedVisualColor);
+            ApplyStateImage(hintVisualImage, theme.HintVisualSprite, theme.HintVisualColor);
         }
 
         public void SetInputEnabled(bool enabled)
@@ -259,6 +262,21 @@ namespace NGEducation.MemoryMatch
             }
 
             RefreshInteractable();
+        }
+
+        private static void ApplyStateImage(Image image, Sprite sprite, Color color)
+        {
+            if (image == null)
+            {
+                return;
+            }
+
+            image.color = color;
+
+            if (sprite != null)
+            {
+                image.sprite = sprite;
+            }
         }
 
         private void ApplyContent()

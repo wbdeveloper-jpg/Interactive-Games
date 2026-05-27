@@ -182,6 +182,11 @@ namespace NGEducation.MemoryMatch
             if (timerText != null)
             {
                 timerText.color = normalTextColor;
+
+                if (theme.UIFont != null)
+                {
+                    timerText.font = theme.UIFont;
+                }
             }
 
             if (timerBackgroundImage != null)

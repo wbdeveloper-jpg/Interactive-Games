@@ -1,0 +1,39 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1eee89d4c38277b4ba4e3b182be98e16, type: 3}
+  m_Name: Science_Memory_AudioConfig
+  m_EditorClassIdentifier: Assembly-CSharp::NGEducation.MemoryMatch.MemoryAudioConfig
+  masterVolume: 1
+  uiVolume: 0.85
+  gameplayVolume: 0.9
+  scoreVolume: 0.85
+  timerVolume: 0.75
+  backgroundVolume: 0.22
+  duckedBackgroundVolume: 0.08
+  backgroundFadeDuration: 0.25
+  backgroundLoop: {fileID: 8300000, guid: 8b26f00eb05769547919f08de1a05436, type: 3}
+  buttonClick: {fileID: 8300000, guid: 19cedd9d1d36b8f419d3acab22c62b0e, type: 3}
+  popupOpen: {fileID: 8300000, guid: d5c328b039e60de4aa2b85b9b6f61494, type: 3}
+  activityStart: {fileID: 0}
+  pause: {fileID: 0}
+  resume: {fileID: 0}
+  cardFlip: {fileID: 8300000, guid: 7a0cb6647b5726a4ca08b0bc5a38a735, type: 3}
+  correctMatch: {fileID: 8300000, guid: 753a289e67413734eb41a715af6d21e6, type: 3}
+  wrongMatch: {fileID: 8300000, guid: ed06b18f2c2683e40b2a35eebf8ab876, type: 3}
+  hintUsed: {fileID: 8300000, guid: dd646e64272cd4645b50dbcc8302013a, type: 3}
+  scorePositive: {fileID: 8300000, guid: d62d606a6df7cdc419911b097d5ead3f, type: 3}
+  scoreNegative: {fileID: 8300000, guid: 0e1a22bca71ced443b5a921432a8c712, type: 3}
+  warningStart: {fileID: 0}
+  timerTickingLoop: {fileID: 8300000, guid: cea2cfd7c6fb0e24898333b74a0c1dbb, type: 3}
+  timeUp: {fileID: 0}
+  summarySuccess: {fileID: 0}
+  summaryTimeUp: {fileID: 0}

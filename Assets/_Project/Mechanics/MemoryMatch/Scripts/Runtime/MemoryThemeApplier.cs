@@ -22,6 +22,16 @@ namespace NGEducation.MemoryMatch
         [SerializeField] private TMP_Text popupTitleText;
         [SerializeField] private TMP_Text popupBodyText;
 
+        [Header("Optional Common Font Targets")]
+        [Tooltip("Texts that should use the theme heading font.")]
+        [SerializeField] private TMP_Text[] headingFontTexts;
+
+        [Tooltip("Texts that should use the theme body font.")]
+        [SerializeField] private TMP_Text[] bodyFontTexts;
+
+        [Tooltip("Texts that should use the theme UI font.")]
+        [SerializeField] private TMP_Text[] uiFontTexts;
+
         public void ApplyTheme(MemoryThemeConfig theme)
         {
             if (theme == null)
@@ -33,6 +43,7 @@ namespace NGEducation.MemoryMatch
             ApplyHeaderBackgrounds(theme);
             ApplyHeaderText(theme);
             ApplyPopup(theme);
+            ApplyCommonFontTargets(theme);
         }
 
         private void ApplyBackground(MemoryThemeConfig theme)
@@ -80,9 +91,9 @@ namespace NGEducation.MemoryMatch
             {
                 instructionText.color = theme.InstructionTextColor;
 
-                if (theme.HeaderFont != null)
+                if (theme.BodyFont != null)
                 {
-                    instructionText.font = theme.HeaderFont;
+                    instructionText.font = theme.BodyFont;
                 }
             }
         }
@@ -108,9 +119,32 @@ namespace NGEducation.MemoryMatch
             {
                 popupBodyText.color = theme.PopupBodyColor;
 
-                if (theme.HeaderFont != null)
+                if (theme.BodyFont != null)
                 {
-                    popupBodyText.font = theme.HeaderFont;
+                    popupBodyText.font = theme.BodyFont;
+                }
+            }
+        }
+
+        private void ApplyCommonFontTargets(MemoryThemeConfig theme)
+        {
+            ApplyFontArray(headingFontTexts, theme.HeaderFont);
+            ApplyFontArray(bodyFontTexts, theme.BodyFont);
+            ApplyFontArray(uiFontTexts, theme.UIFont);
+        }
+
+        private static void ApplyFontArray(TMP_Text[] texts, TMP_FontAsset font)
+        {
+            if (texts == null || font == null)
+            {
+                return;
+            }
+
+            for (int i = 0; i < texts.Length; i++)
+            {
+                if (texts[i] != null)
+                {
+                    texts[i].font = font;
                 }
             }
         }

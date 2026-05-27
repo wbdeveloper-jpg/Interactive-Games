@@ -29,7 +29,7 @@ MonoBehaviour:
   pauseTimerDuringLearningPopup: 1
   showTimerText: 1
   showTimerBackground: 1
-  showClockIcon: 0
+  showClockIcon: 1
   pulseTimerOnWarning: 1
   playTickingSoundOnWarning: 1
   hintsEnabled: 1
@@ -40,3 +40,20 @@ MonoBehaviour:
   showHintsRemainingText: 1
   showHintBackground: 1
   showHintIcon: 1
+  scoringEnabled: 1
+  startingScore: 0
+  scorePerCorrectMatch: 10
+  wrongMatchPenalty: 2
+  hintPenalty: 5
+  clampScoreAtZero: 1
+  enableTimeBonus: 1
+  timeBonusPointsPerRemainingSecond: 1
+  showScoreUI: 1
+  showScoreBackground: 1
+  showScoreDeltaPopup: 1
+  playCorrectScoreParticle: 1
+  showCompletionPanel: 1
+  showCompletionStars: 1
+  threeStarPercent: 0.8
+  twoStarPercent: 0.55
+  oneStarPercent: 0.25

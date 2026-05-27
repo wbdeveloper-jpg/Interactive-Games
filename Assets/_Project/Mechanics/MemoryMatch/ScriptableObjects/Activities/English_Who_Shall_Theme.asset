@@ -1,0 +1,88 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c76383814a1b7454385192055db84bc2, type: 3}
+  m_Name: English_Who_Shall_Theme
+  m_EditorClassIdentifier: Assembly-CSharp::NGEducation.MemoryMatch.MemoryThemeConfig
+  themeId: default_theme
+  displayName: Default Theme
+  audioConfig: {fileID: 11400000, guid: 5e3edc5b7b132b8438be25870703fccc, type: 2}
+  headerFont: {fileID: 11400000, guid: 9decd26d9be579149a16a20ca3516020, type: 2}
+  bodyFont: {fileID: 0}
+  uiFont: {fileID: 0}
+  cardFont: {fileID: 11400000, guid: 9decd26d9be579149a16a20ca3516020, type: 2}
+  backgroundSprite: {fileID: 21300000, guid: 57b7e0130a91ddb4a821cba9f3c13a7c, type: 3}
+  backgroundColor: {r: 1, g: 1, b: 1, a: 1}
+  titleBackgroundSprite: {fileID: 21300000, guid: 02ad11dcf128b11439947fc523933717, type: 3}
+  titleBackgroundColor: {r: 1, g: 0.9921569, b: 0.9921569, a: 1}
+  instructionBackgroundSprite: {fileID: 21300000, guid: 02ad11dcf128b11439947fc523933717, type: 3}
+  instructionBackgroundColor: {r: 1, g: 0.96470594, b: 0.8980393, a: 1}
+  titleTextColor: {r: 0.47450984, g: 0.3647059, b: 0.25882354, a: 1}
+  instructionTextColor: {r: 0.60784316, g: 0.43529415, b: 0.2509804, a: 1}
+  pauseButtonBackgroundSprite: {fileID: 0}
+  pauseButtonBackgroundColor: {r: 1, g: 1, b: 1, a: 1}
+  pauseButtonIconSprite: {fileID: 0}
+  pauseButtonIconColor: {r: 1, g: 1, b: 1, a: 1}
+  howToPlayButtonBackgroundSprite: {fileID: 0}
+  howToPlayButtonBackgroundColor: {r: 1, g: 1, b: 1, a: 1}
+  howToPlayButtonIconSprite: {fileID: 0}
+  howToPlayButtonIconColor: {r: 1, g: 1, b: 1, a: 1}
+  cardFrontSprite: {fileID: 21300000, guid: 76af576eadf579e4aa79017705ef6aad, type: 3}
+  cardFrontColor: {r: 1, g: 1, b: 1, a: 0.72156864}
+  cardBackSprite: {fileID: 21300000, guid: 76af576eadf579e4aa79017705ef6aad, type: 3}
+  cardBackColor: {r: 1, g: 0.96470594, b: 0.8980393, a: 1}
+  cardTextColor: {r: 0.47450984, g: 0.3647059, b: 0.25882354, a: 1}
+  selectedVisualSprite: {fileID: 0}
+  selectedVisualColor: {r: 0.2, g: 0.6, b: 1, a: 0.9}
+  matchedVisualSprite: {fileID: 0}
+  matchedVisualColor: {r: 0.2, g: 0.9, b: 0.35, a: 1}
+  hintVisualSprite: {fileID: 0}
+  hintVisualColor: {r: 1, g: 0.85, b: 0.15, a: 0.85}
+  timerBackgroundSprite: {fileID: 21300000, guid: 02ad11dcf128b11439947fc523933717, type: 3}
+  timerBackgroundColor: {r: 1, g: 0.96470594, b: 0.8980393, a: 1}
+  clockIconSprite: {fileID: -7846750421425124246, guid: 652814766f1e00f489044c00388859fa, type: 3}
+  clockIconColor: {r: 1, g: 1, b: 1, a: 1}
+  timerTextColor: {r: 0.43921572, g: 0.34117648, b: 0.24313727, a: 1}
+  timerWarningTextColor: {r: 1, g: 0.48102343, b: 0.41037738, a: 1}
+  timerWarningTickingLoop: {fileID: 0}
+  hintBackgroundSprite: {fileID: 21300000, guid: 02ad11dcf128b11439947fc523933717, type: 3}
+  hintBackgroundColor: {r: 1, g: 0.97647065, b: 0.89019614, a: 1}
+  hintIconSprite: {fileID: -7813832531268778289, guid: 652814766f1e00f489044c00388859fa, type: 3}
+  hintIconColor: {r: 1, g: 1, b: 1, a: 1}
+  hintTextColor: {r: 1, g: 0.7607844, b: 0, a: 1}
+  hintDisabledTextColor: {r: 0.7, g: 0.7, b: 0.7, a: 1}
+  scoreBackgroundSprite: {fileID: 21300000, guid: 02ad11dcf128b11439947fc523933717, type: 3}
+  scoreBackgroundColor: {r: 0.8941177, g: 0.8588236, b: 1, a: 1}
+  scoreTextColor: {r: 0.4156863, g: 0.2392157, b: 1, a: 1}
+  scorePositiveDeltaColor: {r: 0.34576362, g: 0.6603774, b: 0.47222605, a: 1}
+  scoreNegativeDeltaColor: {r: 0.9716981, g: 0.52388984, b: 0.46293163, a: 1}
+  popupPanelSprite: {fileID: 21300000, guid: 02ad11dcf128b11439947fc523933717, type: 3}
+  popupPanelColor: {r: 1, g: 0.96470594, b: 0.8980393, a: 1}
+  popupTitleColor: {r: 0.47450984, g: 0.3647059, b: 0.25882354, a: 1}
+  popupBodyColor: {r: 0.7264151, g: 0.58163047, b: 0.44201672, a: 1}
+  popupProgressBackgroundColor: {r: 0.7254902, g: 0.5803922, b: 0.44313726, a: 1}
+  popupProgressFillColor: {r: 0.4745098, g: 0.3647059, b: 0.25882354, a: 1}
+  popupDefaultIllustrationSprite: {fileID: 21300000, guid: c4d4ae14f2949dd4b93d8efcf59c6f4b, type: 3}
+  popupDefaultIllustrationColor: {r: 1, g: 1, b: 1, a: 1}
+  useDefaultIllustrationWhenPairImageMissing: 1
+  pauseOverlayBackgroundSprite: {fileID: 0}
+  pauseOverlayBackgroundColor: {r: 1, g: 1, b: 1, a: 0.21960784}
+  pausePanelSprite: {fileID: 21300000, guid: f451e2c1bcb3aa541995035c7aa5abef, type: 3}
+  pausePanelColor: {r: 1, g: 0.9647059, b: 0.8980392, a: 1}
+  pauseTitleColor: {r: 1, g: 0.4431373, b: 0.4431373, a: 1}
+  pauseBodyColor: {r: 0.3647059, g: 0.6, b: 1, a: 1}
+  summaryOverlayBackgroundSprite: {fileID: 0}
+  summaryOverlayBackgroundColor: {r: 0, g: 0, b: 0, a: 0.55}
+  summaryPanelSprite: {fileID: 21300000, guid: 23f214ff7a7d2ba4582d55c29bbff8f4, type: 3}
+  summaryPanelColor: {r: 1, g: 1, b: 1, a: 1}
+  summaryTitleColor: {r: 0.764151, g: 0.49963716, b: 0, a: 1}
+  summaryBodyColor: {r: 0.47450984, g: 0.3647059, b: 0.25882354, a: 1}
+  summaryMetricsColor: {r: 0.5471698, g: 0.43040583, b: 0.3226237, a: 1}

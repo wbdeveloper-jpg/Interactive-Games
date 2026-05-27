@@ -12,6 +12,11 @@ namespace NGEducation.MemoryMatch
         [SerializeField] private Button pauseButton;
         [SerializeField] private Button resumeButton;
 
+        [Header("Pause Button Theme - Optional")]
+        [SerializeField] private Image pauseButtonBackgroundImage;
+        [SerializeField] private Image pauseButtonIconImage;
+        [SerializeField] private TMP_Text resumeButtonText;
+
         [Header("Overlay")]
         [Tooltip("This should be a full-screen object under Canvas/SafeAreaRoot.")]
         [SerializeField] private GameObject overlayRoot;
@@ -106,6 +111,8 @@ namespace NGEducation.MemoryMatch
                 return;
             }
 
+            ApplyImage(pauseButtonBackgroundImage, theme.PauseButtonBackgroundSprite, theme.PauseButtonBackgroundColor);
+            ApplyImage(pauseButtonIconImage, theme.PauseButtonIconSprite, theme.PauseButtonIconColor);
             ApplyImage(overlayBackgroundImage, theme.PauseOverlayBackgroundSprite, theme.PauseOverlayBackgroundColor);
             ApplyImage(pausePanelImage, theme.PausePanelSprite, theme.PausePanelColor);
 
@@ -123,10 +130,15 @@ namespace NGEducation.MemoryMatch
             {
                 bodyText.color = theme.PauseBodyColor;
 
-                if (theme.HeaderFont != null)
+                if (theme.BodyFont != null)
                 {
-                    bodyText.font = theme.HeaderFont;
+                    bodyText.font = theme.BodyFont;
                 }
+            }
+
+            if (resumeButtonText != null && theme.UIFont != null)
+            {
+                resumeButtonText.font = theme.UIFont;
             }
         }
 

@@ -17,6 +17,10 @@ namespace NGEducation.MemoryMatch
         [SerializeField] private MemoryTimerUIView timerUIView;
         [SerializeField] private MemoryPauseController pauseController;
         [SerializeField] private MemoryHintUIView hintUIView;
+        [SerializeField] private MemoryScoreUIView scoreUIView;
+        [SerializeField] private MemorySfxAudioManager sfxAudioManager;
+        [SerializeField] private MemorySummaryOverlayView summaryOverlayView;
+        [SerializeField] private MemoryHowToPlayOverlayView howToPlayOverlayView;
 
         [Header("Config")]
         [SerializeField] private MemoryActivityConfig activityConfig;
@@ -38,6 +42,14 @@ namespace NGEducation.MemoryMatch
         [Header("Phase 6 Animation Timing")]
         [Tooltip("Small delay after correct pulse before the learning popup opens.")]
         [SerializeField, Min(0f)] private float correctFeedbackBeforePopupDelay = 0.25f;
+
+        [Header("Phase 8.5 Score Feedback Timing")]
+        [Tooltip("Delay after correct scoring feedback before the learning popup opens. Use this so +score feedback finishes before the educational popup appears.")]
+        [SerializeField, Min(0f)] private float scoreFeedbackBeforePopupDelay = 0.75f;
+
+        [Header("Phase 9 Summary Timing")]
+        [Tooltip("Small delay before the summarization overlay appears.")]
+        [SerializeField, Min(0f)] private float summaryOverlayDelay = 0.35f;
 
         [Header("Phase 4 Learning Popup")]
         [SerializeField] private bool showLearningPopupOnCorrectMatch = true;
@@ -64,6 +76,7 @@ namespace NGEducation.MemoryMatch
         private MemoryCardView secondSelectedCard;
         private Coroutine evaluateSelectionRoutine;
         private Coroutine hintRevealRoutine;
+        private Coroutine summaryOverlayRoutine;
 
         private bool inputLocked;
         private bool waitingForPopupContinue;
@@ -77,6 +90,11 @@ namespace NGEducation.MemoryMatch
         private int wrongAttempts;
         private int hintsUsed;
         private int maxHints;
+        private int currentScore;
+        private int cardClicks;
+        private int pairAttempts;
+        private bool waitingForHowToPlay;
+        private bool howToOpenedFromGameplay;
 
         private void Awake()
         {
@@ -88,6 +106,11 @@ namespace NGEducation.MemoryMatch
             if (hintUIView != null)
             {
                 hintUIView.Initialize(TryUseHint);
+            }
+
+            if (howToPlayOverlayView != null)
+            {
+                howToPlayOverlayView.Initialize(HandleHowToPlayRequested, HandleHowToPlayClosed);
             }
         }
 
@@ -135,6 +158,12 @@ namespace NGEducation.MemoryMatch
                 hintRevealRoutine = null;
             }
 
+            if (summaryOverlayRoutine != null)
+            {
+                StopCoroutine(summaryOverlayRoutine);
+                summaryOverlayRoutine = null;
+            }
+
             currentActivityConfig = config;
             currentDifficultyConfig = config.DifficultyConfig;
             firstSelectedCard = null;
@@ -143,12 +172,20 @@ namespace NGEducation.MemoryMatch
             wrongAttempts = 0;
             hintsUsed = 0;
             maxHints = currentDifficultyConfig != null ? currentDifficultyConfig.MaxHints : 0;
+            currentScore = currentDifficultyConfig != null && currentDifficultyConfig.ScoringEnabled
+                ? currentDifficultyConfig.StartingScore
+                : 0;
+            cardClicks = 0;
+            pairAttempts = 0;
+
             inputLocked = false;
             waitingForPopupContinue = false;
             activityCompleted = false;
             timerExpired = false;
             gamePaused = false;
             hintActive = false;
+            waitingForHowToPlay = false;
+            howToOpenedFromGameplay = false;
             pairLookup.Clear();
 
             ApplyConfigToScene(config);
@@ -197,14 +234,25 @@ namespace NGEducation.MemoryMatch
             ConfigureTimer(config);
             ConfigurePause(config);
             ConfigureHints(config);
-            SetInputLocked(false);
+            ConfigureScore(config);
+            ConfigureAudio(config);
+            ConfigureSummaryOverlay(config);
+            ConfigureHowToPlay(config);
 
-            if (countdownTimer != null && countdownTimer.TimerEnabled)
+            if (howToPlayOverlayView != null && howToPlayOverlayView.ShowOnActivityStart)
             {
-                countdownTimer.StartTimer();
+                waitingForHowToPlay = true;
+                howToOpenedFromGameplay = false;
+                SetInputLocked(true);
+                RefreshHintUIInteractivity();
+                sfxAudioManager?.PlayPopupOpen();
+                howToPlayOverlayView.Show();
+                UpdateDebugStatus("How to play.");
             }
-
-            UpdateDebugStatus("Activity started.");
+            else
+            {
+                StartGameplayAfterIntro();
+            }
         }
 
         private void ApplyConfigToScene(MemoryActivityConfig config)
@@ -297,6 +345,83 @@ namespace NGEducation.MemoryMatch
             RefreshHintUIInteractivity();
         }
 
+        private void ConfigureScore(MemoryActivityConfig config)
+        {
+            if (scoreUIView == null)
+            {
+                return;
+            }
+
+            scoreUIView.ApplyTheme(config.ThemeConfig);
+            scoreUIView.Configure(config.DifficultyConfig);
+            scoreUIView.SetScore(currentScore);
+        }
+
+        private void ConfigureAudio(MemoryActivityConfig config)
+        {
+            MemoryAudioConfig audioConfig = config != null && config.ThemeConfig != null
+                ? config.ThemeConfig.AudioConfig
+                : null;
+
+            if (sfxAudioManager != null)
+            {
+                sfxAudioManager.Configure(audioConfig);
+            }
+
+            if (learningPopupView != null)
+            {
+                learningPopupView.SetSfxAudioManager(sfxAudioManager);
+            }
+
+            if (howToPlayOverlayView != null)
+            {
+                howToPlayOverlayView.SetSfxAudioManager(sfxAudioManager);
+            }
+        }
+
+        private void ConfigureSummaryOverlay(MemoryActivityConfig config)
+        {
+            if (summaryOverlayView == null)
+            {
+                return;
+            }
+
+            summaryOverlayView.ApplyTheme(config.ThemeConfig);
+            summaryOverlayView.HideImmediate();
+        }
+
+        private void ConfigureHowToPlay(MemoryActivityConfig config)
+        {
+            if (howToPlayOverlayView == null)
+            {
+                return;
+            }
+
+            howToPlayOverlayView.SetSfxAudioManager(sfxAudioManager);
+            howToPlayOverlayView.ApplyTheme(config.ThemeConfig);
+            howToPlayOverlayView.HideImmediate();
+            howToPlayOverlayView.SetButtonVisible(true);
+        }
+
+        private void StartGameplayAfterIntro()
+        {
+            waitingForHowToPlay = false;
+            howToOpenedFromGameplay = false;
+
+            SetInputLocked(false);
+            RefreshHintUIInteractivity();
+
+            sfxAudioManager?.PlayActivityStart();
+            sfxAudioManager?.StartBackgroundLoop();
+
+            if (countdownTimer != null && countdownTimer.TimerEnabled)
+            {
+                countdownTimer.StartTimer();
+            }
+
+            UpdateDebugStatus("Activity started.");
+        }
+
         private void UpdateHeader(MemoryActivityConfig config)
         {
             if (titleText != null)
@@ -322,6 +447,9 @@ namespace NGEducation.MemoryMatch
                 return;
             }
 
+            cardClicks++;
+            sfxAudioManager?.PlayCardFlip();
+
             if (firstSelectedCard == null)
             {
                 firstSelectedCard = clickedCard;
@@ -333,6 +461,7 @@ namespace NGEducation.MemoryMatch
             }
 
             secondSelectedCard = clickedCard;
+            pairAttempts++;
             secondSelectedCard.FlipUp();
             secondSelectedCard.SetSelected(true);
             SetInputLocked(true);
@@ -344,6 +473,14 @@ namespace NGEducation.MemoryMatch
         private IEnumerator EvaluateSelectedCardsRoutine()
         {
             yield return new WaitForSeconds(matchCheckDelay);
+
+            yield return WaitWhilePausedForFlow();
+
+            if (ShouldStopFlow())
+            {
+                evaluateSelectionRoutine = null;
+                yield break;
+            }
 
             bool isCorrect = MemoryMatchValidator.IsCorrectMatch(firstSelectedCard, secondSelectedCard);
 
@@ -379,10 +516,21 @@ namespace NGEducation.MemoryMatch
             }
 
             matchedPairs++;
+            sfxAudioManager?.PlayCorrectMatch();
+            AddScore(currentDifficultyConfig != null ? currentDifficultyConfig.ScorePerCorrectMatch : 0, true);
 
-            if (correctFeedbackBeforePopupDelay > 0f)
+            float feedbackDelay = Mathf.Max(correctFeedbackBeforePopupDelay, scoreFeedbackBeforePopupDelay);
+
+            if (feedbackDelay > 0f)
             {
-                yield return new WaitForSeconds(correctFeedbackBeforePopupDelay);
+                yield return new WaitForSeconds(feedbackDelay);
+            }
+
+            yield return WaitWhilePausedForFlow();
+
+            if (ShouldStopFlow())
+            {
+                yield break;
             }
 
             MemoryPairDefinition pair = null;
@@ -415,6 +563,9 @@ namespace NGEducation.MemoryMatch
                 {
                     narrationDuration = pair.NarrationAudio.length;
                 }
+
+                sfxAudioManager?.PlayPopupOpen();
+                sfxAudioManager?.SetBackgroundDucked(true);
 
                 learningPopupView.Show(
                     pair,
@@ -451,6 +602,8 @@ namespace NGEducation.MemoryMatch
         private IEnumerator HandleWrongMatchRoutine()
         {
             wrongAttempts++;
+            sfxAudioManager?.PlayWrongMatch();
+            AddScore(-(currentDifficultyConfig != null ? currentDifficultyConfig.WrongMatchPenalty : 0), false);
             UpdateDebugStatus("Wrong match.");
 
             if (firstSelectedCard != null)
@@ -464,6 +617,13 @@ namespace NGEducation.MemoryMatch
             }
 
             yield return new WaitForSeconds(wrongFlipBackDelay);
+
+            yield return WaitWhilePausedForFlow();
+
+            if (ShouldStopFlow())
+            {
+                yield break;
+            }
 
             if (firstSelectedCard != null)
             {
@@ -493,20 +653,36 @@ namespace NGEducation.MemoryMatch
                 return;
             }
 
-            HintPair pair = FindHintPair();
+            HintPair hintPair = FindHintPair();
 
-            if (!pair.IsValid)
+            if (!hintPair.IsValid)
             {
                 RefreshHintUIInteractivity();
                 return;
             }
 
-            hintRevealRoutine = StartCoroutine(HintRevealRoutine(pair.First, pair.Second));
+            sfxAudioManager?.PlayButtonClick();
+            hintRevealRoutine = StartCoroutine(HintRevealRoutine(hintPair.First, hintPair.Second));
         }
 
         private bool CanUseHint()
         {
-            if (!CanUseHintWithoutPairSearch())
+            if (currentDifficultyConfig == null || !currentDifficultyConfig.HintsEnabled)
+            {
+                return false;
+            }
+
+            if (hintsUsed >= maxHints || maxHints <= 0)
+            {
+                return false;
+            }
+
+            if (hintActive || inputLocked || gamePaused || timerExpired || activityCompleted || waitingForPopupContinue || waitingForHowToPlay)
+            {
+                return false;
+            }
+
+            if (firstSelectedCard != null || secondSelectedCard != null)
             {
                 return false;
             }
@@ -518,6 +694,8 @@ namespace NGEducation.MemoryMatch
         {
             hintActive = true;
             hintsUsed++;
+            sfxAudioManager?.PlayHintUsed();
+            AddScore(-(currentDifficultyConfig != null ? currentDifficultyConfig.HintPenalty : 0), false);
             RefreshHintUIInteractivity();
             SetInputLocked(true);
 
@@ -531,8 +709,10 @@ namespace NGEducation.MemoryMatch
 
             first.FlipUp();
             second.FlipUp();
+
             first.SetHinted(true);
             second.SetHinted(true);
+
             first.PlayHintFeedback();
             second.PlayHintFeedback();
 
@@ -541,6 +721,7 @@ namespace NGEducation.MemoryMatch
 
             first.StopHintFeedback();
             second.StopHintFeedback();
+
             first.SetHinted(false);
             second.SetHinted(false);
 
@@ -618,6 +799,54 @@ namespace NGEducation.MemoryMatch
             }
         }
 
+        private void AddScore(int delta, bool playPositiveParticle)
+        {
+            if (currentDifficultyConfig == null || !currentDifficultyConfig.ScoringEnabled || delta == 0)
+            {
+                return;
+            }
+
+            currentScore += delta;
+
+            if (currentDifficultyConfig.ClampScoreAtZero)
+            {
+                currentScore = Mathf.Max(0, currentScore);
+            }
+
+            if (delta > 0)
+            {
+                sfxAudioManager?.PlayScorePositive();
+            }
+            else if (delta < 0)
+            {
+                sfxAudioManager?.PlayScoreNegative();
+            }
+
+            if (scoreUIView != null)
+            {
+                scoreUIView.SetScore(currentScore);
+                scoreUIView.ShowScoreDelta(delta);
+
+                if (delta > 0 && playPositiveParticle)
+                {
+                    scoreUIView.PlayCorrectParticle();
+                }
+            }
+        }
+
+        private IEnumerator WaitWhilePausedForFlow()
+        {
+            while (gamePaused || waitingForHowToPlay)
+            {
+                yield return null;
+            }
+        }
+
+        private bool ShouldStopFlow()
+        {
+            return activityCompleted || timerExpired;
+        }
+
         private void PauseGame()
         {
             if (gamePaused || activityCompleted || timerExpired)
@@ -626,6 +855,9 @@ namespace NGEducation.MemoryMatch
             }
 
             gamePaused = true;
+            sfxAudioManager?.PlayButtonClick();
+            sfxAudioManager?.PlayPause();
+            sfxAudioManager?.PauseBackgroundLoop();
             SetInputLocked(true);
             PauseTimerOnly();
 
@@ -663,7 +895,9 @@ namespace NGEducation.MemoryMatch
             }
 
             gamePaused = false;
-            hintActive = false;
+            sfxAudioManager?.PlayButtonClick();
+            sfxAudioManager?.PlayResume();
+            sfxAudioManager?.ResumeBackgroundLoop();
 
             if (pauseController != null)
             {
@@ -691,7 +925,12 @@ namespace NGEducation.MemoryMatch
                 ResumeTimerOnly();
             }
 
-            if (!waitingForPopupContinue && !timerExpired && !activityCompleted && !hintActive)
+            if (!waitingForPopupContinue &&
+                !timerExpired &&
+                !activityCompleted &&
+                !hintActive &&
+                !waitingForHowToPlay &&
+                evaluateSelectionRoutine == null)
             {
                 SetInputLocked(false);
             }
@@ -718,6 +957,8 @@ namespace NGEducation.MemoryMatch
 
         private void ReplayCurrentNarration()
         {
+            sfxAudioManager?.PlayButtonClick();
+
             if (audioNarrationManager != null)
             {
                 audioNarrationManager.ReplayCurrent();
@@ -736,6 +977,7 @@ namespace NGEducation.MemoryMatch
                 learningPopupView.Hide();
             }
 
+            sfxAudioManager?.SetBackgroundDucked(false);
             waitingForPopupContinue = false;
             RefreshHintUIInteractivity();
         }
@@ -754,6 +996,20 @@ namespace NGEducation.MemoryMatch
             {
                 timerUIView.SetWarningState(isWarning);
             }
+
+            if (isWarning)
+            {
+                sfxAudioManager?.PlayWarningStart();
+
+                if (currentDifficultyConfig == null || currentDifficultyConfig.PlayTickingSoundOnWarning)
+                {
+                    sfxAudioManager?.StartTimerTickingLoop();
+                }
+            }
+            else
+            {
+                sfxAudioManager?.StopTimerTickingLoop();
+            }
         }
 
         private void HandleTimerExpired()
@@ -764,7 +1020,11 @@ namespace NGEducation.MemoryMatch
             }
 
             timerExpired = true;
+            sfxAudioManager?.StopTimerTickingLoop();
+            sfxAudioManager?.PlayTimeUp();
+            sfxAudioManager?.StopBackgroundLoop();
             SetInputLocked(true);
+            StopTemporaryStates();
 
             if (timerUIView != null)
             {
@@ -778,7 +1038,53 @@ namespace NGEducation.MemoryMatch
 
             RefreshHintUIInteractivity();
             UpdateDebugStatus("Time up.");
-            Debug.Log($"Memory Match time up. Activity: {currentActivityConfig?.ActivityId}, Matched: {matchedPairs}/{totalPairs}, Wrong Attempts: {wrongAttempts}, Hints Used: {hintsUsed}", this);
+
+            ShowSummaryOverlay(BuildSummaryResult(false, true), summaryOverlayDelay);
+
+            Debug.Log($"Memory Match time up. Activity: {currentActivityConfig?.ActivityId}, Matched: {matchedPairs}/{totalPairs}, Attempts: {pairAttempts}, Clicks: {cardClicks}, Wrong Attempts: {wrongAttempts}, Hints Used: {hintsUsed}, Score: {currentScore}", this);
+        }
+
+        private void StopTemporaryStates()
+        {
+            if (hintRevealRoutine != null)
+            {
+                StopCoroutine(hintRevealRoutine);
+                hintRevealRoutine = null;
+            }
+
+            hintActive = false;
+
+            if (learningPopupView != null && waitingForPopupContinue)
+            {
+                learningPopupView.Hide();
+                waitingForPopupContinue = false;
+            }
+
+            if (audioNarrationManager != null)
+            {
+                audioNarrationManager.Stop();
+            }
+
+            if (activeCards != null)
+            {
+                for (int i = 0; i < activeCards.Count; i++)
+                {
+                    MemoryCardView card = activeCards[i];
+
+                    if (card == null)
+                    {
+                        continue;
+                    }
+
+                    card.SetHinted(false);
+                    card.StopHintFeedback();
+
+                    if (!card.IsMatched && card.IsFaceUp)
+                    {
+                        card.FlipDown();
+                    }
+                }
+            }
         }
 
         private void ClearCurrentSelectionReferences()
@@ -810,6 +1116,7 @@ namespace NGEducation.MemoryMatch
         private void CompleteActivity()
         {
             activityCompleted = true;
+            sfxAudioManager?.StopTimerTickingLoop();
             SetInputLocked(true);
 
             if (countdownTimer != null)
@@ -829,9 +1136,157 @@ namespace NGEducation.MemoryMatch
 
             RefreshHintUIInteractivity();
             UpdateDebugStatus("Activity complete.");
+
+            ShowSummaryOverlay(BuildSummaryResult(true, false), summaryOverlayDelay);
+
             Debug.Log(
-                $"Memory Match complete. Activity: {currentActivityConfig?.ActivityId}, Pairs: {matchedPairs}/{totalPairs}, Wrong Attempts: {wrongAttempts}, Hints Used: {hintsUsed}, Time Remaining: {countdownTimer?.RemainingSeconds}",
+                $"Memory Match complete. Activity: {currentActivityConfig?.ActivityId}, Pairs: {matchedPairs}/{totalPairs}, Attempts: {pairAttempts}, Clicks: {cardClicks}, Wrong Attempts: {wrongAttempts}, Hints Used: {hintsUsed}, Score: {currentScore}, Time Remaining: {countdownTimer?.RemainingSeconds}",
                 this);
+        }
+
+        private MemoryActivitySummaryResult BuildSummaryResult(bool completed, bool timeUp)
+        {
+            float totalTime = countdownTimer != null && countdownTimer.TimerEnabled
+                ? countdownTimer.TotalSeconds
+                : 0f;
+
+            float timeRemaining = countdownTimer != null && countdownTimer.TimerEnabled
+                ? countdownTimer.RemainingSeconds
+                : 0f;
+
+            float accuracy = pairAttempts <= 0
+                ? 0f
+                : (float)matchedPairs / pairAttempts * 100f;
+
+            return new MemoryActivitySummaryResult(
+                currentActivityConfig != null ? currentActivityConfig.ActivityId : string.Empty,
+                completed,
+                timeUp,
+                totalPairs,
+                matchedPairs,
+                pairAttempts,
+                wrongAttempts,
+                cardClicks,
+                hintsUsed,
+                currentScore,
+                totalTime,
+                timeRemaining,
+                accuracy);
+        }
+
+        private void ShowSummaryOverlay(MemoryActivitySummaryResult result, float delay)
+        {
+            if (summaryOverlayRoutine != null)
+            {
+                StopCoroutine(summaryOverlayRoutine);
+            }
+
+            summaryOverlayRoutine = StartCoroutine(ShowSummaryOverlayRoutine(result, delay));
+        }
+
+        private IEnumerator ShowSummaryOverlayRoutine(MemoryActivitySummaryResult result, float delay)
+        {
+            if (delay > 0f)
+            {
+                yield return new WaitForSeconds(delay);
+            }
+
+            yield return WaitWhilePausedForFlow();
+
+            sfxAudioManager?.StopBackgroundLoop();
+
+            if (result.Completed)
+            {
+                sfxAudioManager?.PlaySummarySuccess();
+            }
+            else if (result.TimeUp)
+            {
+                sfxAudioManager?.PlaySummaryTimeUp();
+            }
+
+            if (summaryOverlayView != null)
+            {
+                summaryOverlayView.Show(result, HandleSummaryContinue, HandleSummaryRetry);
+            }
+
+            summaryOverlayRoutine = null;
+        }
+
+        private void HandleSummaryContinue()
+        {
+            sfxAudioManager?.PlayButtonClick();
+            Debug.Log("Memory Match summary continue clicked. Phase 10 should forward this result to the global Bloom reward module.", this);
+        }
+
+        private void HandleSummaryRetry()
+        {
+            sfxAudioManager?.PlayButtonClick();
+
+            if (currentActivityConfig != null)
+            {
+                StartActivity(currentActivityConfig);
+            }
+        }
+
+        private void HandleHowToPlayRequested()
+        {
+            if (activityCompleted ||
+                timerExpired ||
+                waitingForPopupContinue ||
+                hintActive ||
+                inputLocked ||
+                evaluateSelectionRoutine != null)
+            {
+                return;
+            }
+
+            waitingForHowToPlay = true;
+            howToOpenedFromGameplay = true;
+
+            sfxAudioManager?.PlayPopupOpen();
+            sfxAudioManager?.PauseBackgroundLoop();
+
+            SetInputLocked(true);
+            PauseTimerOnly();
+            RefreshHintUIInteractivity();
+
+            if (howToPlayOverlayView != null)
+            {
+                howToPlayOverlayView.Show();
+            }
+
+            UpdateDebugStatus("How to play.");
+        }
+
+        private void HandleHowToPlayClosed()
+        {
+            if (!waitingForHowToPlay)
+            {
+                return;
+            }
+
+            bool wasOpenedFromGameplay = howToOpenedFromGameplay;
+
+            waitingForHowToPlay = false;
+            howToOpenedFromGameplay = false;
+
+            if (activityCompleted || timerExpired)
+            {
+                return;
+            }
+
+            if (wasOpenedFromGameplay)
+            {
+                sfxAudioManager?.ResumeBackgroundLoop();
+                ResumeTimerOnly();
+                SetInputLocked(false);
+                RefreshHintUIInteractivity();
+                UpdateDebugStatus("Resumed.");
+            }
+            else
+            {
+                StartGameplayAfterIntro();
+            }
         }
 
         private void RefreshHintUIInteractivity()
@@ -857,7 +1312,7 @@ namespace NGEducation.MemoryMatch
                 return false;
             }
 
-            if (hintActive || inputLocked || gamePaused || timerExpired || activityCompleted || waitingForPopupContinue)
+            if (hintActive || inputLocked || gamePaused || timerExpired || activityCompleted || waitingForPopupContinue || waitingForHowToPlay)
             {
                 return false;
             }
@@ -909,11 +1364,26 @@ namespace NGEducation.MemoryMatch
                 ? $"\nTime: {Mathf.CeilToInt(countdownTimer.RemainingSeconds)}s"
                 : string.Empty;
 
+            string hintLine = currentDifficultyConfig != null && currentDifficultyConfig.HintsEnabled
+                ? $"\nHints: {hintsUsed}/{maxHints}"
+                : string.Empty;
+
+            string scoreLine = currentDifficultyConfig != null && currentDifficultyConfig.ScoringEnabled
+                ? $"\nScore: {currentScore}"
+                : string.Empty;
+
+            string metricsLine =
+                $"\nAttempts: {pairAttempts}" +
+                $"\nClicks: {cardClicks}";
+
             debugStatusText.text =
                 $"{state}\n" +
                 $"Activity: {activityId}\n" +
                 $"Matched: {matchedPairs}/{totalPairs}\n" +
                 $"Wrong Attempts: {wrongAttempts}" +
+                metricsLine +
+                hintLine +
+                scoreLine +
                 timeLine;
         }
     }

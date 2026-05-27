@@ -38,8 +38,13 @@ namespace NGEducation.MemoryMatch
         [Tooltip("Optional. Assign a Slider if you want visual countdown progress.")]
         [SerializeField] private Slider autoContinueProgress;
 
+        [Header("Auto Continue Progress Theme - Optional")]
+        [SerializeField] private Image autoContinueProgressBackgroundImage;
+        [SerializeField] private Image autoContinueProgressFillImage;
+
         private Action onReplayAudio;
         private Action onContinue;
+        private MemorySfxAudioManager sfxAudioManager;
 
         private bool autoContinueEnabled;
         private bool autoContinuePaused;
@@ -89,6 +94,11 @@ namespace NGEducation.MemoryMatch
             ClearButtonListeners();
         }
 
+        public void SetSfxAudioManager(MemorySfxAudioManager manager)
+        {
+            sfxAudioManager = manager;
+        }
+
         public void ApplyTheme(MemoryThemeConfig theme)
         {
             if (theme == null)
@@ -102,6 +112,56 @@ namespace NGEducation.MemoryMatch
             defaultIllustrationSprite = theme.PopupDefaultIllustrationSprite;
             defaultIllustrationColor = theme.PopupDefaultIllustrationColor;
             useDefaultIllustrationWhenPairImageMissing = theme.UseDefaultIllustrationWhenPairImageMissing;
+
+            if (titleText != null && theme.HeaderFont != null)
+            {
+                titleText.font = theme.HeaderFont;
+            }
+
+            if (bodyText != null && theme.BodyFont != null)
+            {
+                bodyText.font = theme.BodyFont;
+            }
+
+            if (autoContinueCountdownText != null && theme.UIFont != null)
+            {
+                autoContinueCountdownText.font = theme.UIFont;
+            }
+
+            ApplyProgressTheme(theme);
+        }
+
+        private void ApplyProgressTheme(MemoryThemeConfig theme)
+        {
+            Image backgroundImage = autoContinueProgressBackgroundImage;
+            Image fillImage = autoContinueProgressFillImage;
+
+            if (autoContinueProgress != null)
+            {
+                if (backgroundImage == null)
+                {
+                    Transform background = autoContinueProgress.transform.Find("Background");
+                    if (background != null)
+                    {
+                        backgroundImage = background.GetComponent<Image>();
+                    }
+                }
+
+                if (fillImage == null && autoContinueProgress.fillRect != null)
+                {
+                    fillImage = autoContinueProgress.fillRect.GetComponent<Image>();
+                }
+            }
+
+            if (backgroundImage != null)
+            {
+                backgroundImage.color = theme.PopupProgressBackgroundColor;
+            }
+
+            if (fillImage != null)
+            {
+                fillImage.color = theme.PopupProgressFillColor;
+            }
         }
 
         public void Show(
@@ -291,6 +351,8 @@ namespace NGEducation.MemoryMatch
 
         private void HandleReplayAudioClicked()
         {
+            sfxAudioManager?.PlayButtonClick();
+
             if (!interactionEnabled || continueAlreadyRequested)
             {
                 return;
@@ -302,6 +364,8 @@ namespace NGEducation.MemoryMatch
 
         private void HandleContinueClicked()
         {
+            sfxAudioManager?.PlayButtonClick();
+
             if (!interactionEnabled)
             {
                 return;

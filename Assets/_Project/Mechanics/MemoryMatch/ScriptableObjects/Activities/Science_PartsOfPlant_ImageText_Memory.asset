@@ -1,0 +1,74 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 64fc57db2bd926341836a1952e358fb2, type: 3}
+  m_Name: Science_PartsOfPlant_ImageText_Memory
+  m_EditorClassIdentifier: Assembly-CSharp::NG.EduGames.MemoryMatch.MemoryActivityConfig
+  activityId: ' class3__english_whom_Shall_the_bird'
+  activityTitle: Whom Shall the Bird Belongs to?
+  instructionText: Match each scene with thier meaning
+  classLevel: 3
+  subject: English
+  chapterName: Whom Shall the Bird Belongs too?
+  themeConfig: {fileID: 11400000, guid: 96d46dae54dd42746a6c122f0df550ef, type: 2}
+  difficultyConfig: {fileID: 11400000, guid: a148d7f1f3c98e4498b688f897c93fa1, type: 2}
+  pauseTitle: Paused
+  pauseBodyText: 
+  useRandomLearningTextForPauseBody: 1
+  gridColumns: 1
+  gridRows: 2
+  cardAspectRatio: 1
+  maxPairsToUse: 0
+  pairs:
+  - pairId: root
+    cardAContentType: 1
+    cardAText: 
+    cardAImage: {fileID: 1309827103861963320, guid: 01efefc1c56ecd644bf138a53855233b, type: 3}
+    cardBContentType: 0
+    cardBText: Root
+    cardBImage: {fileID: 0}
+    learningTitle: Root
+    learningText: Roots hold the plant in the soil and absorb water.
+    learningImage: {fileID: 0}
+    narrationAudio: {fileID: 0}
+  - pairId: stem
+    cardAContentType: 1
+    cardAText: 
+    cardAImage: {fileID: 21300000, guid: bdbdbb7ad185c454b9d7504c0eca6ce7, type: 3}
+    cardBContentType: 0
+    cardBText: Stem
+    cardBImage: {fileID: 0}
+    learningTitle: Stem
+    learningText: The stem supports the plant and carries water to other parts.
+    learningImage: {fileID: 0}
+    narrationAudio: {fileID: 0}
+  - pairId: leaf
+    cardAContentType: 1
+    cardAText: 
+    cardAImage: {fileID: 21300000, guid: 485baff23dce4364bb5bed989f57d8bc, type: 3}
+    cardBContentType: 0
+    cardBText: Leaf
+    cardBImage: {fileID: 0}
+    learningTitle: Leaf
+    learningText: Leaves make food for the plant using sunlight.
+    learningImage: {fileID: 0}
+    narrationAudio: {fileID: 0}
+  - pairId: flower
+    cardAContentType: 1
+    cardAText: 
+    cardAImage: {fileID: 21300000, guid: d6baa4995772530499df071d9d5f357b, type: 3}
+    cardBContentType: 0
+    cardBText: Flower
+    cardBImage: {fileID: 0}
+    learningTitle: Flower
+    learningText: Flowers help the plant make seeds.
+    learningImage: {fileID: 0}
+    narrationAudio: {fileID: 0}

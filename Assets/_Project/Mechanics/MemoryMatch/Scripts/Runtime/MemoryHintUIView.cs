@@ -78,6 +78,11 @@ namespace NGEducation.MemoryMatch
             if (hintsRemainingText != null)
             {
                 hintsRemainingText.color = enabledTextColor;
+
+                if (theme.UIFont != null)
+                {
+                    hintsRemainingText.font = theme.UIFont;
+                }
             }
 
             if (hintBackgroundImage != null)
