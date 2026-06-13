@@ -22,7 +22,7 @@ public class LetterTile : MonoBehaviour
             letterText = GetComponentInChildren<TMP_Text>(true);
     }
 
-    public void Setup(char character, Action<string, LetterTile> clickCallback, TMP_FontAsset bodyFont)
+    public void Setup(char character, Action<string, LetterTile> clickCallback, TMP_FontAsset secondaryFont)
     {
         string letter = char.ToUpperInvariant(character).ToString();
         onClick = clickCallback;
@@ -31,8 +31,8 @@ public class LetterTile : MonoBehaviour
         {
             letterText.text = letter;
 
-            if (bodyFont != null)
-                letterText.font = bodyFont;
+            if (secondaryFont != null)
+                letterText.font = secondaryFont;
         }
 
         button.onClick.RemoveAllListeners();

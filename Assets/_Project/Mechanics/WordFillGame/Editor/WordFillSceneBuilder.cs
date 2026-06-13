@@ -8,54 +8,50 @@ using UnityEngine.UI;
 
 public static class WordFillSceneBuilder
 {
-    private const string RootFolder = "Assets/WordFillGame";
-    private const string PrefabFolder = RootFolder + "/Prefabs";
-    private const string LetterPrefabPath = PrefabFolder + "/LetterTilePrefab.prefab";
-
-    [MenuItem("Tools/Word Fill Game/Create V5 How To Play Scene UI")]
-    public static void CreateFinalSceneUI()
+    [MenuItem("Tools/Word Fill Game/Create V7 Final Layout Scene UI")]
+    public static void CreateV7SceneUI()
     {
-        EnsureFolder("Assets", "WordFillGame");
-        EnsureFolder(RootFolder, "Prefabs");
-
-        LetterTile letterPrefab = CreateOrLoadLetterTilePrefab();
-
         Canvas canvas = CreateCanvas();
         CreateEventSystemIfMissing();
 
         GameObject root = CreateUIObject("WordFillGameRoot", canvas.transform);
         Stretch(root.GetComponent<RectTransform>());
-        AddVerticalLayout(root, 14, 24, TextAnchor.UpperCenter);
 
-        GameObject topPanel = CreateUIObject("TopPanel", root.transform);
-        SetSize(topPanel.GetComponent<RectTransform>(), 0, 105);
-        AddHorizontalLayout(topPanel, 12, 8, TextAnchor.MiddleCenter);
+        WordFillFontApplier fontApplier = root.AddComponent<WordFillFontApplier>();
 
-        TMP_Text gameHeadingText = CreateText("GameHeadingText", topPanel.transform, "Affirmation Words", 36, TextAlignmentOptions.Left);
-        TMP_Text scoreText = CreateText("ScoreText", topPanel.transform, "Score: 0", 28, TextAlignmentOptions.Left);
-        TMP_Text timerText = CreateText("TimerText", topPanel.transform, "01:00", 40, TextAlignmentOptions.Center);
-        Button howToButton = CreateButton("HowToPlayButton", topPanel.transform, "How?", 26);
-        Button hintButton = CreateButton("HintButton_TopBar", topPanel.transform, "Hint", 26);
-        Button pauseButton = CreateButton("PauseButton", topPanel.transform, "Pause", 26);
-        TMP_Text feedbackText = CreateText("FeedbackText", topPanel.transform, "", 26, TextAlignmentOptions.Right);
+        Button howToButton = CreateBottomCornerButton("HowToPlayButton_BottomLeft", root.transform, "How?", true);
+        Button pauseButton = CreateBottomCornerButton("PauseButton_BottomRight", root.transform, "Pause", false);
 
-        AddLayoutElement(gameHeadingText.gameObject, 360, 78, 1);
-        AddLayoutElement(scoreText.gameObject, 200, 78, 0);
-        AddLayoutElement(timerText.gameObject, 165, 78, 0);
-        AddLayoutElement(howToButton.gameObject, 120, 66, 0);
-        AddLayoutElement(hintButton.gameObject, 120, 66, 0);
-        AddLayoutElement(pauseButton.gameObject, 135, 66, 0);
-        AddLayoutElement(feedbackText.gameObject, 230, 78, 0);
+        GameObject gameplayArea = CreateUIObject("MainGameplayArea", root.transform);
+        RectTransform gameplayRect = gameplayArea.GetComponent<RectTransform>();
+        gameplayRect.anchorMin = new Vector2(0.04f, 0.08f);
+        gameplayRect.anchorMax = new Vector2(0.96f, 0.96f);
+        gameplayRect.offsetMin = Vector2.zero;
+        gameplayRect.offsetMax = Vector2.zero;
+        AddVerticalLayout(gameplayArea, 14, 14, TextAnchor.UpperCenter);
 
-        TMP_Text objectiveText = CreateText("GameObjectiveText", root.transform, "Fill in the missing letters to complete the affirmation.", 30, TextAlignmentOptions.Center);
-        AddLayoutElement(objectiveText.gameObject, 0, 56, 0);
+        GameObject topBar = CreateUIObject("TopBarSingleLine", gameplayArea.transform);
+        AddHorizontalLayout(topBar, 16, 12, TextAnchor.MiddleCenter);
+        AddLayoutElement(topBar, 0, 82, 0);
 
-        GameObject centerPanel = CreateUIObject("CenterPanel", root.transform);
-        AddLayoutElement(centerPanel, 0, 560, 1);
-        AddVerticalLayout(centerPanel, 12, 12, TextAnchor.MiddleCenter);
+        TMP_Text instructionText = CreateText("InstructionLineText", topBar.transform, "Fill in the missing letters to complete the affirmation.", 30, TextAlignmentOptions.Left);
+        TMP_Text scoreText = CreateText("ScoreText", topBar.transform, "Score: 0", 28, TextAlignmentOptions.Center);
+        TMP_Text timerText = CreateText("TimerText", topBar.transform, "01:00", 38, TextAlignmentOptions.Center);
+        Button hintButton = CreateButton("HintButton_TopBar", topBar.transform, "Hint", 26);
+        TMP_Text feedbackText = CreateText("FeedbackText", topBar.transform, "", 26, TextAlignmentOptions.Right);
 
-        Image clueImage = CreateImage("ClueImage_Drag_AanyaSprite_Here", centerPanel.transform);
-        AddLayoutElement(clueImage.gameObject, 500, 300, 0);
+        AddLayoutElement(instructionText.gameObject, 560, 66, 1);
+        AddLayoutElement(scoreText.gameObject, 170, 66, 0);
+        AddLayoutElement(timerText.gameObject, 150, 66, 0);
+        AddLayoutElement(hintButton.gameObject, 120, 60, 0);
+        AddLayoutElement(feedbackText.gameObject, 200, 66, 0);
+
+        GameObject centerPanel = CreateUIObject("CenterPanel", gameplayArea.transform);
+        AddLayoutElement(centerPanel, 0, 570, 1);
+        AddVerticalLayout(centerPanel, 12, 10, TextAnchor.MiddleCenter);
+
+        Image clueImage = CreateImage("ClueImage_DragSpriteHere", centerPanel.transform);
+        AddLayoutElement(clueImage.gameObject, 520, 310, 0);
 
         TMP_Text clueText = CreateText("HiddenHintText", centerPanel.transform, "Aanya is showing courage while facing a challenge.", 30, TextAlignmentOptions.Center);
         CanvasGroup clueCanvasGroup = clueText.gameObject.AddComponent<CanvasGroup>();
@@ -65,9 +61,9 @@ public static class WordFillSceneBuilder
         TMP_Text wordText = CreateText("WordText", centerPanel.transform, "I am b _ _ _ _", 50, TextAlignmentOptions.Center);
         AddLayoutElement(wordText.gameObject, 950, 90, 0);
 
-        GameObject bottomPanel = CreateUIObject("BottomPanel", root.transform);
-        SetSize(bottomPanel.GetComponent<RectTransform>(), 0, 250);
-        AddVerticalLayout(bottomPanel, 15, 10, TextAnchor.MiddleCenter);
+        GameObject bottomPanel = CreateUIObject("BottomPanel", gameplayArea.transform);
+        AddLayoutElement(bottomPanel, 0, 235, 0);
+        AddVerticalLayout(bottomPanel, 14, 8, TextAnchor.MiddleCenter);
 
         GameObject letterParent = CreateUIObject("LetterButtonParent", bottomPanel.transform);
         GridLayoutGroup grid = letterParent.AddComponent<GridLayoutGroup>();
@@ -76,22 +72,29 @@ public static class WordFillSceneBuilder
         grid.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
         grid.constraintCount = 8;
         grid.childAlignment = TextAnchor.MiddleCenter;
-        AddLayoutElement(letterParent, 880, 120, 0);
+        AddLayoutElement(letterParent, 880, 122, 0);
 
         GameObject controls = CreateUIObject("ControlButtons", bottomPanel.transform);
-        AddHorizontalLayout(controls, 20, 0, TextAnchor.MiddleCenter);
-        AddLayoutElement(controls, 700, 85, 0);
+        AddHorizontalLayout(controls, 22, 0, TextAnchor.MiddleCenter);
+        AddLayoutElement(controls, 700, 78, 0);
 
         Button backspaceButton = CreateButton("BackspaceButton", controls.transform, "Backspace", 30);
         Button clearButton = CreateButton("ClearButton", controls.transform, "Clear", 30);
-        AddLayoutElement(backspaceButton.gameObject, 230, 72, 0);
-        AddLayoutElement(clearButton.gameObject, 180, 72, 0);
+        AddLayoutElement(backspaceButton.gameObject, 230, 70, 0);
+        AddLayoutElement(clearButton.gameObject, 180, 70, 0);
+
+        GameObject sceneTemplates = CreateUIObject("SceneTemplates_DoNotDelete", root.transform);
+        sceneTemplates.SetActive(false);
+        LetterTile letterTemplate = CreateLetterTileTemplate(sceneTemplates.transform);
 
         TMP_Text centerFeedbackText = CreateCenterFeedback(canvas.transform, out CanvasGroup centerFeedbackCanvasGroup);
-        GameObject howToPanelRoot = CreateHowToPlayPanel(canvas.transform, out WordFillHowToPlayPanel howToPanel);
-        GameObject pausePanel = CreatePausePanel(canvas.transform, out TMP_Text pauseTitleText, out Button continueButton);
-        GameObject completePanel = CreateCompletePanel(canvas.transform, out TMP_Text completeTitleText, out TMP_Text completeBodyText, out Button playAgainButton);
 
+        GameObject loadingPanel = CreateLoadingPanel(canvas.transform, out WordFillLoadingPanel loadingPanelComponent);
+        GameObject howToPanelRoot = CreateHowToPlayPanel(canvas.transform, out WordFillHowToPlayPanel howToPanel);
+        GameObject pausePanel = CreatePausePanel(canvas.transform, out TMP_Text pauseTitleText, out Button pauseContinueButton);
+        GameObject completePanel = CreateCompletePanel(canvas.transform, out TMP_Text completeTitleText, out TMP_Text completeBodyText, out Button playAgainButton, out Button completeContinueButton);
+
+        loadingPanel.SetActive(false);
         howToPanelRoot.SetActive(false);
         pausePanel.SetActive(false);
         completePanel.SetActive(false);
@@ -114,10 +117,10 @@ public static class WordFillSceneBuilder
         WordFillGameController controller = controllerObject.AddComponent<WordFillGameController>();
 
         SerializedObject so = new SerializedObject(controller);
-        so.FindProperty("gameHeading").stringValue = "Affirmation Words";
-        so.FindProperty("gameHeadingText").objectReferenceValue = gameHeadingText;
-        so.FindProperty("gameObjectiveLine").stringValue = "Fill in the missing letters to complete the affirmation.";
-        so.FindProperty("gameObjectiveText").objectReferenceValue = objectiveText;
+        so.FindProperty("fontApplier").objectReferenceValue = fontApplier;
+        so.FindProperty("gameInstructionLine").stringValue = "Fill in the missing letters to complete the affirmation.";
+        so.FindProperty("gameInstructionText").objectReferenceValue = instructionText;
+
         so.FindProperty("clueImage").objectReferenceValue = clueImage;
         so.FindProperty("clueText").objectReferenceValue = clueText;
         so.FindProperty("clueTextCanvasGroup").objectReferenceValue = clueCanvasGroup;
@@ -125,26 +128,36 @@ public static class WordFillSceneBuilder
         so.FindProperty("scoreText").objectReferenceValue = scoreText;
         so.FindProperty("feedbackText").objectReferenceValue = feedbackText;
         so.FindProperty("timerText").objectReferenceValue = timerText;
+
         so.FindProperty("howToPlayButton").objectReferenceValue = howToButton;
-        so.FindProperty("hintButton").objectReferenceValue = hintButton;
         so.FindProperty("pauseButton").objectReferenceValue = pauseButton;
+        so.FindProperty("hintButton").objectReferenceValue = hintButton;
+
         so.FindProperty("uiAnimator").objectReferenceValue = animator;
         so.FindProperty("audioManager").objectReferenceValue = audioManager;
         so.FindProperty("howToPlayPanel").objectReferenceValue = howToPanel;
+        so.FindProperty("loadingPanel").objectReferenceValue = loadingPanelComponent;
+
+        so.FindProperty("letterTileTemplate").objectReferenceValue = letterTemplate;
         so.FindProperty("letterButtonParent").objectReferenceValue = letterParent.transform;
-        so.FindProperty("letterTilePrefab").objectReferenceValue = letterPrefab;
+
         so.FindProperty("backspaceButton").objectReferenceValue = backspaceButton;
         so.FindProperty("clearButton").objectReferenceValue = clearButton;
+
         so.FindProperty("pausePanel").objectReferenceValue = pausePanel;
         so.FindProperty("pauseTitleText").objectReferenceValue = pauseTitleText;
-        so.FindProperty("continueButton").objectReferenceValue = continueButton;
+        so.FindProperty("continueButton").objectReferenceValue = pauseContinueButton;
+
         so.FindProperty("completePanel").objectReferenceValue = completePanel;
         so.FindProperty("completeTitleText").objectReferenceValue = completeTitleText;
         so.FindProperty("completeBodyText").objectReferenceValue = completeBodyText;
         so.FindProperty("playAgainButton").objectReferenceValue = playAgainButton;
+        so.FindProperty("completeContinueButton").objectReferenceValue = completeContinueButton;
+
         so.FindProperty("questionsPerRound").intValue = 5;
         so.FindProperty("maxTimeSeconds").floatValue = 60f;
         so.FindProperty("randomQuestionOrder").boolValue = true;
+        so.FindProperty("showLoadingPanelOnRoundStart").boolValue = true;
         so.FindProperty("showHowToPlayOnRoundStart").boolValue = true;
         so.FindProperty("timerWarningSeconds").floatValue = 10f;
         so.FindProperty("hintPenaltyPoints").intValue = 5;
@@ -161,12 +174,90 @@ public static class WordFillSceneBuilder
         SetQuestion(questions.GetArrayElementAtIndex(5), "Aanya is aware and conscious of what is happening.", "mindful", "I am mindful.", 10, 3);
         SetQuestion(questions.GetArrayElementAtIndex(6), "Rishi is sitting calmly and peacefully in a park.", "peaceful", "I am peaceful.", 10, 3);
         SetQuestion(questions.GetArrayElementAtIndex(7), "Aanya is full of great energy and enthusiasm.", "zealous", "I am zealous.", 10, 3);
+
         so.ApplyModifiedProperties();
 
         Selection.activeGameObject = controllerObject;
         EditorSceneManager.MarkSceneDirty(EditorSceneManager.GetActiveScene());
 
-        Debug.Log("Word Fill Game V5 How To Play layout created. Add DOTween, sprites, narration clips, how-to images, fonts, SFX, and music.");
+        Debug.Log("Word Fill Game V7 final layout created. No prefab asset is created; letter tiles use an inactive scene template.");
+    }
+
+    private static Button CreateBottomCornerButton(string name, Transform parent, string label, bool left)
+    {
+        Button button = CreateButton(name, parent, label, 26);
+        RectTransform rect = button.GetComponent<RectTransform>();
+
+        rect.anchorMin = left ? new Vector2(0f, 0f) : new Vector2(1f, 0f);
+        rect.anchorMax = left ? new Vector2(0f, 0f) : new Vector2(1f, 0f);
+        rect.pivot = left ? new Vector2(0f, 0f) : new Vector2(1f, 0f);
+        rect.sizeDelta = new Vector2(140f, 66f);
+        rect.anchoredPosition = left ? new Vector2(24f, 24f) : new Vector2(-24f, 24f);
+
+        return button;
+    }
+
+    private static GameObject CreateLoadingPanel(Transform parent, out WordFillLoadingPanel panelComponent)
+    {
+        GameObject panel = new GameObject("LoadingPanel", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
+        Undo.RegisterCreatedObjectUndo(panel, "Create Loading Panel");
+        panel.transform.SetParent(parent, false);
+        Stretch(panel.GetComponent<RectTransform>());
+        panel.GetComponent<Image>().color = new Color(0.92f, 0.88f, 1f, 1f);
+
+        GameObject card = CreateCenteredCard("LoadingCard", panel.transform, new Vector2(760, 430));
+        AddVerticalLayout(card, 28, 45, TextAnchor.MiddleCenter);
+
+        TMP_Text gameName = CreateText("LoadingGameNameText", card.transform, "Affirmation Words", 58, TextAlignmentOptions.Center);
+        AddLayoutElement(gameName.gameObject, 680, 120, 0);
+
+        GameObject sliderObject = new GameObject("LoadingSlider", typeof(RectTransform), typeof(Slider));
+        Undo.RegisterCreatedObjectUndo(sliderObject, "Create Loading Slider");
+        sliderObject.transform.SetParent(card.transform, false);
+        AddLayoutElement(sliderObject, 560, 42, 0);
+
+        Slider slider = sliderObject.GetComponent<Slider>();
+        slider.minValue = 0f;
+        slider.maxValue = 1f;
+        slider.value = 0f;
+        slider.transition = Selectable.Transition.None;
+
+        GameObject background = new GameObject("Background", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
+        background.transform.SetParent(sliderObject.transform, false);
+        Stretch(background.GetComponent<RectTransform>());
+        background.GetComponent<Image>().color = new Color(0.75f, 0.68f, 0.95f, 0.45f);
+
+        GameObject fillArea = new GameObject("Fill Area", typeof(RectTransform));
+        fillArea.transform.SetParent(sliderObject.transform, false);
+        RectTransform fillAreaRect = fillArea.GetComponent<RectTransform>();
+        fillAreaRect.anchorMin = Vector2.zero;
+        fillAreaRect.anchorMax = Vector2.one;
+        fillAreaRect.offsetMin = new Vector2(4f, 4f);
+        fillAreaRect.offsetMax = new Vector2(-4f, -4f);
+
+        GameObject fill = new GameObject("Fill", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
+        fill.transform.SetParent(fillArea.transform, false);
+        fill.GetComponent<Image>().color = new Color(0.47f, 0.30f, 0.85f, 1f);
+
+        slider.fillRect = fill.GetComponent<RectTransform>();
+        slider.targetGraphic = fill.GetComponent<Image>();
+
+        TMP_Text loadingText = CreateText("LoadingLineText", card.transform, "Loading", 30, TextAlignmentOptions.Center);
+        AddLayoutElement(loadingText.gameObject, 680, 70, 0);
+
+        panelComponent = panel.AddComponent<WordFillLoadingPanel>();
+        SerializedObject so = new SerializedObject(panelComponent);
+        so.FindProperty("panelRoot").objectReferenceValue = panel;
+        so.FindProperty("gameNameText").objectReferenceValue = gameName;
+        so.FindProperty("loadingSlider").objectReferenceValue = slider;
+        so.FindProperty("loadingLineText").objectReferenceValue = loadingText;
+        so.FindProperty("gameName").stringValue = "Affirmation Words";
+        so.FindProperty("loadingBaseText").stringValue = "Loading";
+        so.FindProperty("loadingDuration").floatValue = 1.5f;
+        so.FindProperty("dotAnimationSpeed").floatValue = 0.35f;
+        so.ApplyModifiedProperties();
+
+        return panel;
     }
 
     private static GameObject CreateHowToPlayPanel(Transform parent, out WordFillHowToPlayPanel panelComponent)
@@ -181,7 +272,7 @@ public static class WordFillSceneBuilder
         AddVerticalLayout(card, 18, 35, TextAnchor.MiddleCenter);
 
         TMP_Text title = CreateText("HowToTitleText", card.transform, "How To Play", 46, TextAlignmentOptions.Center);
-        TMP_Text instruction = CreateText("HowToInstructionText", card.transform, "Look at the picture and fill in the missing letters.", 32, TextAlignmentOptions.Center);
+        TMP_Text instruction = CreateText("HowToInstructionText", card.transform, "Look carefully at the picture and fill the word.", 32, TextAlignmentOptions.Center);
         Image image = CreateImage("HowToInstructionImage", card.transform);
         TMP_Text page = CreateText("HowToPageText", card.transform, "1 / 3", 26, TextAlignmentOptions.Center);
 
@@ -222,6 +313,37 @@ public static class WordFillSceneBuilder
 
         so.ApplyModifiedProperties();
         return panel;
+    }
+
+    private static LetterTile CreateLetterTileTemplate(Transform parent)
+    {
+        GameObject buttonObject = new GameObject("LetterTileTemplate", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image), typeof(Button));
+        Undo.RegisterCreatedObjectUndo(buttonObject, "Create Letter Tile Template");
+        buttonObject.transform.SetParent(parent, false);
+
+        RectTransform rect = buttonObject.GetComponent<RectTransform>();
+        rect.sizeDelta = new Vector2(92, 80);
+
+        Image image = buttonObject.GetComponent<Image>();
+        image.color = Color.white;
+
+        GameObject textObject = new GameObject("LetterText", typeof(RectTransform), typeof(CanvasRenderer), typeof(TextMeshProUGUI));
+        textObject.transform.SetParent(buttonObject.transform, false);
+        Stretch(textObject.GetComponent<RectTransform>());
+
+        TextMeshProUGUI tmp = textObject.GetComponent<TextMeshProUGUI>();
+        tmp.text = "A";
+        tmp.fontSize = 38;
+        tmp.alignment = TextAlignmentOptions.Center;
+        tmp.color = Color.black;
+
+        LetterTile tile = buttonObject.AddComponent<LetterTile>();
+        SerializedObject so = new SerializedObject(tile);
+        so.FindProperty("letterText").objectReferenceValue = tmp;
+        so.ApplyModifiedProperties();
+
+        buttonObject.SetActive(false);
+        return tile;
     }
 
     private static void SetHowToStep(SerializedProperty step, string instruction, Sprite image)
@@ -287,7 +409,7 @@ public static class WordFillSceneBuilder
         return panel;
     }
 
-    private static GameObject CreateCompletePanel(Transform parent, out TMP_Text titleText, out TMP_Text bodyText, out Button playAgainButton)
+    private static GameObject CreateCompletePanel(Transform parent, out TMP_Text titleText, out TMP_Text bodyText, out Button playAgainButton, out Button completeContinueButton)
     {
         GameObject panel = new GameObject("CompletePanel", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
         Undo.RegisterCreatedObjectUndo(panel, "Create Complete Panel");
@@ -295,16 +417,23 @@ public static class WordFillSceneBuilder
         Stretch(panel.GetComponent<RectTransform>());
         panel.GetComponent<Image>().color = new Color(0f, 0f, 0f, 0.65f);
 
-        GameObject card = CreateCenteredCard("ResultCard", panel.transform, new Vector2(720, 530));
-        AddVerticalLayout(card, 22, 35, TextAnchor.MiddleCenter);
+        GameObject card = CreateCenteredCard("ResultCard", panel.transform, new Vector2(760, 560));
+        AddVerticalLayout(card, 18, 35, TextAnchor.MiddleCenter);
 
         titleText = CreateText("CompleteTitleText", card.transform, "Game Complete!", 46, TextAlignmentOptions.Center);
         bodyText = CreateText("CompleteBodyText", card.transform, "Correct Answers: 5 / 5\nWrong Attempts: 0\nHints Used: 0\nHint Penalty: -0\nFinal Score: 50\nTime Used: 35 / 60 sec", 32, TextAlignmentOptions.Center);
-        playAgainButton = CreateButton("PlayAgainButton", card.transform, "Play Again", 32);
 
-        AddLayoutElement(titleText.gameObject, 640, 75, 0);
-        AddLayoutElement(bodyText.gameObject, 640, 285, 0);
-        AddLayoutElement(playAgainButton.gameObject, 260, 75, 0);
+        GameObject buttons = CreateUIObject("CompleteButtons", card.transform);
+        AddHorizontalLayout(buttons, 22, 0, TextAnchor.MiddleCenter);
+
+        playAgainButton = CreateButton("PlayAgainButton", buttons.transform, "Play Again", 32);
+        completeContinueButton = CreateButton("CompleteContinueButton", buttons.transform, "Continue", 32);
+
+        AddLayoutElement(titleText.gameObject, 660, 75, 0);
+        AddLayoutElement(bodyText.gameObject, 660, 285, 0);
+        AddLayoutElement(buttons, 660, 82, 0);
+        AddLayoutElement(playAgainButton.gameObject, 240, 75, 0);
+        AddLayoutElement(completeContinueButton.gameObject, 240, 75, 0);
 
         return panel;
     }
@@ -323,44 +452,6 @@ public static class WordFillSceneBuilder
         image.color = Color.white;
 
         return card;
-    }
-
-    private static LetterTile CreateOrLoadLetterTilePrefab()
-    {
-        LetterTile existing = AssetDatabase.LoadAssetAtPath<LetterTile>(LetterPrefabPath);
-        if (existing != null)
-            return existing;
-
-        GameObject buttonObject = new GameObject("LetterTilePrefab", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image), typeof(Button));
-        RectTransform rect = buttonObject.GetComponent<RectTransform>();
-        rect.sizeDelta = new Vector2(92, 80);
-
-        Image image = buttonObject.GetComponent<Image>();
-        image.color = Color.white;
-
-        GameObject textObject = new GameObject("LetterText", typeof(RectTransform), typeof(CanvasRenderer), typeof(TextMeshProUGUI));
-        textObject.transform.SetParent(buttonObject.transform, false);
-        Stretch(textObject.GetComponent<RectTransform>());
-
-        TextMeshProUGUI tmp = textObject.GetComponent<TextMeshProUGUI>();
-        tmp.text = "A";
-        tmp.fontSize = 38;
-        tmp.alignment = TextAlignmentOptions.Center;
-        tmp.color = Color.black;
-
-        LetterTile tile = buttonObject.AddComponent<LetterTile>();
-
-        SerializedObject so = new SerializedObject(tile);
-        so.FindProperty("letterText").objectReferenceValue = tmp;
-        so.ApplyModifiedProperties();
-
-        GameObject prefab = PrefabUtility.SaveAsPrefabAsset(buttonObject, LetterPrefabPath);
-        Object.DestroyImmediate(buttonObject);
-
-        AssetDatabase.SaveAssets();
-        AssetDatabase.Refresh();
-
-        return prefab.GetComponent<LetterTile>();
     }
 
     private static Canvas CreateCanvas()
@@ -486,25 +577,12 @@ public static class WordFillSceneBuilder
         element.flexibleWidth = flexibleWidth;
     }
 
-    private static void SetSize(RectTransform rect, float width, float height)
-    {
-        rect.sizeDelta = new Vector2(width, height);
-    }
-
     private static void Stretch(RectTransform rect)
     {
         rect.anchorMin = Vector2.zero;
         rect.anchorMax = Vector2.one;
         rect.offsetMin = Vector2.zero;
         rect.offsetMax = Vector2.zero;
-    }
-
-    private static void EnsureFolder(string parent, string child)
-    {
-        string path = parent + "/" + child;
-
-        if (!AssetDatabase.IsValidFolder(path))
-            AssetDatabase.CreateFolder(parent, child);
     }
 }
 #endif

@@ -1,115 +1,124 @@
 using UnityEngine;
 
+[DisallowMultipleComponent]
 public class SentenceWordSearchAudio : MonoBehaviour
 {
     [Header("Sources")]
-    public AudioSource bgmSource;
+    public AudioSource bgMusicSource;
     public AudioSource sfxSource;
     public AudioSource narrationSource;
 
-    [Header("Clips")]
-    public AudioClip bgmClip;
+    [Header("Music")]
+    public AudioClip bgMusicClip;
+    [Range(0f, 1f)] public float bgMusicVolume = 0.35f;
+    public bool playMusicOnStart = true;
+    [Tooltip("Recommended for Bloom flow. Music starts only after PreGame and How To Play are complete.")]
+    public bool deferMusicUntilGameplayStarts = true;
+
+    [Header("SFX")]
     public AudioClip correctClip;
     public AudioClip wrongClip;
+    public AudioClip scorePopupClip;
+    public AudioClip hintClip;
     public AudioClip completeClip;
 
-    [Header("Volumes")]
-    [Range(0f, 1f)] public float bgmVolume = 0.35f;
-    [Range(0f, 1f)] public float sfxVolume = 1f;
-    [Range(0f, 1f)] public float narrationVolume = 1f;
+    [Header("Narration")]
+    public float noNarrationReadDuration = 1.35f;
+
+    public bool IsNarrationPlaying => narrationSource != null && narrationSource.isPlaying;
 
     private void Awake()
     {
         EnsureSources();
     }
 
-    public void PlayBgm()
+    private void Start()
     {
-        EnsureSources();
-
-        if (bgmSource == null || bgmClip == null)
-            return;
-
-        bgmSource.clip = bgmClip;
-        bgmSource.volume = bgmVolume;
-        bgmSource.loop = true;
-        bgmSource.Play();
+        if (playMusicOnStart && !deferMusicUntilGameplayStarts)
+            PlayBgMusic();
     }
 
-    public void StopBgm()
+    public void EnsureSources()
     {
-        if (bgmSource != null)
-            bgmSource.Stop();
-    }
-
-    public void PlayCorrect()
-    {
-        PlaySfx(correctClip);
-    }
-
-    public void PlayWrong()
-    {
-        PlaySfx(wrongClip);
-    }
-
-    public void PlayComplete()
-    {
-        PlaySfx(completeClip);
-    }
-
-    public float PlayNarrationAndGetDuration(AudioClip clip)
-    {
-        EnsureSources();
-
-        if (narrationSource == null || clip == null)
-            return 0f;
-
-        narrationSource.Stop();
-        narrationSource.clip = clip;
-        narrationSource.volume = narrationVolume;
-        narrationSource.loop = false;
-        narrationSource.Play();
-
-        return clip.length;
-    }
-
-    public bool IsNarrationPlaying()
-    {
-        return narrationSource != null && narrationSource.isPlaying;
-    }
-
-    private void PlaySfx(AudioClip clip)
-    {
-        EnsureSources();
-
-        if (sfxSource != null && clip != null)
+        if (bgMusicSource == null)
         {
-            sfxSource.volume = sfxVolume;
-            sfxSource.PlayOneShot(clip);
-        }
-    }
-
-    private void EnsureSources()
-    {
-        if (bgmSource == null)
-        {
-            GameObject obj = new GameObject("SentenceWordSearch_BGM_Source");
-            obj.transform.SetParent(transform, false);
-            bgmSource = obj.AddComponent<AudioSource>();
+            bgMusicSource = gameObject.AddComponent<AudioSource>();
+            bgMusicSource.loop = true;
+            bgMusicSource.playOnAwake = false;
         }
 
         if (sfxSource == null)
         {
-            GameObject obj = new GameObject("SentenceWordSearch_SFX_Source");
-            obj.transform.SetParent(transform, false);
-            sfxSource = obj.AddComponent<AudioSource>();
+            sfxSource = gameObject.AddComponent<AudioSource>();
+            sfxSource.loop = false;
+            sfxSource.playOnAwake = false;
         }
 
         if (narrationSource == null)
         {
-            GameObject obj = new GameObject("SentenceWordSearch_Narration_Source");
-            obj.transform.SetParent(transform, false);
-            narrationSource = obj.AddComponent<AudioSource>();
+            narrationSource = gameObject.AddComponent<AudioSource>();
+            narrationSource.loop = false;
+            narrationSource.playOnAwake = false;
         }
+    }
+
+    public void PlayBgMusic()
+    {
+        EnsureSources();
+
+        if (!playMusicOnStart || bgMusicClip == null)
+            return;
+
+        bgMusicSource.clip = bgMusicClip;
+        bgMusicSource.volume = bgMusicVolume;
+        bgMusicSource.loop = true;
+        bgMusicSource.Play();
+    }
+
+    public void StopBgMusic()
+    {
+        if (bgMusicSource != null)
+            bgMusicSource.Stop();
+    }
+
+    public void PlaySfx(AudioClip clip)
+    {
+        EnsureSources();
+
+        if (clip != null)
+            sfxSource.PlayOneShot(clip);
+    }
+
+    public float PlayNarration(AudioClip clip)
+    {
+        EnsureSources();
+
+        if (clip == null)
+            return noNarrationReadDuration;
+
+        narrationSource.Stop();
+        narrationSource.clip = clip;
+        narrationSource.Play();
+
+        return Mathf.Max(0.1f, clip.length);
+    }
+
+    public void StopNarration()
+    {
+        if (narrationSource != null)
+            narrationSource.Stop();
+    }
+
+    public void StopSfx()
+    {
+        if (sfxSource != null)
+            sfxSource.Stop();
+    }
+
+    public void StopAllGameAudio()
+    {
+        StopBgMusic();
+        StopNarration();
+        StopSfx();
     }
 }

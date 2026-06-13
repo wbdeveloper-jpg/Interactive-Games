@@ -39,21 +39,6 @@ public class WordFillHowToPlayPanel : MonoBehaviour
         CloseInstant();
     }
 
-    public void ApplyFonts(TMP_FontAsset headingFont, TMP_FontAsset bodyFont)
-    {
-        if (headingFont != null && titleText != null)
-            titleText.font = headingFont;
-
-        if (bodyFont != null)
-        {
-            if (instructionText != null)
-                instructionText.font = bodyFont;
-
-            if (pageText != null)
-                pageText.font = bodyFont;
-        }
-    }
-
     public void Open(Action continueCallback)
     {
         onContinue = continueCallback;

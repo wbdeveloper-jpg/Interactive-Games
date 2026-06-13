@@ -1,0 +1,108 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 64fc57db2bd926341836a1952e358fb2, type: 3}
+  m_Name: English_Whom_shall_the_bird_belongs_Img_Text
+  m_EditorClassIdentifier: Assembly-CSharp::NG.EduGames.MemoryMatch.MemoryActivityConfig
+  activityId: ' class3__english_whom_Shall_the_bird'
+  activityTitle: Whom Shall the Bird Belongs to?
+  instructionText: Match each scene with thier meaning
+  classLevel: 3
+  subject: English
+  chapterName: Whom Shall the Bird Belongs too?
+  pauseTitle: Paused
+  pauseBodyText: 
+  useRandomLearningTextForPauseBody: 1
+  themeConfig: {fileID: 11400000, guid: 96d46dae54dd42746a6c122f0df550ef, type: 2}
+  difficultyConfig: {fileID: 11400000, guid: a148d7f1f3c98e4498b688f897c93fa1, type: 2}
+  gridColumns: 1
+  gridRows: 2
+  cardAspectRatio: 1
+  maxPairsToUse: 0
+  randomizePairSelection: 1
+  pairs:
+  - pairId: Lost freedom
+    cardAContentType: 1
+    cardAText: 
+    cardAImage: {fileID: 21300000, guid: 4eb27c074a8f69f45bd388aca119f4f3, type: 3}
+    cardBContentType: 0
+    cardBText: Lost freedom
+    cardBImage: {fileID: 0}
+    learningTitle: Bird inside cage
+    learningText: All living beings feel sad when they lose their freedom.
+    learningImage: {fileID: 0}
+    narrationAudio: {fileID: 0}
+  - pairId: Set free
+    cardAContentType: 1
+    cardAText: 
+    cardAImage: {fileID: 21300000, guid: 2d51e1bcb80a7a44ea66288b8b945724, type: 3}
+    cardBContentType: 0
+    cardBText: Set free
+    cardBImage: {fileID: 0}
+    learningTitle: Open cage
+    learningText: Kindness means letting others live happily.
+    learningImage: {fileID: 0}
+    narrationAudio: {fileID: 0}
+  - pairId: Argument
+    cardAContentType: 1
+    cardAText: 
+    cardAImage: {fileID: 21300000, guid: 98cccc4c788f3b149a0957296ac3385a, type: 3}
+    cardBContentType: 0
+    cardBText: Argument
+    cardBImage: {fileID: 0}
+    learningTitle: Boys fighting
+    learningText: Fighting does not solve problems peacefully.
+    learningImage: {fileID: 0}
+    narrationAudio: {fileID: 0}
+  - pairId: Fair decision
+    cardAContentType: 1
+    cardAText: 
+    cardAImage: {fileID: 21300000, guid: 7f9cb28fed8583f42af5f79688359a79, type: 3}
+    cardBContentType: 0
+    cardBText: Fair decision
+    cardBImage: {fileID: 0}
+    learningTitle: Wise judge
+    learningText: Wise people listen carefully before deciding.
+    learningImage: {fileID: 0}
+    narrationAudio: {fileID: 0}
+  - pairId: Freedom
+    cardAContentType: 1
+    cardAText: 
+    cardAImage: {fileID: 21300000, guid: 864fbb5a20f71af4992401bc57bebcc0, type: 3}
+    cardBContentType: 0
+    cardBText: Freedom
+    cardBImage: {fileID: 0}
+    learningTitle: Bird flying
+    learningText: Freedom makes every creature happy.
+    learningImage: {fileID: 0}
+    narrationAudio: {fileID: 0}
+  - pairId: Natural home
+    cardAContentType: 1
+    cardAText: 
+    cardAImage: {fileID: 21300000, guid: 04631e17033e09746ba41a6ff4e55adb, type: 3}
+    cardBContentType: 0
+    cardBText: Natural home
+    cardBImage: {fileID: 0}
+    learningTitle: Bird in sky
+    learningText: Birds belong in nature, not in cages.
+    learningImage: {fileID: 0}
+    narrationAudio: {fileID: 0}
+  - pairId: Kindness
+    cardAContentType: 1
+    cardAText: 
+    cardAImage: {fileID: 21300000, guid: c24fa6a763e5f4a41b184da314077cc0, type: 3}
+    cardBContentType: 0
+    cardBText: Kindness
+    cardBImage: {fileID: 0}
+    learningTitle: Opening cage door
+    learningText: Being kind to animals is a good habit.
+    learningImage: {fileID: 0}
+    narrationAudio: {fileID: 0}

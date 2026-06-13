@@ -1,29 +1,41 @@
 using System.Collections;
 using System.Collections.Generic;
+using RewardSystem;
 using UnityEngine;
-using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
-public class SentenceWordSearchManager : MonoBehaviour
+[DisallowMultipleComponent]
+public class SentenceWordSearchManager : MonoBehaviour, IGameSceneCallbacks, IGameAudioCallbacks
 {
-    [Header("Question Bank")]
-    public List<SentenceWordSearchQuestion> questions = new List<SentenceWordSearchQuestion>();
-    public int maxQuestions = 5;
+    [Header("Questions")]
+    public List<SentenceWordSearchQuestion> questionBank = new List<SentenceWordSearchQuestion>();
+    [Min(1)] public int questionCount = 5;
     public bool randomizeQuestions = true;
 
-    [Header("Mechanic Settings")]
-    public SentenceWordSearchDifficulty difficulty = SentenceWordSearchDifficulty.Hard;
-    public bool allowReverseSelection = true;
-    public bool autoStart = true;
-
     [Header("Gameplay")]
+    public bool autoStart = true;
     public bool useTimer = true;
     public float gameTime = 120f;
-    public int scorePerCorrectAnswer = 10;
+    public int correctScore = 10;
     public int wrongPenalty = 1;
-    public float scorePopupDelay = 0.12f;
-    public float nextQuestionDelay = 0.25f;
-    public float wrongFlashTime = 0.35f;
-    public float textOnlyReadDuration = 1.15f;
+    public bool allowReverseSelection = true;
+    public float wrongFlashDuration = 0.35f;
+
+    [Header("Bloom Reward System")]
+    [Tooltip("Keep enabled for final build. If RewardManager.Instance is missing during direct scene testing, the game will safely skip Bloom screens.")]
+    public bool useBloomRewardSystem = true;
+    [Tooltip("Used for Bloom timeScore. If 0 or less, Game Time is used.")]
+    public float expectedMaxTime = 120f;
+
+    [Header("Board Settings - Edit Here Or On Board")]
+    [Tooltip("If enabled, these Manager board values are copied to SentenceWordSearchBoard when the game starts. Keep enabled for fast production editing from one Inspector.")]
+    public bool useManagerBoardSettings = true;
+    [Min(2)] public int rows = 8;
+    [Min(2)] public int columns = 8;
+    public int gridPadding = 10;
+    public Vector2 gridSpacing = new Vector2(8f, 8f);
+    public SentenceWordSearchDifficulty difficulty = SentenceWordSearchDifficulty.Medium;
+    public string fillerAlphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
     [Header("References")]
     public SentenceWordSearchBoard board;
@@ -31,68 +43,91 @@ public class SentenceWordSearchManager : MonoBehaviour
     public SentenceWordSearchUI ui;
     public SentenceWordSearchAudio audioController;
 
-    [Header("Buttons")]
-    public Button restartButton;
-    public Button resultRestartButton;
-    public Button howToPlayButton;
-    public Button closeHowToPlayButton;
-    public Button pauseButton;
-    public Button resumeButton;
-    public Button hintButton;
+    public bool CanAcceptInput
+    {
+        get
+        {
+            return gameRunning
+                   && gameplayStarted
+                   && !inputLocked
+                   && !paused
+                   && (ui == null || !ui.IsGameplayBlockingPanelOpen);
+        }
+    }
 
     private readonly List<SentenceWordSearchQuestion> activeQuestions = new List<SentenceWordSearchQuestion>();
 
+    private readonly List<SkillEntry> _skills = new List<SkillEntry>
+    {
+        new SkillEntry(BloomSkillType.Remember, 100f),
+        new SkillEntry(BloomSkillType.Understand, 100f),
+    };
+
     private int currentQuestionIndex;
-    private int totalQuestions;
     private int score;
+    private int correctCount;
+    private int wrongCount;
     private float remainingTime;
+    private float _startTime;
     private bool gameRunning;
+    private bool gameplayStarted;
+    private bool inputLocked;
     private bool paused;
-    private bool busy;
+    private bool waitingForHowToPlayClose;
+    private bool postGameOpened;
+    private GameEvaluationData lastEvaluationData;
+
+    private SentenceWordSearchQuestion CurrentQuestion
+    {
+        get
+        {
+            if (currentQuestionIndex < 0 || currentQuestionIndex >= activeQuestions.Count)
+                return null;
+
+            return activeQuestions[currentQuestionIndex];
+        }
+    }
 
     private void Awake()
     {
+        if (board == null)
+            board = FindObjectOfType<SentenceWordSearchBoard>();
+
+        if (inputController == null)
+            inputController = FindObjectOfType<SentenceWordSearchInputController>();
+
+        if (ui == null)
+            ui = FindObjectOfType<SentenceWordSearchUI>();
+
+        if (audioController == null)
+            audioController = FindObjectOfType<SentenceWordSearchAudio>();
+
         if (inputController != null)
-            inputController.SelectionSubmitted += OnSelectionSubmitted;
+        {
+            inputController.manager = this;
+            inputController.board = board;
+        }
 
-        if (restartButton != null)
-            restartButton.onClick.AddListener(StartGame);
-
-        if (resultRestartButton != null)
-            resultRestartButton.onClick.AddListener(StartGame);
-
-        if (howToPlayButton != null)
-            howToPlayButton.onClick.AddListener(() => ui?.ShowHowToPlay(true));
-
-        if (closeHowToPlayButton != null)
-            closeHowToPlayButton.onClick.AddListener(() => ui?.ShowHowToPlay(false));
-
-        if (pauseButton != null)
-            pauseButton.onClick.AddListener(PauseGame);
-
-        if (resumeButton != null)
-            resumeButton.onClick.AddListener(ResumeGame);
-
-        if (hintButton != null)
-            hintButton.onClick.AddListener(ShowHintForCurrentAnswer);
+        PullBoardSettingsIntoManagerIfNeeded();
+        HookButtons();
+        BuildDefaultQuestionsIfEmpty();
     }
 
     private void Start()
     {
-        BuildDefaultQuestionsIfEmpty();
-
         if (autoStart)
             StartGame();
     }
 
     private void Update()
     {
-        if (!gameRunning || paused || busy)
+        if (!gameRunning || !gameplayStarted || paused || inputLocked)
             return;
 
         if (useTimer)
         {
             remainingTime -= Time.deltaTime;
+
             if (remainingTime <= 0f)
             {
                 remainingTime = 0f;
@@ -100,258 +135,582 @@ public class SentenceWordSearchManager : MonoBehaviour
             }
         }
 
-        ui?.SetTimer(remainingTime, useTimer);
-    }
-
-    private void OnDestroy()
-    {
-        if (inputController != null)
-            inputController.SelectionSubmitted -= OnSelectionSubmitted;
+        if (ui != null)
+            ui.UpdateTimer(remainingTime, useTimer);
     }
 
     public void StartGame()
     {
         StopAllCoroutines();
-        BuildDefaultQuestionsIfEmpty();
+        StartCoroutine(StartGameRoutine());
+    }
 
-        BuildActiveQuestionSet();
+    private IEnumerator StartGameRoutine()
+    {
+        BuildDefaultQuestionsIfEmpty();
+        SelectActiveQuestions();
 
         if (activeQuestions.Count == 0)
         {
             Debug.LogError("SentenceWordSearchManager has no valid questions.");
-            return;
+            yield break;
         }
 
-        totalQuestions = activeQuestions.Count;
         currentQuestionIndex = 0;
         score = 0;
+        correctCount = 0;
+        wrongCount = 0;
         remainingTime = Mathf.Max(1f, gameTime);
         gameRunning = true;
+        gameplayStarted = false;
+        inputLocked = true;
         paused = false;
-        busy = false;
+        waitingForHowToPlayClose = false;
+        postGameOpened = false;
 
-        ui?.HideResult();
-        ui?.ShowPause(false);
-        ui?.SetScore(score);
-        ui?.SetTimer(remainingTime, useTimer);
+        if (inputController != null)
+            inputController.SetInputEnabled(false);
 
-        board?.BuildFixedBoard(activeQuestions, totalQuestions, difficulty);
-        audioController?.PlayBgm();
-        inputController?.SetInputEnabled(true);
+        if (audioController != null)
+        {
+            audioController.StopAllGameAudio();
+        }
+
+        if (ui != null)
+        {
+            ui.HideResult();
+            ui.HidePause();
+            ui.HideHowToPlay();
+            ui.UpdateScore(score);
+            ui.UpdateTimer(remainingTime, useTimer);
+            ui.ApplyFonts();
+        }
+
+        ApplyManagerBoardSettingsToBoard();
+
+        if (board != null)
+            board.BuildBoard(activeQuestions, ui != null ? ui.primaryFont : null);
 
         LoadCurrentQuestion();
+
+        yield return ShowBloomPreGameRoutine();
+        yield return ShowHowToPlayBeforeGameplayRoutine();
+
+        BeginGameplayAfterPreScreens();
     }
 
-    public void PauseGame()
+    private IEnumerator ShowBloomPreGameRoutine()
     {
-        if (!gameRunning || busy)
-            return;
+        if (!useBloomRewardSystem || RewardManager.Instance == null)
+            yield break;
 
-        paused = true;
-        inputController?.SetInputEnabled(false);
-        ui?.ShowPause(true);
+        RewardManager.Instance.ShowPreGame(_skills);
+        yield return new WaitUntil(() => RewardManager.Instance == null || RewardManager.Instance.IsPreGameComplete);
     }
 
-    public void ResumeGame()
+    private IEnumerator ShowHowToPlayBeforeGameplayRoutine()
+    {
+        if (ui == null || ui.howToPlayPanel == null)
+            yield break;
+
+        waitingForHowToPlayClose = true;
+        ui.ShowHowToPlay();
+
+        while (waitingForHowToPlayClose && ui != null && ui.IsHowToPlayOpen)
+            yield return null;
+
+        waitingForHowToPlayClose = false;
+    }
+
+    private void BeginGameplayAfterPreScreens()
     {
         if (!gameRunning)
             return;
 
-        paused = false;
-        inputController?.SetInputEnabled(true);
-        ui?.ShowPause(false);
+        inputLocked = false;
+        gameplayStarted = true;
+        _startTime = Time.time;
+
+        if (inputController != null)
+            inputController.SetInputEnabled(true);
+
+        if (audioController != null)
+            audioController.PlayBgMusic();
     }
 
-    public void ShowHintForCurrentAnswer()
+    public void SubmitSelectedWord(string selectedWord, List<SentenceWordSearchCell> selectedPath)
     {
-        if (!gameRunning || paused || busy || board == null || currentQuestionIndex >= activeQuestions.Count)
+        if (!CanAcceptInput)
             return;
 
-        string answer = activeQuestions[currentQuestionIndex].answer;
-        board.ShowHintForWord(answer);
+        SentenceWordSearchQuestion question = CurrentQuestion;
+
+        if (question == null)
+            return;
+
+        string selectedClean = CleanWordStatic(selectedWord);
+        string answerClean = CleanWordStatic(question.answer);
+
+        bool correct = selectedClean == answerClean;
+
+        if (!correct && allowReverseSelection)
+            correct = Reverse(selectedClean) == answerClean;
+
+        if (correct)
+            StartCoroutine(CorrectRoutine(question, selectedPath));
+        else
+            StartCoroutine(WrongRoutine(selectedPath));
+    }
+
+    public void UseHint()
+    {
+        if (!CanAcceptInput || CurrentQuestion == null)
+            return;
+
+        if (board != null)
+            board.PulseHintForWord(CurrentQuestion.answer);
+
+        if (audioController != null)
+            audioController.PlaySfx(audioController.hintClip);
+    }
+
+    public void PauseGame()
+    {
+        if (!gameRunning || !gameplayStarted)
+            return;
+
+        paused = true;
+
+        if (inputController != null)
+            inputController.SetInputEnabled(false);
+
+        if (ui != null)
+            ui.ShowPause();
+    }
+
+    public void ResumeGame()
+    {
+        paused = false;
+
+        if (ui != null)
+            ui.HidePause();
+
+        if (inputController != null)
+            inputController.SetInputEnabled(CanAcceptInput);
+    }
+
+    public void ShowHowToPlay()
+    {
+        if (ui == null)
+            return;
+
+        if (inputController != null)
+            inputController.SetInputEnabled(false);
+
+        ui.ShowHowToPlay();
+    }
+
+    public void HideHowToPlay()
+    {
+        OnHowToPlayClosePressed();
+    }
+
+    public void OnHowToPlayClosePressed()
+    {
+        if (ui != null)
+            ui.HideHowToPlay();
+
+        if (waitingForHowToPlayClose)
+        {
+            waitingForHowToPlayClose = false;
+            return;
+        }
+
+        if (inputController != null)
+            inputController.SetInputEnabled(CanAcceptInput);
+    }
+
+    private IEnumerator CorrectRoutine(SentenceWordSearchQuestion question, List<SentenceWordSearchCell> selectedPath)
+    {
+        inputLocked = true;
+
+        string answer = CleanWordStatic(question.answer);
+
+        Vector2 popupPosition = Vector2.zero;
+        Camera eventCamera = inputController != null ? inputController.EventCamera : null;
+
+        if (board != null)
+            popupPosition = board.GetPathCenterScreenPosition(selectedPath, eventCamera);
+
+        score += correctScore;
+        correctCount++;
+
+        if (ui != null)
+        {
+            ui.UpdateScore(score);
+            ui.ShowScorePopup($"+{correctScore}", popupPosition, eventCamera, true);
+        }
+
+        if (audioController != null)
+            audioController.PlaySfx(audioController.scorePopupClip != null ? audioController.scorePopupClip : audioController.correctClip);
+
+        yield return new WaitForSeconds(0.28f);
+
+        if (board != null)
+        {
+            board.ClearPreview();
+            board.MarkWordSolved(answer);
+        }
+
+        if (ui != null)
+            yield return ui.AnimateWordToSentence(answer, popupPosition, eventCamera);
+
+        if (audioController != null)
+            audioController.PlaySfx(audioController.correctClip);
+
+        float fallbackReadDuration = audioController != null ? audioController.PlayNarration(question.narrationClip) : 1.25f;
+
+        if (ui != null)
+            ui.StartSentenceReadPulse();
+
+        if (audioController != null && question.narrationClip != null)
+        {
+            while (audioController.IsNarrationPlaying)
+                yield return null;
+        }
+        else
+        {
+            yield return new WaitForSeconds(fallbackReadDuration);
+        }
+
+        if (ui != null)
+            ui.StopSentenceReadPulse();
+
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex >= activeQuestions.Count)
+        {
+            FinishGame(true);
+            yield break;
+        }
+
+        inputLocked = false;
+        LoadCurrentQuestion();
+    }
+
+    private IEnumerator WrongRoutine(List<SentenceWordSearchCell> selectedPath)
+    {
+        inputLocked = true;
+        wrongCount++;
+
+        Vector2 popupPosition = Vector2.zero;
+        Camera eventCamera = inputController != null ? inputController.EventCamera : null;
+
+        if (board != null)
+            popupPosition = board.GetPathCenterScreenPosition(selectedPath, eventCamera);
+
+        if (wrongPenalty > 0)
+            score = Mathf.Max(0, score - wrongPenalty);
+
+        if (ui != null)
+        {
+            ui.UpdateScore(score);
+            ui.ShowScorePopup($"-{wrongPenalty}", popupPosition, eventCamera, false);
+        }
+
+        if (audioController != null)
+            audioController.PlaySfx(audioController.wrongClip);
+
+        if (board != null)
+            board.FlashWrongPath(selectedPath, wrongFlashDuration);
+
+        yield return new WaitForSeconds(wrongFlashDuration);
+
+        if (board != null)
+            board.ClearPreview();
+
+        inputLocked = false;
     }
 
     private void LoadCurrentQuestion()
     {
-        if (currentQuestionIndex >= totalQuestions)
+        SentenceWordSearchQuestion question = CurrentQuestion;
+
+        if (question == null)
         {
             FinishGame(true);
             return;
         }
 
-        SentenceWordSearchQuestion question = activeQuestions[currentQuestionIndex];
-        ui?.SetQuestion(question, currentQuestionIndex, totalQuestions);
-        ui?.SetScore(score);
-        ui?.SetTimer(remainingTime, useTimer);
-    }
-
-    private void OnSelectionSubmitted(List<SentenceWordSearchCell> path, string selectedWord)
-    {
-        if (!gameRunning || paused || busy || path == null || path.Count == 0)
-            return;
-
-        string target = SentenceWordSearchUtility.CleanWord(activeQuestions[currentQuestionIndex].answer);
-        string cleanSelected = SentenceWordSearchUtility.CleanWord(selectedWord);
-
-        bool correct = cleanSelected == target;
-        if (!correct && allowReverseSelection)
-            correct = SentenceWordSearchUtility.Reverse(cleanSelected) == target;
-
-        if (correct)
-            StartCoroutine(CorrectRoutine(path));
-        else
-            StartCoroutine(WrongRoutine(path));
-    }
-
-    private IEnumerator CorrectRoutine(List<SentenceWordSearchCell> path)
-    {
-        busy = true;
-        inputController?.SetInputEnabled(false);
-        board?.ClearAllHints();
-
-        SentenceWordSearchQuestion question = activeQuestions[currentQuestionIndex];
-        string answer = SentenceWordSearchUtility.CleanWord(question.answer);
-        Vector3 startPosition = GetPathCenter(path);
-
-        board?.MarkSolved(path);
-        audioController?.PlayCorrect();
-
-        if (ui != null)
-            yield return ui.PlayScorePopup($"+{scorePerCorrectAnswer}", startPosition, true);
-
-        score += scorePerCorrectAnswer;
-        ui?.SetScore(score);
-
-        if (scorePopupDelay > 0f)
-            yield return new WaitForSeconds(scorePopupDelay);
-
-        if (ui != null)
-            yield return ui.PlayWordToSentenceAnimation(question.sentenceWithBlank, answer, startPosition);
-
-        float narrationDuration = audioController != null ? audioController.PlayNarrationAndGetDuration(question.narrationAudio) : 0f;
-        float readDuration = narrationDuration > 0.01f ? narrationDuration : textOnlyReadDuration;
-
-        if (ui != null)
-            yield return ui.PlaySentenceReadingPulse(readDuration);
-        else
-            yield return new WaitForSeconds(readDuration);
-
-        yield return new WaitForSeconds(nextQuestionDelay);
-
-        currentQuestionIndex++;
-        busy = false;
-
-        if (currentQuestionIndex >= totalQuestions)
+        if (board != null)
         {
-            FinishGame(true);
-        }
-        else
-        {
-            LoadCurrentQuestion();
-            inputController?.SetInputEnabled(true);
-        }
-    }
-
-    private IEnumerator WrongRoutine(List<SentenceWordSearchCell> path)
-    {
-        busy = true;
-        inputController?.SetInputEnabled(false);
-        board?.ClearAllHints();
-
-        Vector3 startPosition = GetPathCenter(path);
-        board?.MarkWrong(path, true);
-        audioController?.PlayWrong();
-
-        if (wrongPenalty > 0)
-        {
-            score = Mathf.Max(0, score - wrongPenalty);
-            ui?.SetScore(score);
+            board.ClearPreview();
+            board.StopAllHintPulses();
         }
 
         if (ui != null)
-            StartCoroutine(ui.PlayScorePopup($"-{Mathf.Max(1, wrongPenalty)}", startPosition, false));
-
-        yield return new WaitForSeconds(wrongFlashTime);
-
-        board?.MarkWrong(path, false);
-        board?.ClearPreview(path);
-
-        busy = false;
-        inputController?.SetInputEnabled(true);
+            ui.ShowQuestion(question, currentQuestionIndex + 1, activeQuestions.Count);
     }
 
     private void FinishGame(bool completed)
     {
+        if (!gameRunning)
+            return;
+
         gameRunning = false;
-        busy = true;
-        board?.ClearAllHints();
-        inputController?.SetInputEnabled(false);
-        ui?.ShowResult(completed, score);
-        audioController?.PlayComplete();
+        gameplayStarted = false;
+        inputLocked = true;
+        paused = false;
+
+        if (inputController != null)
+            inputController.SetInputEnabled(false);
+
+        if (audioController != null)
+        {
+            audioController.StopNarration();
+            audioController.PlaySfx(audioController.completeClip);
+        }
+
+        lastEvaluationData = BuildEvaluationData();
+
+        if (ui != null)
+        {
+            ui.StopSentenceReadPulse();
+            ui.ShowResult(score, completed);
+        }
     }
 
-    private void BuildActiveQuestionSet()
+    private GameEvaluationData BuildEvaluationData()
+    {
+        int totalQuestions = activeQuestions.Count;
+        float timeTaken = Mathf.Max(0f, Time.time - _startTime);
+        float maxTime = expectedMaxTime > 0f ? expectedMaxTime : gameTime;
+        maxTime = Mathf.Max(1f, maxTime);
+
+        float timeScore = Mathf.Clamp01(1f - (timeTaken / maxTime));
+        float accuracyScore = totalQuestions > 0 ? (float)correctCount / totalQuestions : 0f;
+
+        return new GameEvaluationData
+        {
+            timeScore = timeScore,
+            accuracyScore = Mathf.Clamp01(accuracyScore),
+            mistakeCount = wrongCount,
+            timeTaken = timeTaken
+        };
+    }
+
+    public void ShowPostGameReward()
+    {
+        if (postGameOpened)
+            return;
+
+        postGameOpened = true;
+
+        if (ui != null)
+            ui.HideResult();
+
+        if (audioController != null)
+            audioController.StopAllGameAudio();
+
+        if (useBloomRewardSystem && RewardManager.Instance != null)
+        {
+            RewardManager.Instance.ShowPostGame(_skills, lastEvaluationData);
+        }
+        else
+        {
+            Debug.LogWarning("Bloom RewardManager.Instance not found. Post-game reward screen skipped for direct scene testing.");
+        }
+    }
+
+    public void OnPlayAgain()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
+    public void OnHome()
+    {
+        SceneManager.LoadScene("Loader Scene");
+    }
+
+    public void OnRewardScreenOpen()
+    {
+        if (audioController != null)
+            audioController.StopAllGameAudio();
+    }
+
+    private void PullBoardSettingsIntoManagerIfNeeded()
+    {
+        if (board == null)
+            return;
+
+        rows = Mathf.Max(2, board.rows);
+        columns = Mathf.Max(2, board.columns);
+        gridPadding = board.gridPadding;
+        gridSpacing = board.gridSpacing;
+        difficulty = board.difficulty;
+        fillerAlphabet = board.fillerAlphabet;
+    }
+
+    private void ApplyManagerBoardSettingsToBoard()
+    {
+        if (!useManagerBoardSettings || board == null)
+            return;
+
+        rows = Mathf.Max(2, rows);
+        columns = Mathf.Max(2, columns);
+
+        board.rows = rows;
+        board.columns = columns;
+        board.gridPadding = gridPadding;
+        board.gridSpacing = gridSpacing;
+        board.difficulty = difficulty;
+        board.fillerAlphabet = fillerAlphabet;
+    }
+
+    private void OnValidate()
+    {
+        questionCount = Mathf.Max(1, questionCount);
+        rows = Mathf.Max(2, rows);
+        columns = Mathf.Max(2, columns);
+        gridPadding = Mathf.Max(0, gridPadding);
+        wrongPenalty = Mathf.Max(0, wrongPenalty);
+        correctScore = Mathf.Max(0, correctScore);
+
+        if (expectedMaxTime <= 0f)
+            expectedMaxTime = gameTime;
+    }
+
+    private void SelectActiveQuestions()
     {
         activeQuestions.Clear();
 
-        List<SentenceWordSearchQuestion> pool = new List<SentenceWordSearchQuestion>();
-        for (int i = 0; i < questions.Count; i++)
+        List<SentenceWordSearchQuestion> valid = new List<SentenceWordSearchQuestion>();
+
+        for (int i = 0; i < questionBank.Count; i++)
         {
-            if (questions[i] != null && !string.IsNullOrEmpty(SentenceWordSearchUtility.CleanWord(questions[i].answer)))
-                pool.Add(questions[i]);
+            if (questionBank[i] == null)
+                continue;
+
+            if (string.IsNullOrWhiteSpace(questionBank[i].answer))
+                continue;
+
+            valid.Add(questionBank[i]);
         }
 
         if (randomizeQuestions)
-            ShuffleQuestions(pool);
+            Shuffle(valid);
 
-        int count = Mathf.Clamp(maxQuestions, 1, pool.Count);
+        int count = Mathf.Clamp(questionCount, 1, valid.Count);
+
         for (int i = 0; i < count; i++)
-            activeQuestions.Add(pool[i]);
+            activeQuestions.Add(valid[i]);
     }
 
-    private void ShuffleQuestions(List<SentenceWordSearchQuestion> list)
+    private void Shuffle<T>(List<T> list)
     {
         for (int i = 0; i < list.Count; i++)
         {
             int randomIndex = Random.Range(i, list.Count);
-            SentenceWordSearchQuestion temp = list[i];
+            T temp = list[i];
             list[i] = list[randomIndex];
             list[randomIndex] = temp;
         }
     }
 
-    private Vector3 GetPathCenter(List<SentenceWordSearchCell> path)
+    private void HookButtons()
     {
-        if (path == null || path.Count == 0)
-            return Vector3.zero;
+        if (ui == null)
+            return;
 
-        Vector3 sum = Vector3.zero;
-        int count = 0;
-
-        for (int i = 0; i < path.Count; i++)
+        if (ui.pauseButton != null)
         {
-            if (path[i] == null)
-                continue;
-
-            sum += path[i].GetWorldCenter();
-            count++;
+            ui.pauseButton.onClick.RemoveListener(PauseGame);
+            ui.pauseButton.onClick.AddListener(PauseGame);
         }
 
-        return count > 0 ? sum / count : Vector3.zero;
+        if (ui.resumeButton != null)
+        {
+            ui.resumeButton.onClick.RemoveListener(ResumeGame);
+            ui.resumeButton.onClick.AddListener(ResumeGame);
+        }
+
+        if (ui.howToPlayButton != null)
+        {
+            ui.howToPlayButton.onClick.RemoveListener(ShowHowToPlay);
+            ui.howToPlayButton.onClick.AddListener(ShowHowToPlay);
+        }
+
+        if (ui.closeHowToPlayButton != null)
+        {
+            ui.closeHowToPlayButton.onClick.RemoveListener(OnHowToPlayClosePressed);
+            ui.closeHowToPlayButton.onClick.AddListener(OnHowToPlayClosePressed);
+        }
+
+        if (ui.hintButton != null)
+        {
+            ui.hintButton.onClick.RemoveListener(UseHint);
+            ui.hintButton.onClick.AddListener(UseHint);
+        }
+
+        if (ui.restartButton != null)
+        {
+            ui.restartButton.onClick.RemoveListener(StartGame);
+            ui.restartButton.onClick.AddListener(StartGame);
+        }
+
+        if (ui.resultRestartButton != null)
+        {
+            ui.resultRestartButton.onClick.RemoveListener(StartGame);
+            ui.resultRestartButton.onClick.AddListener(StartGame);
+        }
+
+        if (ui.resultContinueButton != null)
+        {
+            ui.resultContinueButton.onClick.RemoveListener(ShowPostGameReward);
+            ui.resultContinueButton.onClick.AddListener(ShowPostGameReward);
+        }
     }
 
     private void BuildDefaultQuestionsIfEmpty()
     {
-        if (questions.Count > 0)
+        if (questionBank.Count > 0)
             return;
 
-        questions.Add(new SentenceWordSearchQuestion { sentenceWithBlank = "The wind is _________.", answer = "STRONG" });
-        questions.Add(new SentenceWordSearchQuestion { sentenceWithBlank = "The sun is _________.", answer = "BRIGHT" });
-        questions.Add(new SentenceWordSearchQuestion { sentenceWithBlank = "Ice feels _________.", answer = "COLD" });
-        questions.Add(new SentenceWordSearchQuestion { sentenceWithBlank = "A baby cat is called a _________.", answer = "KITTEN" });
-        questions.Add(new SentenceWordSearchQuestion { sentenceWithBlank = "We drink _________.", answer = "WATER" });
-        questions.Add(new SentenceWordSearchQuestion { sentenceWithBlank = "The grass is _________.", answer = "GREEN" });
-        questions.Add(new SentenceWordSearchQuestion { sentenceWithBlank = "A bird can _________.", answer = "FLY" });
-        questions.Add(new SentenceWordSearchQuestion { sentenceWithBlank = "A fish can _________.", answer = "SWIM" });
+        questionBank.Add(new SentenceWordSearchQuestion { sentenceWithBlank = "The wind is _________.", answer = "STRONG" });
+        questionBank.Add(new SentenceWordSearchQuestion { sentenceWithBlank = "The sun is _________.", answer = "BRIGHT" });
+        questionBank.Add(new SentenceWordSearchQuestion { sentenceWithBlank = "Ice feels _________.", answer = "COLD" });
+        questionBank.Add(new SentenceWordSearchQuestion { sentenceWithBlank = "A baby cat is called a _________.", answer = "KITTEN" });
+        questionBank.Add(new SentenceWordSearchQuestion { sentenceWithBlank = "We drink _________.", answer = "WATER" });
+        questionBank.Add(new SentenceWordSearchQuestion { sentenceWithBlank = "A bird can _________.", answer = "FLY" });
+        questionBank.Add(new SentenceWordSearchQuestion { sentenceWithBlank = "Grass is usually _________.", answer = "GREEN" });
+        questionBank.Add(new SentenceWordSearchQuestion { sentenceWithBlank = "We see with our _________.", answer = "EYES" });
+    }
+
+    public static string CleanWordStatic(string value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+            return string.Empty;
+
+        System.Text.StringBuilder builder = new System.Text.StringBuilder(value.Length);
+
+        for (int i = 0; i < value.Length; i++)
+        {
+            char ch = value[i];
+
+            if (char.IsLetterOrDigit(ch))
+                builder.Append(char.ToUpperInvariant(ch));
+        }
+
+        return builder.ToString();
+    }
+
+    private string Reverse(string value)
+    {
+        if (string.IsNullOrEmpty(value))
+            return string.Empty;
+
+        char[] chars = value.ToCharArray();
+        System.Array.Reverse(chars);
+        return new string(chars);
     }
 }

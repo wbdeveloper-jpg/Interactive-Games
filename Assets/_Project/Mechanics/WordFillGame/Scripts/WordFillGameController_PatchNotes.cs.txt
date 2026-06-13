@@ -1,0 +1,81 @@
+IMPORTANT:
+I did not overwrite your full WordFillGameController automatically in this patch,
+because you already have a working manually-designed scene.
+
+Apply these changes manually to your current WordFillGameController:
+
+1. Add this field under Letters:
+
+[SerializeField] private WordFillLetterGridFitter letterGridFitter;
+
+2. Add these fields:
+
+[Header("Difficulty / Layout")]
+[SerializeField] private WordFillLetterDifficulty difficulty = WordFillLetterDifficulty.Easy;
+[SerializeField] private bool randomizeDifficultyPerQuestion = false;
+
+3. In AutoFindSystemsIfMissing(), add:
+
+if (letterGridFitter == null && letterButtonParent != null)
+    letterGridFitter = letterButtonParent.GetComponent<WordFillLetterGridFitter>();
+
+4. At the end of CreateLetterButtons(), after all letter tiles are spawned, add:
+
+WordFillLetterDifficulty activeDifficulty = GetActiveDifficulty();
+
+if (letterGridFitter != null)
+    letterGridFitter.FitGrid(letters.Count, activeDifficulty);
+
+5. Add this method inside WordFillGameController:
+
+private WordFillLetterDifficulty GetActiveDifficulty()
+{
+    if (!randomizeDifficultyPerQuestion)
+        return difficulty;
+
+    int value = Random.Range(0, 3);
+    return (WordFillLetterDifficulty)value;
+}
+
+6. Replace the old correct sentence part in CorrectAnswerSequence().
+
+Before narration plays, use this flow:
+
+string cleanAnswer = currentQuestion.GetCleanAnswer();
+string slotLine = currentQuestion.GetSlotLine();
+string completedLine = currentQuestion.GetCompletedLine();
+
+if (wordText != null)
+{
+    wordText.text = slotLine;
+    wordText.color = normalWordColor;
+}
+
+if (uiAnimator != null && wordText != null)
+    yield return uiAnimator.PlayWordFlyToSentence(cleanAnswer, wordText, completedLine, narrationWordColor);
+else if (wordText != null)
+    wordText.text = completedLine;
+
+Then play narration like before:
+
+float narrationDuration = 0f;
+
+if (audioManager != null)
+    narrationDuration = audioManager.PlayNarration(currentQuestion.completedLineNarration);
+
+if (narrationDuration <= 0f)
+    narrationDuration = fallbackNarrationDuration;
+
+if (uiAnimator != null && wordText != null)
+    yield return uiAnimator.PlayNarrationHighlight(wordText, normalWordColor, narrationWordColor, narrationDuration);
+else
+    yield return new WaitForSecondsRealtime(narrationDuration);
+
+7. Select WordFillUIAnimator in Inspector and assign:
+Flying Word Text = your hidden TMP text used for flying word animation.
+
+8. Select LetterButtonParent:
+Add Component > WordFillLetterGridFitter
+Assign it to WordFillGameController > Letter Grid Fitter.
+
+This patch is safer for your current working scene because it avoids breaking your existing controller references.

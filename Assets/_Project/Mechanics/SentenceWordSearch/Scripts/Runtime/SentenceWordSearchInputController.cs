@@ -1,106 +1,156 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.EventSystems;
-using UnityEngine.UI;
 
-[RequireComponent(typeof(Image))]
-public class SentenceWordSearchInputController : MonoBehaviour, IPointerDownHandler, IDragHandler, IPointerUpHandler
+[DisallowMultipleComponent]
+public class SentenceWordSearchInputController : MonoBehaviour
 {
     [Header("References")]
+    public SentenceWordSearchManager manager;
     public SentenceWordSearchBoard board;
+    public Canvas targetCanvas;
 
-    public event Action<List<SentenceWordSearchCell>, string> SelectionSubmitted;
-
-    private readonly List<SentenceWordSearchCell> currentPath = new List<SentenceWordSearchCell>();
+    [Header("Input")]
+    public bool inputEnabled = true;
 
     private SentenceWordSearchCell startCell;
-    private bool inputEnabled = true;
-    private bool isDragging;
+    private SentenceWordSearchCell currentCell;
+    private List<SentenceWordSearchCell> currentPath = new List<SentenceWordSearchCell>();
+    private bool dragging;
+
+    public Camera EventCamera
+    {
+        get
+        {
+            if (targetCanvas == null)
+                return null;
+
+            return targetCanvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : targetCanvas.worldCamera;
+        }
+    }
 
     private void Awake()
     {
-        Image raycastImage = GetComponent<Image>();
-        raycastImage.raycastTarget = true;
-        raycastImage.color = new Color(1f, 1f, 1f, 0f);
+        if (manager == null)
+            manager = FindObjectOfType<SentenceWordSearchManager>();
+
+        if (board == null)
+            board = FindObjectOfType<SentenceWordSearchBoard>();
+
+        if (targetCanvas == null)
+            targetCanvas = FindObjectOfType<Canvas>();
     }
 
-    public void SetInputEnabled(bool value)
+    private void Update()
     {
-        inputEnabled = value;
-
-        if (!value)
-            ClearCurrentPreview();
-    }
-
-    public void OnPointerDown(PointerEventData eventData)
-    {
-        if (!inputEnabled || board == null)
-            return;
-
-        SentenceWordSearchCell cell = board.FindCellAtScreenPosition(eventData.position);
-        if (cell == null)
-            return;
-
-        board.ClearAllHints();
-        isDragging = true;
-        startCell = cell;
-        UpdatePath(cell);
-    }
-
-    public void OnDrag(PointerEventData eventData)
-    {
-        if (!inputEnabled || !isDragging || board == null || startCell == null)
-            return;
-
-        SentenceWordSearchCell cell = board.FindCellAtScreenPosition(eventData.position);
-        if (cell == null)
-            return;
-
-        UpdatePath(cell);
-    }
-
-    public void OnPointerUp(PointerEventData eventData)
-    {
-        if (!isDragging)
-            return;
-
-        isDragging = false;
-
-        if (!inputEnabled || currentPath.Count == 0)
+        if (!inputEnabled || manager == null || board == null || !manager.CanAcceptInput)
         {
-            ClearCurrentPreview();
+            if (dragging)
+                CancelDrag();
+
             return;
         }
 
-        List<SentenceWordSearchCell> submittedPath = new List<SentenceWordSearchCell>(currentPath);
-        string selectedWord = board.GetWordFromCells(submittedPath);
-
-        SelectionSubmitted?.Invoke(submittedPath, selectedWord);
-
-        currentPath.Clear();
-        startCell = null;
+        HandleMouseInput();
+        HandleTouchInput();
     }
 
-    public void ClearCurrentPreview()
+    public void SetInputEnabled(bool enabled)
     {
-        if (board != null)
-            board.ClearPreview(currentPath);
+        inputEnabled = enabled;
 
-        currentPath.Clear();
-        startCell = null;
-        isDragging = false;
+        if (!enabled)
+            CancelDrag();
     }
 
-    private void UpdatePath(SentenceWordSearchCell endCell)
+    private void HandleMouseInput()
     {
-        List<SentenceWordSearchCell> newPath = board.GetStraightCellPath(startCell, endCell);
-        if (newPath == null || newPath.Count == 0)
+        if (Input.touchCount > 0)
             return;
 
-        board.ClearPreview(currentPath);
+        if (Input.GetMouseButtonDown(0))
+            BeginDrag(Input.mousePosition);
+
+        if (Input.GetMouseButton(0) && dragging)
+            UpdateDrag(Input.mousePosition);
+
+        if (Input.GetMouseButtonUp(0) && dragging)
+            EndDrag();
+    }
+
+    private void HandleTouchInput()
+    {
+        if (Input.touchCount <= 0)
+            return;
+
+        Touch touch = Input.GetTouch(0);
+
+        if (touch.phase == TouchPhase.Began)
+            BeginDrag(touch.position);
+        else if ((touch.phase == TouchPhase.Moved || touch.phase == TouchPhase.Stationary) && dragging)
+            UpdateDrag(touch.position);
+        else if ((touch.phase == TouchPhase.Ended || touch.phase == TouchPhase.Canceled) && dragging)
+            EndDrag();
+    }
+
+    private void BeginDrag(Vector2 screenPosition)
+    {
+        SentenceWordSearchCell cell = board.FindCellAtScreenPosition(screenPosition, EventCamera);
+
+        if (cell == null)
+            return;
+
+        dragging = true;
+        startCell = cell;
+        currentCell = cell;
+
+        currentPath = new List<SentenceWordSearchCell> { cell };
+        board.SetPreviewPath(currentPath);
+    }
+
+    private void UpdateDrag(Vector2 screenPosition)
+    {
+        if (!dragging || startCell == null)
+            return;
+
+        SentenceWordSearchCell hoverCell = board.FindCellAtScreenPosition(screenPosition, EventCamera);
+
+        if (hoverCell == null || hoverCell == currentCell)
+            return;
+
+        List<SentenceWordSearchCell> path = board.GetStraightPath(startCell, hoverCell);
+
+        if (path == null || path.Count == 0)
+            return;
+
+        currentCell = hoverCell;
+        currentPath = path;
+        board.SetPreviewPath(currentPath);
+    }
+
+    private void EndDrag()
+    {
+        dragging = false;
+
+        if (currentPath == null || currentPath.Count == 0)
+        {
+            CancelDrag();
+            return;
+        }
+
+        string selectedWord = board.GetWordFromPath(currentPath);
+        List<SentenceWordSearchCell> submittedPath = new List<SentenceWordSearchCell>(currentPath);
+
+        manager.SubmitSelectedWord(selectedWord, submittedPath);
+    }
+
+    private void CancelDrag()
+    {
+        dragging = false;
+        startCell = null;
+        currentCell = null;
         currentPath.Clear();
-        currentPath.AddRange(newPath);
-        board.MarkPreview(currentPath);
+
+        if (board != null)
+            board.ClearPreview();
     }
 }

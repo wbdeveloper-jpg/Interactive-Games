@@ -1,212 +1,293 @@
 using System.Collections;
+using System.Collections.Generic;
+using DG.Tweening;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using DG.Tweening;
 
+[DisallowMultipleComponent]
 public class SentenceWordSearchUI : MonoBehaviour
 {
     [Header("Universal Fonts")]
     public TMP_FontAsset primaryFont;
     public TMP_FontAsset secondaryFont;
-    public TextMeshProUGUI[] primaryFontTexts;
-    public TextMeshProUGUI[] secondaryFontTexts;
+    public List<TextMeshProUGUI> primaryTexts = new List<TextMeshProUGUI>();
+    public List<TextMeshProUGUI> secondaryTexts = new List<TextMeshProUGUI>();
 
-    [Header("Main UI")]
-    public Canvas canvas;
+    [Header("Text")]
+    public TextMeshProUGUI titleText;
     public TextMeshProUGUI sentenceText;
-    public TextMeshProUGUI progressText;
+    public TextMeshProUGUI progressText; // Legacy/backward compatible. Prefer questionCounterText for this layout.
+    public TextMeshProUGUI questionCounterText;
+    public TextMeshProUGUI instructionText;
     public TextMeshProUGUI scoreText;
     public TextMeshProUGUI timerText;
+    public TextMeshProUGUI resultTitleText;
+    public TextMeshProUGUI resultScoreText;
+    public TextMeshProUGUI howToPlayBodyText;
+
+    [Header("Images")]
     public Image questionImage;
 
     [Header("Panels")]
     public GameObject resultPanel;
-    public TextMeshProUGUI resultTitleText;
-    public TextMeshProUGUI resultScoreText;
     public GameObject howToPlayPanel;
     public GameObject pausePanel;
 
-    [Header("Animation Text")]
-    public TextMeshProUGUI flyingWordText;
-    public TextMeshProUGUI scorePopupText;
+    [Header("Buttons")]
+    public Button pauseButton;
+    public Button resumeButton;
+    public Button howToPlayButton;
+    public Button closeHowToPlayButton;
+    public Button hintButton;
+    public Button restartButton;
+    public Button resultRestartButton;
+    [Tooltip("Optional. Assign the Continue button in Result Panel here. It opens Bloom post-game reward screen.")]
+    public Button resultContinueButton;
 
-    [Header("Animation Settings")]
-    public Color readingHighlightColor = new Color(0.1f, 0.42f, 1f);
-    public Color normalSentenceColor = new Color(0.08f, 0.1f, 0.16f);
-    public Color positiveScoreColor = new Color(0.05f, 0.65f, 0.22f);
-    public Color negativeScoreColor = new Color(0.9f, 0.18f, 0.12f);
+    [Header("Animation Targets")]
+    public RectTransform overlayRoot;
+    public RectTransform sentenceAnswerTarget;
 
-    private Sequence readingSequence;
+    [Header("Colors")]
+    public Color sentenceNormalColor = new Color(0.22f, 0.18f, 0.18f, 1f);
+    public Color sentenceActiveColor = new Color(0.82f, 0.22f, 0.22f, 1f);
+    public Color positivePopupColor = new Color(0.78f, 0.12f, 0.12f, 1f);
+    public Color negativePopupColor = new Color(0.75f, 0.18f, 0.18f, 1f);
+
+    [Header("Animation")]
+    public float scorePopupDuration = 0.75f;
+    public float wordFlyDuration = 0.5f;
+
+    private Sequence sentencePulseSequence;
+    private string currentSentenceWithBlank = "";
+
+    public bool IsResultOpen => resultPanel != null && resultPanel.activeInHierarchy;
+    public bool IsHowToPlayOpen => howToPlayPanel != null && howToPlayPanel.activeInHierarchy;
+    public bool IsPauseOpen => pausePanel != null && pausePanel.activeInHierarchy;
+    public bool IsGameplayBlockingPanelOpen => IsResultOpen || IsHowToPlayOpen || IsPauseOpen;
 
     private void Awake()
     {
         ApplyFonts();
-    }
-
-    private void OnValidate()
-    {
-        ApplyFonts();
+        HideResult();
+        HidePause();
     }
 
     public void ApplyFonts()
     {
-        if (primaryFont != null && primaryFontTexts != null)
+        if (primaryFont != null)
         {
-            for (int i = 0; i < primaryFontTexts.Length; i++)
+            for (int i = 0; i < primaryTexts.Count; i++)
             {
-                if (primaryFontTexts[i] != null)
-                    primaryFontTexts[i].font = primaryFont;
+                if (primaryTexts[i] != null)
+                    primaryTexts[i].font = primaryFont;
             }
         }
 
-        if (secondaryFont != null && secondaryFontTexts != null)
+        if (secondaryFont != null)
         {
-            for (int i = 0; i < secondaryFontTexts.Length; i++)
+            for (int i = 0; i < secondaryTexts.Count; i++)
             {
-                if (secondaryFontTexts[i] != null)
-                    secondaryFontTexts[i].font = secondaryFont;
+                if (secondaryTexts[i] != null)
+                    secondaryTexts[i].font = secondaryFont;
             }
         }
     }
 
-    public void SetQuestion(SentenceWordSearchQuestion question, int index, int total)
+    public void ShowQuestion(SentenceWordSearchQuestion question, int questionNumber, int totalQuestions)
     {
-        StopSentenceReadingPulse();
+        currentSentenceWithBlank = question != null ? question.sentenceWithBlank : "";
 
         if (sentenceText != null)
         {
-            sentenceText.DOKill();
-            sentenceText.color = normalSentenceColor;
+            sentenceText.text = currentSentenceWithBlank;
+            sentenceText.color = sentenceNormalColor;
             sentenceText.transform.localScale = Vector3.one;
-            sentenceText.text = question.sentenceWithBlank;
         }
 
         if (questionImage != null)
         {
-            questionImage.sprite = question.questionSprite;
-            questionImage.gameObject.SetActive(question.questionSprite != null);
+            bool hasSprite = question != null && question.questionSprite != null;
+            questionImage.gameObject.SetActive(hasSprite);
+            questionImage.sprite = hasSprite ? question.questionSprite : null;
         }
 
-        SetProgress(index, total);
+        UpdateProgress(questionNumber, totalQuestions);
     }
 
-    public void SetProgress(int index, int total)
+    public void UpdateProgress(int questionNumber, int totalQuestions)
     {
+        string value = $"Question {questionNumber}/{totalQuestions}";
+
+        if (questionCounterText != null)
+            questionCounterText.text = value;
+
+        // Backward compatibility for older scenes that used ProgressText.
         if (progressText != null)
-            progressText.text = $"{index + 1} / {total}";
+            progressText.text = value;
     }
 
-    public void SetScore(int score)
+    public void UpdateScore(int score)
     {
         if (scoreText != null)
             scoreText.text = $"Score: {score}";
     }
 
-    public void SetTimer(float remaining, bool useTimer)
+    public void UpdateTimer(float seconds, bool useTimer)
     {
-        if (timerText != null)
-            timerText.text = useTimer ? SentenceWordSearchUtility.FormatTime(remaining) : "--";
-    }
+        if (timerText == null)
+            return;
 
-    public IEnumerator PlayScorePopup(string message, Vector3 startWorldPosition, bool positive)
-    {
-        EnsureScorePopupText();
-
-        if (scorePopupText == null)
-            yield break;
-
-        scorePopupText.gameObject.SetActive(true);
-        scorePopupText.DOKill();
-        scorePopupText.text = message;
-        scorePopupText.color = positive ? positiveScoreColor : negativeScoreColor;
-        scorePopupText.alpha = 1f;
-        scorePopupText.transform.position = startWorldPosition;
-        scorePopupText.transform.localScale = Vector3.one * 0.75f;
-
-        Sequence seq = DOTween.Sequence();
-        seq.Join(scorePopupText.transform.DOScale(1.25f, 0.2f).SetEase(Ease.OutBack));
-        seq.Append(scorePopupText.transform.DOMoveY(startWorldPosition.y + 85f, 0.45f).SetEase(Ease.OutQuad));
-        seq.Join(scorePopupText.DOFade(0f, 0.45f));
-        yield return seq.WaitForCompletion();
-
-        scorePopupText.gameObject.SetActive(false);
-    }
-
-    public IEnumerator PlayWordToSentenceAnimation(string sentenceWithBlank, string answer, Vector3 startWorldPosition)
-    {
-        EnsureFlyingWordText();
-
-        if (flyingWordText != null)
+        if (!useTimer)
         {
-            flyingWordText.gameObject.SetActive(true);
-            flyingWordText.DOKill();
-            flyingWordText.text = answer;
-            flyingWordText.transform.position = startWorldPosition;
-            flyingWordText.transform.localScale = Vector3.one * 0.75f;
-            flyingWordText.alpha = 1f;
-
-            Vector3 targetPosition = sentenceText != null ? sentenceText.transform.position : startWorldPosition;
-            Sequence flySeq = DOTween.Sequence();
-            flySeq.Join(flyingWordText.transform.DOMove(targetPosition, 0.48f).SetEase(Ease.InOutQuad));
-            flySeq.Join(flyingWordText.transform.DOScale(1.15f, 0.48f).SetEase(Ease.OutBack));
-            yield return flySeq.WaitForCompletion();
-
-            flyingWordText.gameObject.SetActive(false);
+            timerText.text = "--";
+            return;
         }
 
-        if (sentenceText != null)
-        {
-            sentenceText.text = SentenceWordSearchUtility.CompleteSentence(sentenceWithBlank, answer);
-            sentenceText.color = readingHighlightColor;
-            sentenceText.transform.DOKill();
-            sentenceText.transform.localScale = Vector3.one;
-            sentenceText.transform.DOPunchScale(Vector3.one * 0.08f, 0.28f, 8, 0.7f);
-            yield return new WaitForSeconds(0.28f);
-        }
+        int total = Mathf.CeilToInt(Mathf.Max(0f, seconds));
+        int minutes = total / 60;
+        int sec = total % 60;
+
+        timerText.text = $"{minutes:00}:{sec:00}";
     }
 
-    public IEnumerator PlaySentenceReadingPulse(float duration)
+    public void FillSentenceAnswer(string answer)
     {
         if (sentenceText == null)
-            yield break;
+            return;
 
-        duration = Mathf.Max(0.35f, duration);
-        StopSentenceReadingPulse();
-
-        sentenceText.color = readingHighlightColor;
-        sentenceText.transform.localScale = Vector3.one;
-
-        readingSequence = DOTween.Sequence();
-        readingSequence.Join(sentenceText.DOColor(readingHighlightColor, 0.12f));
-        readingSequence.Join(sentenceText.transform.DOScale(1.035f, 0.38f).SetEase(Ease.InOutSine));
-        readingSequence.SetLoops(-1, LoopType.Yoyo);
-
-        yield return new WaitForSeconds(duration);
-
-        StopSentenceReadingPulse();
+        string cleanAnswer = answer.ToUpperInvariant();
+        string source = string.IsNullOrWhiteSpace(currentSentenceWithBlank) ? sentenceText.text : currentSentenceWithBlank;
+        string coloredAnswer = $"<color=#{ColorUtility.ToHtmlStringRGB(sentenceActiveColor)}><b>{cleanAnswer}</b></color>";
+        sentenceText.text = ReplaceBlankWithAnswer(source, coloredAnswer);
     }
 
-    public void StopSentenceReadingPulse()
+    public void StartSentenceReadPulse()
     {
-        if (readingSequence != null)
+        if (sentenceText == null)
+            return;
+
+        StopSentenceReadPulse(false);
+
+        sentenceText.color = sentenceNormalColor;
+        sentenceText.transform.localScale = Vector3.one;
+
+        sentencePulseSequence = DOTween.Sequence();
+        sentencePulseSequence.Append(sentenceText.DOColor(sentenceActiveColor, 0.28f));
+        sentencePulseSequence.Join(sentenceText.transform.DOScale(1.035f, 0.28f));
+        sentencePulseSequence.Append(sentenceText.DOColor(sentenceNormalColor, 0.28f));
+        sentencePulseSequence.Join(sentenceText.transform.DOScale(1f, 0.28f));
+        sentencePulseSequence.SetLoops(-1);
+    }
+
+    public void StopSentenceReadPulse(bool resetColor = true)
+    {
+        if (sentencePulseSequence != null)
         {
-            readingSequence.Kill();
-            readingSequence = null;
+            sentencePulseSequence.Kill();
+            sentencePulseSequence = null;
         }
 
         if (sentenceText != null)
         {
-            sentenceText.DOKill();
+            sentenceText.transform.DOKill();
             sentenceText.transform.localScale = Vector3.one;
-            sentenceText.color = normalSentenceColor;
+
+            if (resetColor)
+                sentenceText.color = sentenceNormalColor;
         }
     }
 
-    public void ShowResult(bool completed, int score)
+    public void ShowScorePopup(string message, Vector2 screenPosition, Camera uiCamera, bool positive)
     {
-        StopSentenceReadingPulse();
+        if (overlayRoot == null)
+            return;
 
+        GameObject popupObject = new GameObject("ScorePopup", typeof(RectTransform));
+        popupObject.transform.SetParent(overlayRoot, false);
+
+        TextMeshProUGUI popupText = popupObject.AddComponent<TextMeshProUGUI>();
+        popupText.text = message;
+        popupText.alignment = TextAlignmentOptions.Center;
+        popupText.fontSize = 48f;
+        popupText.fontStyle = FontStyles.Bold;
+        popupText.raycastTarget = false;
+        popupText.color = positive ? positivePopupColor : negativePopupColor;
+
+        if (primaryFont != null)
+            popupText.font = primaryFont;
+
+        RectTransform rect = popupObject.GetComponent<RectTransform>();
+        rect.sizeDelta = new Vector2(220f, 90f);
+
+        Vector2 localPoint;
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(overlayRoot, screenPosition, uiCamera, out localPoint);
+        rect.anchoredPosition = localPoint;
+        rect.localScale = Vector3.one * 0.65f;
+
+        Sequence sequence = DOTween.Sequence();
+        sequence.Append(rect.DOScale(1.15f, 0.16f).SetEase(Ease.OutBack));
+        sequence.Join(rect.DOAnchorPos(localPoint + new Vector2(0f, 80f), scorePopupDuration).SetEase(Ease.OutCubic));
+        sequence.Join(popupText.DOFade(0f, scorePopupDuration).SetDelay(0.2f));
+        sequence.OnComplete(() =>
+        {
+            if (popupObject != null)
+                Destroy(popupObject);
+        });
+    }
+
+    public IEnumerator AnimateWordToSentence(string answer, Vector2 startScreenPosition, Camera uiCamera)
+    {
+        if (overlayRoot == null)
+        {
+            FillSentenceAnswer(answer);
+            yield break;
+        }
+
+        GameObject wordObject = new GameObject("FlyingAnswerWord", typeof(RectTransform));
+        wordObject.transform.SetParent(overlayRoot, false);
+
+        TextMeshProUGUI wordText = wordObject.AddComponent<TextMeshProUGUI>();
+        wordText.text = answer.ToUpperInvariant();
+        wordText.alignment = TextAlignmentOptions.Center;
+        wordText.fontSize = 54f;
+        wordText.fontStyle = FontStyles.Bold;
+        wordText.raycastTarget = false;
+        wordText.color = sentenceActiveColor;
+
+        if (primaryFont != null)
+            wordText.font = primaryFont;
+
+        RectTransform wordRect = wordObject.GetComponent<RectTransform>();
+        wordRect.sizeDelta = new Vector2(340f, 100f);
+
+        Vector2 startLocal;
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(overlayRoot, startScreenPosition, uiCamera, out startLocal);
+        wordRect.anchoredPosition = startLocal;
+        wordRect.localScale = Vector3.one * 0.85f;
+
+        RectTransform target = sentenceAnswerTarget != null ? sentenceAnswerTarget : sentenceText != null ? sentenceText.rectTransform : overlayRoot;
+        Vector2 targetScreen = RectTransformUtility.WorldToScreenPoint(uiCamera, target.position);
+        Vector2 endLocal;
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(overlayRoot, targetScreen, uiCamera, out endLocal);
+
+        Sequence sequence = DOTween.Sequence();
+        sequence.Append(wordRect.DOScale(1.15f, 0.14f).SetEase(Ease.OutBack));
+        sequence.Append(wordRect.DOAnchorPos(endLocal, wordFlyDuration).SetEase(Ease.InOutCubic));
+        sequence.Join(wordRect.DOScale(0.92f, wordFlyDuration));
+        sequence.Append(wordText.DOFade(0f, 0.12f));
+
+        yield return sequence.WaitForCompletion();
+
+        if (wordObject != null)
+            Destroy(wordObject);
+
+        FillSentenceAnswer(answer);
+    }
+
+    public void ShowResult(int score, bool completed)
+    {
         if (resultPanel != null)
             resultPanel.SetActive(true);
 
@@ -223,59 +304,56 @@ public class SentenceWordSearchUI : MonoBehaviour
             resultPanel.SetActive(false);
     }
 
-    public void ShowHowToPlay(bool show)
+    public void ShowHowToPlay()
     {
         if (howToPlayPanel != null)
-            howToPlayPanel.SetActive(show);
+            howToPlayPanel.SetActive(true);
     }
 
-    public void ShowPause(bool show)
+    public void HideHowToPlay()
+    {
+        if (howToPlayPanel != null)
+            howToPlayPanel.SetActive(false);
+    }
+
+    public void ShowPause()
     {
         if (pausePanel != null)
-            pausePanel.SetActive(show);
+            pausePanel.SetActive(true);
     }
 
-    private void EnsureFlyingWordText()
+    public void HidePause()
     {
-        if (flyingWordText != null)
-            return;
-
-        flyingWordText = CreateFloatingText("FlyingWordText", 52f, new Color(0.08f, 0.1f, 0.16f));
+        if (pausePanel != null)
+            pausePanel.SetActive(false);
     }
 
-    private void EnsureScorePopupText()
+    private string ReplaceBlankWithAnswer(string source, string answerRichText)
     {
-        if (scorePopupText != null)
-            return;
+        if (string.IsNullOrEmpty(source))
+            return answerRichText;
 
-        scorePopupText = CreateFloatingText("ScorePopupText", 46f, positiveScoreColor);
-    }
+        int start = -1;
+        int length = 0;
 
-    private TextMeshProUGUI CreateFloatingText(string objectName, float fontSize, Color color)
-    {
-        if (canvas == null)
-            canvas = GetComponentInParent<Canvas>();
+        for (int i = 0; i < source.Length; i++)
+        {
+            if (source[i] == '_')
+            {
+                if (start < 0)
+                    start = i;
 
-        if (canvas == null)
-            return null;
+                length++;
+            }
+            else if (start >= 0)
+            {
+                break;
+            }
+        }
 
-        GameObject obj = new GameObject(objectName, typeof(RectTransform));
-        obj.transform.SetParent(canvas.transform, false);
+        if (start >= 0 && length > 0)
+            return source.Remove(start, length).Insert(start, answerRichText);
 
-        TextMeshProUGUI tmp = obj.AddComponent<TextMeshProUGUI>();
-        tmp.fontSize = fontSize;
-        tmp.alignment = TextAlignmentOptions.Center;
-        tmp.color = color;
-        tmp.fontStyle = FontStyles.Bold;
-        tmp.raycastTarget = false;
-        tmp.gameObject.SetActive(false);
-
-        if (primaryFont != null)
-            tmp.font = primaryFont;
-
-        RectTransform rect = obj.GetComponent<RectTransform>();
-        rect.sizeDelta = new Vector2(420f, 110f);
-
-        return tmp;
+        return source + " " + answerRichText;
     }
 }

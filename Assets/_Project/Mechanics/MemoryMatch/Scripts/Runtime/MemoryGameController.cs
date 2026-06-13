@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace NGEducation.MemoryMatch
 {
@@ -1216,6 +1217,7 @@ namespace NGEducation.MemoryMatch
         {
             sfxAudioManager?.PlayButtonClick();
             Debug.Log("Memory Match summary continue clicked. Phase 10 should forward this result to the global Bloom reward module.", this);
+            SceneManager.LoadScene("Loader Scene");
         }
 
         private void HandleSummaryRetry()

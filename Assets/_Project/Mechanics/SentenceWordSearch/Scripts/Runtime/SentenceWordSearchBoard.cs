@@ -1,102 +1,108 @@
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
+[DisallowMultipleComponent]
 public class SentenceWordSearchBoard : MonoBehaviour
 {
-    [Header("Grid References")]
+    [Header("References")]
     public RectTransform gridParent;
     public GridLayoutGroup gridLayout;
     public SentenceWordSearchCell cellPrefab;
 
-    [Header("Grid Settings")]
-    public int rows = 8;
-    public int columns = 8;
-    public int padding = 8;
-    public Vector2 spacing = new Vector2(6f, 6f);
-    public bool autoResizeCellsToParent = true;
-    public string fillerAlphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    [Header("Board Size")]
+    [Min(2)] public int rows = 8;
+    [Min(2)] public int columns = 8;
+    public int gridPadding = 10;
+    public Vector2 gridSpacing = new Vector2(8f, 8f);
 
-    public SentenceWordSearchCell[,] Cells { get; private set; }
+    [Header("Letter Fill")]
+    public string fillerAlphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    public SentenceWordSearchDifficulty difficulty = SentenceWordSearchDifficulty.Medium;
+
+    [Header("Hint")]
+    public float hintPulseDuration = 2.2f;
+
+    private readonly Dictionary<string, SentenceWordSearchPlacedWord> placedWords = new Dictionary<string, SentenceWordSearchPlacedWord>();
+    private readonly List<SentenceWordSearchCell> previewPath = new List<SentenceWordSearchCell>();
 
     private char[,] letters;
-    private readonly Dictionary<string, List<Vector2Int>> placedWordPositions = new Dictionary<string, List<Vector2Int>>();
+    private SentenceWordSearchCell[,] cells;
 
-    public void BuildFixedBoard(List<SentenceWordSearchQuestion> questions, int questionCount, SentenceWordSearchDifficulty difficulty)
+    public void BuildBoard(List<SentenceWordSearchQuestion> questions, TMP_FontAsset cellFont)
     {
-        if (gridParent == null || gridLayout == null || cellPrefab == null)
+        if (gridParent == null)
+            gridParent = transform as RectTransform;
+
+        if (gridLayout == null && gridParent != null)
+            gridLayout = gridParent.GetComponent<GridLayoutGroup>();
+
+        if (gridLayout == null && gridParent != null)
+            gridLayout = gridParent.gameObject.AddComponent<GridLayoutGroup>();
+
+        if (cellPrefab == null)
         {
-            Debug.LogError("SentenceWordSearchBoard is missing gridParent, gridLayout, or cellPrefab.");
+            Debug.LogError("SentenceWordSearchBoard is missing Cell Prefab.");
             return;
         }
 
         rows = Mathf.Max(2, rows);
         columns = Mathf.Max(2, columns);
-        EnsureBoardCanFitLongestWord(questions, questionCount);
 
-        placedWordPositions.Clear();
+        ClearBoard();
+        ConfigureGridLayout();
+
         letters = new char[rows, columns];
-        ClearExistingCells();
+        placedWords.Clear();
 
-        int count = Mathf.Clamp(questionCount, 1, questions.Count);
-        for (int i = 0; i < count; i++)
-        {
-            string answer = SentenceWordSearchUtility.CleanWord(questions[i].answer);
-            if (string.IsNullOrEmpty(answer))
-                continue;
-
-            bool placed = TryPlaceWord(answer, difficulty);
-            if (!placed)
-                Debug.LogWarning($"Could not place word '{answer}'. Increase rows/columns or reduce difficulty restrictions.");
-        }
-
+        TryPlaceAllWords(questions);
         FillEmptyCells();
-        CreateCells();
-        ResizeCellsToParent();
+        SpawnCells(cellFont);
     }
 
-    public void ResizeCellsToParent()
+    public void ConfigureGridLayout()
     {
-        if (!autoResizeCellsToParent || gridParent == null || gridLayout == null)
+        if (gridParent == null || gridLayout == null)
             return;
 
         Canvas.ForceUpdateCanvases();
 
         Rect rect = gridParent.rect;
-        float parentWidth = Mathf.Max(100f, rect.width);
-        float parentHeight = Mathf.Max(100f, rect.height);
-
-        float availableWidth = parentWidth - padding * 2f - spacing.x * (columns - 1);
-        float availableHeight = parentHeight - padding * 2f - spacing.y * (rows - 1);
-        float cellSize = Mathf.Floor(Mathf.Min(availableWidth / columns, availableHeight / rows));
-        cellSize = Mathf.Max(24f, cellSize);
+        float parentWidth = rect.width > 1f ? rect.width : 760f;
+        float parentHeight = rect.height > 1f ? rect.height : 760f;
 
         gridLayout.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
         gridLayout.constraintCount = columns;
-        gridLayout.padding = new RectOffset(padding, padding, padding, padding);
-        gridLayout.spacing = spacing;
-        gridLayout.cellSize = new Vector2(cellSize, cellSize);
+        gridLayout.childAlignment = TextAnchor.MiddleCenter;
+        gridLayout.spacing = gridSpacing;
+        gridLayout.padding = new RectOffset(gridPadding, gridPadding, gridPadding, gridPadding);
+
+        float availableWidth = parentWidth - gridPadding * 2f - gridSpacing.x * Mathf.Max(0, columns - 1);
+        float availableHeight = parentHeight - gridPadding * 2f - gridSpacing.y * Mathf.Max(0, rows - 1);
+
+        float cellWidth = availableWidth / columns;
+        float cellHeight = availableHeight / rows;
+        float finalSize = Mathf.Floor(Mathf.Max(12f, Mathf.Min(cellWidth, cellHeight)));
+
+        gridLayout.cellSize = new Vector2(finalSize, finalSize);
     }
 
-    public SentenceWordSearchCell FindCellAtScreenPosition(Vector2 screenPosition)
+    public SentenceWordSearchCell FindCellAtScreenPosition(Vector2 screenPosition, Camera eventCamera)
     {
-        if (Cells == null)
+        if (cells == null)
             return null;
-
-        Camera cameraToUse = null;
-        Canvas canvas = gridParent != null ? gridParent.GetComponentInParent<Canvas>() : null;
-        if (canvas != null && canvas.renderMode != RenderMode.ScreenSpaceOverlay)
-            cameraToUse = canvas.worldCamera;
 
         for (int r = 0; r < rows; r++)
         {
             for (int c = 0; c < columns; c++)
             {
-                SentenceWordSearchCell cell = Cells[r, c];
-                if (cell == null || cell.rectTransform == null)
+                SentenceWordSearchCell cell = cells[r, c];
+
+                if (cell == null)
                     continue;
 
-                if (RectTransformUtility.RectangleContainsScreenPoint(cell.rectTransform, screenPosition, cameraToUse))
+                if (RectTransformUtility.RectangleContainsScreenPoint(cell.RectTransform, screenPosition, eventCamera))
                     return cell;
             }
         }
@@ -104,9 +110,9 @@ public class SentenceWordSearchBoard : MonoBehaviour
         return null;
     }
 
-    public List<SentenceWordSearchCell> GetStraightCellPath(SentenceWordSearchCell from, SentenceWordSearchCell to)
+    public List<SentenceWordSearchCell> GetStraightPath(SentenceWordSearchCell from, SentenceWordSearchCell to)
     {
-        if (from == null || to == null || Cells == null)
+        if (from == null || to == null || cells == null)
             return null;
 
         int rowDelta = to.Row - from.Row;
@@ -121,9 +127,10 @@ public class SentenceWordSearchBoard : MonoBehaviour
 
         int rowStep = rowDelta == 0 ? 0 : rowDelta / Mathf.Abs(rowDelta);
         int colStep = colDelta == 0 ? 0 : colDelta / Mathf.Abs(colDelta);
+
         int length = Mathf.Max(Mathf.Abs(rowDelta), Mathf.Abs(colDelta)) + 1;
 
-        List<SentenceWordSearchCell> path = new List<SentenceWordSearchCell>(length);
+        List<SentenceWordSearchCell> path = new List<SentenceWordSearchCell>();
 
         for (int i = 0; i < length; i++)
         {
@@ -133,193 +140,204 @@ public class SentenceWordSearchBoard : MonoBehaviour
             if (!IsInside(row, col))
                 return null;
 
-            path.Add(Cells[row, col]);
+            path.Add(cells[row, col]);
         }
 
         return path;
     }
 
-    public string GetWordFromCells(List<SentenceWordSearchCell> path)
+    public void SetPreviewPath(List<SentenceWordSearchCell> path)
+    {
+        ClearPreview();
+
+        if (path == null)
+            return;
+
+        previewPath.AddRange(path);
+
+        for (int i = 0; i < previewPath.Count; i++)
+        {
+            if (previewPath[i] != null)
+                previewPath[i].SetPreview(true);
+        }
+    }
+
+    public void ClearPreview()
+    {
+        for (int i = 0; i < previewPath.Count; i++)
+        {
+            if (previewPath[i] != null)
+                previewPath[i].SetPreview(false);
+        }
+
+        previewPath.Clear();
+    }
+
+    public string GetWordFromPath(List<SentenceWordSearchCell> path)
     {
         if (path == null || path.Count == 0)
             return string.Empty;
 
         System.Text.StringBuilder builder = new System.Text.StringBuilder(path.Count);
+
         for (int i = 0; i < path.Count; i++)
-            builder.Append(path[i].Letter);
+        {
+            if (path[i] != null)
+                builder.Append(path[i].Letter);
+        }
 
         return builder.ToString();
     }
 
-    public bool TryGetPlacedWordPath(string answer, out List<SentenceWordSearchCell> path)
+    public Vector2 GetPathCenterScreenPosition(List<SentenceWordSearchCell> path, Camera eventCamera)
     {
-        path = null;
-        string cleanAnswer = SentenceWordSearchUtility.CleanWord(answer);
+        if (path == null || path.Count == 0)
+            return Vector2.zero;
 
-        if (Cells == null || string.IsNullOrEmpty(cleanAnswer))
-            return false;
+        Vector3 sum = Vector3.zero;
+        int count = 0;
 
-        if (!placedWordPositions.TryGetValue(cleanAnswer, out List<Vector2Int> positions))
-            return false;
-
-        path = new List<SentenceWordSearchCell>(positions.Count);
-        for (int i = 0; i < positions.Count; i++)
+        for (int i = 0; i < path.Count; i++)
         {
-            Vector2Int pos = positions[i];
-            if (!IsInside(pos.x, pos.y))
-                return false;
+            if (path[i] == null)
+                continue;
 
-            path.Add(Cells[pos.x, pos.y]);
+            sum += path[i].RectTransform.position;
+            count++;
         }
 
-        return true;
+        if (count == 0)
+            return Vector2.zero;
+
+        Vector3 world = sum / count;
+        return RectTransformUtility.WorldToScreenPoint(eventCamera, world);
     }
 
-    public void ShowHintForWord(string answer)
+    public void MarkWordSolved(string cleanWord)
     {
-        ClearAllHints();
+        cleanWord = SentenceWordSearchManager.CleanWordStatic(cleanWord);
 
-        if (!TryGetPlacedWordPath(answer, out List<SentenceWordSearchCell> path) || path == null || path.Count == 0)
+        if (!placedWords.TryGetValue(cleanWord, out SentenceWordSearchPlacedWord placed))
             return;
 
-        path[0]?.SetHint(true);
+        for (int i = 0; i < placed.cells.Count; i++)
+        {
+            Vector2Int pos = placed.cells[i];
 
-        if (path.Count > 1)
-            path[path.Count - 1]?.SetHint(true);
+            if (IsInside(pos.x, pos.y) && cells[pos.x, pos.y] != null)
+                cells[pos.x, pos.y].SetSolved(true);
+        }
     }
 
-    public void ClearAllHints()
+    public void FlashWrongPath(List<SentenceWordSearchCell> path, float duration)
     {
-        if (Cells == null)
+        if (path == null)
+            return;
+
+        for (int i = 0; i < path.Count; i++)
+        {
+            if (path[i] != null)
+                path[i].FlashWrong(duration);
+        }
+    }
+
+    public void PulseHintForWord(string cleanWord)
+    {
+        StopAllHintPulses();
+
+        cleanWord = SentenceWordSearchManager.CleanWordStatic(cleanWord);
+
+        if (!placedWords.TryGetValue(cleanWord, out SentenceWordSearchPlacedWord placed))
+            return;
+
+        if (placed.cells.Count == 0)
+            return;
+
+        Vector2Int first = placed.cells[0];
+        Vector2Int last = placed.cells[placed.cells.Count - 1];
+
+        if (IsInside(first.x, first.y) && cells[first.x, first.y] != null)
+            cells[first.x, first.y].PulseHint(hintPulseDuration);
+
+        if (last != first && IsInside(last.x, last.y) && cells[last.x, last.y] != null)
+            cells[last.x, last.y].PulseHint(hintPulseDuration);
+    }
+
+    public void StopAllHintPulses()
+    {
+        if (cells == null)
             return;
 
         for (int r = 0; r < rows; r++)
         {
             for (int c = 0; c < columns; c++)
             {
-                if (Cells[r, c] != null)
-                    Cells[r, c].ClearHint();
+                if (cells[r, c] != null)
+                    cells[r, c].StopHintPulse();
             }
         }
     }
 
-    public void ClearPreview(List<SentenceWordSearchCell> path)
+    private void TryPlaceAllWords(List<SentenceWordSearchQuestion> questions)
     {
-        if (path == null)
+        if (questions == null)
             return;
 
-        for (int i = 0; i < path.Count; i++)
+        for (int i = 0; i < questions.Count; i++)
         {
-            if (path[i] != null)
-                path[i].ClearTransient();
-        }
-    }
+            string word = SentenceWordSearchManager.CleanWordStatic(questions[i].answer);
 
-    public void MarkPreview(List<SentenceWordSearchCell> path)
-    {
-        if (path == null)
-            return;
+            if (string.IsNullOrEmpty(word))
+                continue;
 
-        for (int i = 0; i < path.Count; i++)
-        {
-            if (path[i] != null)
-                path[i].SetPreview(true);
-        }
-    }
-
-    public void MarkSolved(List<SentenceWordSearchCell> path)
-    {
-        if (path == null)
-            return;
-
-        for (int i = 0; i < path.Count; i++)
-        {
-            if (path[i] != null)
+            if (word.Length > Mathf.Max(rows, columns))
             {
-                path[i].ClearTransient();
-                path[i].ClearHint();
-                path[i].SetSolved(true);
+                Debug.LogWarning($"Word '{word}' is longer than the board side. Increase rows/columns.");
+                continue;
             }
+
+            bool placed = TryPlaceWord(word);
+
+            if (!placed)
+                Debug.LogWarning($"Could not place word '{word}'. Increase grid size or reduce question count.");
         }
     }
 
-    public void MarkWrong(List<SentenceWordSearchCell> path, bool active)
+    private bool TryPlaceWord(string word)
     {
-        if (path == null)
-            return;
+        Vector2Int[] directions = GetDirections();
 
-        for (int i = 0; i < path.Count; i++)
+        for (int attempt = 0; attempt < 350; attempt++)
         {
-            if (path[i] != null)
-                path[i].SetWrong(active);
-        }
-    }
-
-    private void OnRectTransformDimensionsChange()
-    {
-        if (gameObject.activeInHierarchy)
-            ResizeCellsToParent();
-    }
-
-    private void EnsureBoardCanFitLongestWord(List<SentenceWordSearchQuestion> questions, int questionCount)
-    {
-        int longest = 0;
-        int count = Mathf.Clamp(questionCount, 1, questions.Count);
-
-        for (int i = 0; i < count; i++)
-        {
-            string answer = SentenceWordSearchUtility.CleanWord(questions[i].answer);
-            longest = Mathf.Max(longest, answer.Length);
-        }
-
-        int maxDimension = Mathf.Max(rows, columns);
-        if (longest > maxDimension)
-            columns = longest;
-    }
-
-    private bool TryPlaceWord(string word, SentenceWordSearchDifficulty difficulty)
-    {
-        List<Vector2Int> directions = GetDirections(difficulty);
-
-        for (int attempt = 0; attempt < 1200; attempt++)
-        {
-            if (attempt % directions.Count == 0)
-                ShuffleDirections(directions);
-
-            Vector2Int direction = directions[attempt % directions.Count];
+            Vector2Int dir = directions[Random.Range(0, directions.Length)];
             int startRow = Random.Range(0, rows);
             int startCol = Random.Range(0, columns);
 
-            if (!CanPlaceWord(word, startRow, startCol, direction))
+            if (!CanPlaceWord(word, startRow, startCol, dir))
                 continue;
 
-            List<Vector2Int> path = new List<Vector2Int>(word.Length);
-            for (int i = 0; i < word.Length; i++)
-            {
-                int row = startRow + direction.x * i;
-                int col = startCol + direction.y * i;
-                letters[row, col] = word[i];
-                path.Add(new Vector2Int(row, col));
-            }
-
-            placedWordPositions[word] = path;
+            PlaceWord(word, startRow, startCol, dir);
             return true;
         }
 
         return false;
     }
 
-    private bool CanPlaceWord(string word, int startRow, int startCol, Vector2Int direction)
+    private bool CanPlaceWord(string word, int startRow, int startCol, Vector2Int dir)
     {
+        int endRow = startRow + dir.x * (word.Length - 1);
+        int endCol = startCol + dir.y * (word.Length - 1);
+
+        if (!IsInside(endRow, endCol))
+            return false;
+
         for (int i = 0; i < word.Length; i++)
         {
-            int row = startRow + direction.x * i;
-            int col = startCol + direction.y * i;
-
-            if (!IsInside(row, col))
-                return false;
+            int row = startRow + dir.x * i;
+            int col = startCol + dir.y * i;
 
             char existing = letters[row, col];
+
             if (existing != '\0' && existing != word[i])
                 return false;
         }
@@ -327,40 +345,49 @@ public class SentenceWordSearchBoard : MonoBehaviour
         return true;
     }
 
-    private List<Vector2Int> GetDirections(SentenceWordSearchDifficulty difficulty)
+    private void PlaceWord(string word, int startRow, int startCol, Vector2Int dir)
     {
-        List<Vector2Int> dirs = new List<Vector2Int>
+        SentenceWordSearchPlacedWord placed = new SentenceWordSearchPlacedWord
         {
-            new Vector2Int(0, 1),
-            new Vector2Int(1, 0)
+            word = word,
+            start = new Vector2Int(startRow, startCol),
+            direction = dir
         };
 
-        if (difficulty == SentenceWordSearchDifficulty.Medium || difficulty == SentenceWordSearchDifficulty.Hard)
+        for (int i = 0; i < word.Length; i++)
         {
-            dirs.Add(new Vector2Int(1, 1));
-            dirs.Add(new Vector2Int(1, -1));
+            int row = startRow + dir.x * i;
+            int col = startCol + dir.y * i;
+
+            letters[row, col] = word[i];
+            placed.cells.Add(new Vector2Int(row, col));
         }
 
-        if (difficulty == SentenceWordSearchDifficulty.Hard)
-        {
-            dirs.Add(new Vector2Int(0, -1));
-            dirs.Add(new Vector2Int(-1, 0));
-            dirs.Add(new Vector2Int(-1, -1));
-            dirs.Add(new Vector2Int(-1, 1));
-        }
-
-        ShuffleDirections(dirs);
-        return dirs;
+        placedWords[word] = placed;
     }
 
-    private void ShuffleDirections(List<Vector2Int> dirs)
+    private Vector2Int[] GetDirections()
     {
-        for (int i = 0; i < dirs.Count; i++)
+        switch (difficulty)
         {
-            int randomIndex = Random.Range(i, dirs.Count);
-            Vector2Int temp = dirs[i];
-            dirs[i] = dirs[randomIndex];
-            dirs[randomIndex] = temp;
+            case SentenceWordSearchDifficulty.Easy:
+                return new[] { new Vector2Int(0, 1), new Vector2Int(1, 0) };
+
+            case SentenceWordSearchDifficulty.Hard:
+                return new[]
+                {
+                    new Vector2Int(0, 1), new Vector2Int(0, -1),
+                    new Vector2Int(1, 0), new Vector2Int(-1, 0),
+                    new Vector2Int(1, 1), new Vector2Int(1, -1),
+                    new Vector2Int(-1, 1), new Vector2Int(-1, -1)
+                };
+
+            default:
+                return new[]
+                {
+                    new Vector2Int(0, 1), new Vector2Int(1, 0),
+                    new Vector2Int(1, 1), new Vector2Int(1, -1)
+                };
         }
     }
 
@@ -379,39 +406,41 @@ public class SentenceWordSearchBoard : MonoBehaviour
         }
     }
 
-    private void CreateCells()
+    private void SpawnCells(TMP_FontAsset cellFont)
     {
-        Cells = new SentenceWordSearchCell[rows, columns];
+        cells = new SentenceWordSearchCell[rows, columns];
 
         for (int r = 0; r < rows; r++)
         {
             for (int c = 0; c < columns; c++)
             {
                 SentenceWordSearchCell cell = Instantiate(cellPrefab, gridParent);
-                cell.gameObject.name = $"Cell_{r}_{c}_{letters[r, c]}";
                 cell.gameObject.SetActive(true);
-                cell.Setup(r, c, letters[r, c]);
-                Cells[r, c] = cell;
+                cell.name = $"Cell_{r}_{c}_{letters[r, c]}";
+                cell.Setup(r, c, letters[r, c], cellFont);
+                cells[r, c] = cell;
             }
         }
     }
 
-    private void ClearExistingCells()
+    private void ClearBoard()
     {
+        ClearPreview();
+
         if (gridParent == null)
             return;
 
         for (int i = gridParent.childCount - 1; i >= 0; i--)
         {
             Transform child = gridParent.GetChild(i);
-            if (child.GetComponent<SentenceWordSearchCell>() == null)
-                continue;
 
             if (Application.isPlaying)
                 Destroy(child.gameObject);
             else
                 DestroyImmediate(child.gameObject);
         }
+
+        cells = null;
     }
 
     private bool IsInside(int row, int col)

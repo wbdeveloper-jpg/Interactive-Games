@@ -11,21 +11,18 @@ public class WordQuestion
     public string clueText;
 
     [Header("Answer")]
-    [Tooltip("Write full answer here. Example: brave, blissful, creative.")]
     public string answerWord;
 
     [Tooltip("Optional. If empty, script will create line like: I am brave.")]
     public string completedLineText;
 
     [Header("Narration")]
-    [Tooltip("Audio clip that reads the completed line. Example: I am brave.")]
     public AudioClip completedLineNarration;
 
     [Header("Scoring")]
     public int points = 10;
 
     [Header("Letter Options")]
-    [Tooltip("Extra wrong letters mixed with correct letters.")]
     [Min(0)]
     public int extraLetters = 3;
 

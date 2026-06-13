@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2b6042f360f921243b1e79fe5d5895d3, type: 3}
+  m_Name: Demo Question Set
+  m_EditorClassIdentifier: Assembly-CSharp::DictationGame.DictationQuestionSet
+  allQuestions:
+  - {fileID: 11400000, guid: 45720f599bca5fa4781e618a0fb9f539, type: 2}
+  - {fileID: 11400000, guid: 3ae8b7bb1b654af42929797c6a07a715, type: 2}
+  - {fileID: 11400000, guid: a6bd2020aa5977144bce22ba4d202ea2, type: 2}
+  - {fileID: 11400000, guid: d7823ae6c2414af4499985540c6af40f, type: 2}
+  - {fileID: 11400000, guid: e7af5584c97b27341a0482bf17867e99, type: 2}
+  totalRoundsPerSession: 5
+  easyCount: 4
+  mediumCount: 3
+  hardCount: 3

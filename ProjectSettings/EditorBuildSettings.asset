@@ -5,31 +5,52 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 0
+  - enabled: 1
     path: Assets/Loader Scene/Loader Scene.unity
     guid: 98af264abec0a2d48aa661452128d39f
-  - enabled: 0
+  - enabled: 1
     path: Assets/_Project/Legacy/Maze  in the Jungle/Scenes/maze-in-the-jungle.unity
     guid: 8c9cfa26abfee488c85f1582747f6a02
   - enabled: 0
     path: Assets/_Project/Legacy/Old man with Beard/Old Man with beard.unity
     guid: 0088ca4f999d3f048b5d382866aba8c5
-  - enabled: 0
+  - enabled: 1
     path: Assets/_Project/Legacy/Being Honest/Game 8/being-honest.unity
     guid: 248157980acebf247aeebc7f906fb8e1
-  - enabled: 0
+  - enabled: 1
     path: Assets/_Project/Legacy/Girls are Smarter than Men/Girls are Smarter than
       Mans.unity
     guid: 361ff62dfac946541aecb4fe1caea4cb
-  - enabled: 0
+  - enabled: 1
     path: Assets/_Project/Legacy/All the Bells are Ringing/all-the-bells-are-ringing.unity
     guid: 6600a85aeed9b144897ff2f1ce47b02d
-  - enabled: 0
+  - enabled: 1
     path: Assets/_Project/Legacy/Twinkle Twinkle/twinkle-twinkle.unity
     guid: ca001fe2b8662af4c82014884510e88b
   - enabled: 1
     path: Assets/_Project/Mechanics/MemoryMatch/Scenes/MemoryMechanicScene.unity
     guid: 048d44e8a268031468e81deadaff591d
+  - enabled: 1
+    path: Assets/_Project/Mechanics/ImageChoiceRevealGame/Scenes/ImageChoiceReveal1.unity
+    guid: bb1dcde23555b084b8e46dc2f61ba09e
+  - enabled: 1
+    path: Assets/_Project/Mechanics/SentenceWordSearch/Scenes/SentenceWordSearch1.unity
+    guid: 47b89e1de8e2e8a4591772a7d84b5bd1
+  - enabled: 1
+    path: Assets/_Project/Mechanics/WordFillGame/Scenes/WordFillGame1.unity
+    guid: c547da8fdefed9346b22b6be9bf4d856
+  - enabled: 1
+    path: Assets/_Project/Mechanics/OrderSortDrag/Scenes/OrderSortDrag.unity
+    guid: 66868a0f2cc9b384f8741031f3f9d264
+  - enabled: 1
+    path: Assets/_Project/Mechanics/SkyFallGame/Scenes/Scenes/SkyFallScene1.unity
+    guid: bad3627701c4fa944a809818268a35a8
+  - enabled: 1
+    path: Assets/_Project/Mechanics/DictationGame/Scene/DictationGame1.unity
+    guid: 674ea015e1c0a4541b6a9628fa98b17f
+  - enabled: 1
+    path: Assets/_Project/Mechanics/FractionPortionFill/Scenes/FractionPizza.unity
+    guid: ea085e2192948704cb64ec9c2cccedb5
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0

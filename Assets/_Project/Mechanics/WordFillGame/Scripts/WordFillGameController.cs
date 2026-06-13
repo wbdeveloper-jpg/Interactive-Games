@@ -2,21 +2,20 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using RewardSystem;
 
-public class WordFillGameController : MonoBehaviour
+public class WordFillGameController : MonoBehaviour, IGameSceneCallbacks, IGameAudioCallbacks
 {
     [Header("Fonts")]
-    [SerializeField] private TMP_FontAsset headingFontAsset;
-    [SerializeField] private TMP_FontAsset bodyFontAsset;
+    [SerializeField] private TMP_FontAsset primaryFont;
+    [SerializeField] private TMP_FontAsset secondaryFont;
+    [SerializeField] private WordFillFontApplier fontApplier;
 
-    [Header("Game Heading")]
-    [SerializeField] private string gameHeading = "Affirmation Words";
-    [SerializeField] private TMP_Text gameHeadingText;
-
-    [Header("Objective Line")]
-    [SerializeField] private string gameObjectiveLine = "Fill in the missing letters to complete the affirmation.";
-    [SerializeField] private TMP_Text gameObjectiveText;
+    [Header("Game Text")]
+    [SerializeField] private string gameInstructionLine = "Fill in the missing letters to complete the affirmation.";
+    [SerializeField] private TMP_Text gameInstructionText;
 
     [Header("Main UI")]
     [SerializeField] private Image clueImage;
@@ -27,19 +26,23 @@ public class WordFillGameController : MonoBehaviour
     [SerializeField] private TMP_Text feedbackText;
     [SerializeField] private TMP_Text timerText;
 
-    [Header("Top Bar Buttons")]
+    [Header("Bottom Corner Buttons")]
     [SerializeField] private Button howToPlayButton;
-    [SerializeField] private Button hintButton;
     [SerializeField] private Button pauseButton;
+
+    [Header("Top Bar Button")]
+    [SerializeField] private Button hintButton;
 
     [Header("Systems")]
     [SerializeField] private WordFillUIAnimator uiAnimator;
     [SerializeField] private WordFillAudioManager audioManager;
     [SerializeField] private WordFillHowToPlayPanel howToPlayPanel;
+    [SerializeField] private WordFillLoadingPanel loadingPanel;
 
     [Header("Letters")]
+    [Tooltip("Scene template object, not prefab asset. Keep it inactive in the scene.")]
+    [SerializeField] private LetterTile letterTileTemplate;
     [SerializeField] private Transform letterButtonParent;
-    [SerializeField] private LetterTile letterTilePrefab;
 
     [Header("Control Buttons")]
     [SerializeField] private Button backspaceButton;
@@ -55,36 +58,37 @@ public class WordFillGameController : MonoBehaviour
     [SerializeField] private TMP_Text completeTitleText;
     [SerializeField] private TMP_Text completeBodyText;
     [SerializeField] private Button playAgainButton;
+    [SerializeField] private Button completeContinueButton;
 
     [Header("Questions")]
     [SerializeField] private List<WordQuestion> questions = new List<WordQuestion>();
 
     [Header("Round Settings")]
-    [Tooltip("How many correct answers are required to complete one round.")]
     [SerializeField] private int questionsPerRound = 5;
-
-    [Tooltip("Max time for one round in seconds.")]
     [SerializeField] private float maxTimeSeconds = 60f;
-
-    [Tooltip("Use random question order. Recommended ON.")]
     [SerializeField] private bool randomQuestionOrder = true;
-
-    [Tooltip("Show How To Play panel every time a new round starts.")]
+    [SerializeField] private bool showLoadingPanelOnRoundStart = true;
     [SerializeField] private bool showHowToPlayOnRoundStart = true;
-
-    [Tooltip("Timer starts pulsing and ticking below this value.")]
     [SerializeField] private float timerWarningSeconds = 10f;
-
-    [Tooltip("Score reduced when hint is used once in a question.")]
     [SerializeField] private int hintPenaltyPoints = 5;
-
     [SerializeField] private float nextQuestionDelay = 0.45f;
     [SerializeField] private float fallbackNarrationDuration = 1.2f;
     [SerializeField] private bool autoStartOnPlay = true;
 
+    [Header("Bloom Reward")]
+    [SerializeField] private float expectedMaxTime = 60f;
+    [SerializeField] private bool showBloomPreGame = true;
+    [SerializeField] private bool showBloomPostGameFromCompleteContinue = true;
+
     [Header("Colors")]
     [SerializeField] private Color normalWordColor = Color.black;
     [SerializeField] private Color narrationWordColor = new Color(0.05f, 0.35f, 0.9f);
+
+    private readonly List<SkillEntry> _skills = new List<SkillEntry>
+    {
+        new SkillEntry(BloomSkillType.Remember, 100f),
+        new SkillEntry(BloomSkillType.Understand, 100f),
+    };
 
     private const string Alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
@@ -97,6 +101,10 @@ public class WordFillGameController : MonoBehaviour
     private int lastTickSecond = -1;
 
     private float remainingTime;
+    private float _startTime;
+    private float _finalTimeTaken;
+    private GameEvaluationData _finalEvaluationData;
+    private bool _hasFinalEvaluation;
 
     private bool timerRunning;
     private bool inputLocked;
@@ -106,6 +114,9 @@ public class WordFillGameController : MonoBehaviour
     private bool hintUsedForCurrentQuestion;
     private bool timerWarningStarted;
     private bool howToPlayOpen;
+    private bool loadingOpen;
+    private bool bloomPreGameOpen;
+    private bool bloomPostGameOpen;
 
     private bool timerRunningBeforePause;
     private bool inputLockedBeforePause;
@@ -115,6 +126,7 @@ public class WordFillGameController : MonoBehaviour
 
     private WordQuestion currentQuestion;
     private Coroutine activeFlowRoutine;
+    private Coroutine bloomPreGameRoutine;
 
     private readonly List<string> typedLetters = new List<string>();
     private readonly List<LetterTile> usedTiles = new List<LetterTile>();
@@ -127,11 +139,16 @@ public class WordFillGameController : MonoBehaviour
         ApplyFonts();
         UpdateStaticTexts();
 
+        expectedMaxTime = Mathf.Max(1f, expectedMaxTime <= 0f ? maxTimeSeconds : expectedMaxTime);
+
         if (pausePanel != null)
             pausePanel.SetActive(false);
 
         if (completePanel != null)
             completePanel.SetActive(false);
+
+        if (letterTileTemplate != null)
+            letterTileTemplate.gameObject.SetActive(false);
 
         if (autoStartOnPlay)
             StartRound();
@@ -139,7 +156,7 @@ public class WordFillGameController : MonoBehaviour
 
     private void Update()
     {
-        if (!timerRunning || roundEnded || paused || howToPlayOpen)
+        if (!timerRunning || roundEnded || paused || howToPlayOpen || loadingOpen || bloomPreGameOpen || bloomPostGameOpen)
             return;
 
         remainingTime -= Time.deltaTime;
@@ -166,6 +183,12 @@ public class WordFillGameController : MonoBehaviour
 
         if (howToPlayPanel == null)
             howToPlayPanel = FindObjectOfType<WordFillHowToPlayPanel>();
+
+        if (loadingPanel == null)
+            loadingPanel = FindObjectOfType<WordFillLoadingPanel>();
+
+        if (fontApplier == null)
+            fontApplier = FindObjectOfType<WordFillFontApplier>();
     }
 
     private void HookButtons()
@@ -177,7 +200,7 @@ public class WordFillGameController : MonoBehaviour
             clearButton.onClick.AddListener(ClearAnswer);
 
         if (howToPlayButton != null)
-            howToPlayButton.onClick.AddListener(OpenHowToPlayFromTopBar);
+            howToPlayButton.onClick.AddListener(OpenHowToPlayFromCornerButton);
 
         if (hintButton != null)
             hintButton.onClick.AddListener(ShowHint);
@@ -189,46 +212,22 @@ public class WordFillGameController : MonoBehaviour
             continueButton.onClick.AddListener(ContinueGame);
 
         if (playAgainButton != null)
-            playAgainButton.onClick.AddListener(StartRound);
+            playAgainButton.onClick.AddListener(OnCustomCompletePlayAgainClicked);
+
+        if (completeContinueButton != null)
+            completeContinueButton.onClick.AddListener(OnCompleteContinueClicked);
     }
 
     private void ApplyFonts()
     {
-        if (headingFontAsset != null)
-        {
-            ApplyFont(gameHeadingText, headingFontAsset);
-            ApplyFont(timerText, headingFontAsset);
-            ApplyFont(completeTitleText, headingFontAsset);
-            ApplyFont(pauseTitleText, headingFontAsset);
-        }
-
-        if (bodyFontAsset != null)
-        {
-            ApplyFont(gameObjectiveText, bodyFontAsset);
-            ApplyFont(clueText, bodyFontAsset);
-            ApplyFont(wordText, bodyFontAsset);
-            ApplyFont(scoreText, bodyFontAsset);
-            ApplyFont(feedbackText, bodyFontAsset);
-            ApplyFont(completeBodyText, bodyFontAsset);
-        }
-
-        if (howToPlayPanel != null)
-            howToPlayPanel.ApplyFonts(headingFontAsset, bodyFontAsset);
-    }
-
-    private void ApplyFont(TMP_Text text, TMP_FontAsset font)
-    {
-        if (text != null && font != null)
-            text.font = font;
+        if (fontApplier != null)
+            fontApplier.SetFonts(primaryFont, secondaryFont);
     }
 
     private void UpdateStaticTexts()
     {
-        if (gameHeadingText != null)
-            gameHeadingText.text = gameHeading;
-
-        if (gameObjectiveText != null)
-            gameObjectiveText.text = gameObjectiveLine;
+        if (gameInstructionText != null)
+            gameInstructionText.text = gameInstructionLine;
     }
 
     public void StartRound()
@@ -242,8 +241,12 @@ public class WordFillGameController : MonoBehaviour
         if (activeFlowRoutine != null)
             StopCoroutine(activeFlowRoutine);
 
+        if (bloomPreGameRoutine != null)
+            StopCoroutine(bloomPreGameRoutine);
+
         questionsPerRound = Mathf.Max(1, questionsPerRound);
         maxTimeSeconds = Mathf.Max(1f, maxTimeSeconds);
+        expectedMaxTime = Mathf.Max(1f, expectedMaxTime <= 0f ? maxTimeSeconds : expectedMaxTime);
         hintPenaltyPoints = Mathf.Max(0, hintPenaltyPoints);
 
         score = 0;
@@ -256,11 +259,18 @@ public class WordFillGameController : MonoBehaviour
         lastTickSecond = -1;
         timerWarningStarted = false;
 
+        _startTime = 0f;
+        _finalTimeTaken = 0f;
+        _hasFinalEvaluation = false;
+
         timerRunning = false;
         inputLocked = true;
         roundEnded = false;
         paused = false;
         howToPlayOpen = false;
+        loadingOpen = false;
+        bloomPreGameOpen = false;
+        bloomPostGameOpen = false;
         isInCorrectSequence = false;
 
         usedQuestionIndexes.Clear();
@@ -284,6 +294,27 @@ public class WordFillGameController : MonoBehaviour
         UpdateTimerText();
         SetFeedback(string.Empty);
 
+        StartBloomPreGameThenLoading();
+    }
+
+    private void OpenLoadingPanel()
+    {
+        loadingOpen = true;
+        inputLocked = true;
+        timerRunning = false;
+
+        if (audioManager != null)
+            audioManager.PlayPanelOpen();
+
+        loadingPanel.Open(() =>
+        {
+            loadingOpen = false;
+            AfterLoadingPanel();
+        });
+    }
+
+    private void AfterLoadingPanel()
+    {
         if (showHowToPlayOnRoundStart && howToPlayPanel != null)
             OpenHowToPlayForRoundStart();
         else
@@ -309,8 +340,38 @@ public class WordFillGameController : MonoBehaviour
         });
     }
 
+    private void StartBloomPreGameThenLoading()
+    {
+        if (bloomPreGameRoutine != null)
+            StopCoroutine(bloomPreGameRoutine);
+
+        bloomPreGameRoutine = StartCoroutine(BloomPreGameThenLoadingRoutine());
+    }
+
+    private IEnumerator BloomPreGameThenLoadingRoutine()
+    {
+        bloomPreGameOpen = true;
+        inputLocked = true;
+        timerRunning = false;
+
+        if (showBloomPreGame && RewardManager.Instance != null)
+        {
+            RewardManager.Instance.ShowPreGame(_skills);
+            yield return new WaitUntil(() => RewardManager.Instance.IsPreGameComplete);
+        }
+
+        bloomPreGameOpen = false;
+
+        if (showLoadingPanelOnRoundStart && loadingPanel != null)
+            OpenLoadingPanel();
+        else
+            AfterLoadingPanel();
+    }
+
     private void BeginRoundGameplay()
     {
+        _startTime = Time.time;
+
         paused = false;
         inputLocked = false;
         timerRunning = true;
@@ -321,15 +382,16 @@ public class WordFillGameController : MonoBehaviour
         LoadNextQuestion();
     }
 
-    private void OpenHowToPlayFromTopBar()
+    private void OpenHowToPlayFromCornerButton()
     {
-        if (howToPlayPanel == null || howToPlayOpen || isInCorrectSequence)
+        if (howToPlayPanel == null || howToPlayOpen || loadingOpen || bloomPreGameOpen || bloomPostGameOpen || isInCorrectSequence)
             return;
 
         if (audioManager != null)
         {
             audioManager.PlayButtonTap();
             audioManager.PlayPanelOpen();
+            audioManager.PauseBackgroundMusic();
         }
 
         howToPlayOpen = true;
@@ -340,9 +402,6 @@ public class WordFillGameController : MonoBehaviour
         timerRunning = false;
         inputLocked = true;
         paused = true;
-
-        if (audioManager != null)
-            audioManager.PauseBackgroundMusic();
 
         howToPlayPanel.Open(() =>
         {
@@ -420,7 +479,7 @@ public class WordFillGameController : MonoBehaviour
 
     private void ShowHint()
     {
-        if (roundEnded || paused || howToPlayOpen || isInCorrectSequence || hintUsedForCurrentQuestion)
+        if (roundEnded || paused || howToPlayOpen || loadingOpen || bloomPreGameOpen || bloomPostGameOpen || isInCorrectSequence || hintUsedForCurrentQuestion)
             return;
 
         hintUsedForCurrentQuestion = true;
@@ -457,9 +516,9 @@ public class WordFillGameController : MonoBehaviour
 
     private void CreateLetterButtons()
     {
-        if (letterButtonParent == null || letterTilePrefab == null)
+        if (letterButtonParent == null || letterTileTemplate == null)
         {
-            Debug.LogError("WordFillGameController: Letter parent or letter tile prefab missing.");
+            Debug.LogError("WordFillGameController: Letter parent or letter tile scene template missing.");
             return;
         }
 
@@ -467,9 +526,7 @@ public class WordFillGameController : MonoBehaviour
             Destroy(letterButtonParent.GetChild(i).gameObject);
 
         List<char> letters = new List<char>();
-
-        string cleanAnswer = currentQuestion.GetCleanAnswer();
-        string missingPart = cleanAnswer.Substring(1);
+        string missingPart = currentQuestion.GetCleanAnswer().Substring(1);
 
         for (int i = 0; i < missingPart.Length; i++)
             letters.Add(missingPart[i]);
@@ -486,8 +543,9 @@ public class WordFillGameController : MonoBehaviour
 
         for (int i = 0; i < letters.Count; i++)
         {
-            LetterTile tile = Instantiate(letterTilePrefab, letterButtonParent);
-            tile.Setup(letters[i], OnLetterClicked, bodyFontAsset);
+            LetterTile tile = Instantiate(letterTileTemplate, letterButtonParent);
+            tile.gameObject.SetActive(true);
+            tile.Setup(letters[i], OnLetterClicked, secondaryFont);
 
             if (uiAnimator != null)
                 uiAnimator.AnimateLetterSpawn(tile.RectTransform, i);
@@ -496,7 +554,7 @@ public class WordFillGameController : MonoBehaviour
 
     private void OnLetterClicked(string letter, LetterTile tile)
     {
-        if (inputLocked || roundEnded || paused || howToPlayOpen || isInCorrectSequence || currentQuestion == null)
+        if (inputLocked || roundEnded || paused || howToPlayOpen || loadingOpen || bloomPreGameOpen || bloomPostGameOpen || isInCorrectSequence || currentQuestion == null)
             return;
 
         if (audioManager != null)
@@ -682,6 +740,7 @@ public class WordFillGameController : MonoBehaviour
         inputLocked = true;
         isInCorrectSequence = false;
 
+        BuildFinalEvaluationData();
         SetAllLettersInteractable(false);
 
         if (hintButton != null && uiAnimator != null)
@@ -708,7 +767,7 @@ public class WordFillGameController : MonoBehaviour
         if (completeBodyText != null)
         {
             int target = Mathf.Max(1, questionsPerRound);
-            int timeUsed = Mathf.RoundToInt(maxTimeSeconds - remainingTime);
+            int timeUsed = Mathf.RoundToInt(_finalTimeTaken);
             int timeLimit = Mathf.RoundToInt(maxTimeSeconds);
 
             completeBodyText.text =
@@ -729,9 +788,67 @@ public class WordFillGameController : MonoBehaviour
         }
     }
 
+    private void BuildFinalEvaluationData()
+    {
+        _finalTimeTaken = _startTime > 0f ? Time.time - _startTime : maxTimeSeconds;
+
+        int totalQuestions = Mathf.Max(1, questionsPerRound);
+        float timeScore = Mathf.Clamp01(1f - (_finalTimeTaken / Mathf.Max(1f, expectedMaxTime)));
+        float accuracyScore = totalQuestions > 0 ? (float)correctAnswers / totalQuestions : 0f;
+
+        _finalEvaluationData = new GameEvaluationData
+        {
+            timeScore = timeScore,
+            accuracyScore = Mathf.Clamp01(accuracyScore),
+            mistakeCount = wrongAttempts,
+            timeTaken = _finalTimeTaken
+        };
+
+        _hasFinalEvaluation = true;
+    }
+
+    private void OnCompleteContinueClicked()
+    {
+        if (audioManager != null)
+            audioManager.PlayButtonTap();
+
+        if (completePanel != null)
+            completePanel.SetActive(false);
+
+        if (!showBloomPostGameFromCompleteContinue)
+            return;
+
+        ShowBloomPostGame();
+    }
+
+    private void OnCustomCompletePlayAgainClicked()
+    {
+        if (showBloomPostGameFromCompleteContinue)
+            OnCompleteContinueClicked();
+        else
+            StartRound();
+    }
+
+    private void ShowBloomPostGame()
+    {
+        if (!_hasFinalEvaluation)
+            BuildFinalEvaluationData();
+
+        bloomPostGameOpen = true;
+        inputLocked = true;
+        timerRunning = false;
+
+        OnRewardScreenOpen();
+
+        if (RewardManager.Instance != null)
+            RewardManager.Instance.ShowPostGame(_skills, _finalEvaluationData);
+        else
+            Debug.LogWarning("RewardManager.Instance not found. Make sure RewardManager exists in LoadingScene and uses DontDestroyOnLoad.");
+    }
+
     private void PauseGame()
     {
-        if (paused || roundEnded || howToPlayOpen || isInCorrectSequence)
+        if (paused || roundEnded || howToPlayOpen || loadingOpen || bloomPreGameOpen || bloomPostGameOpen || isInCorrectSequence)
             return;
 
         paused = true;
@@ -779,7 +896,7 @@ public class WordFillGameController : MonoBehaviour
 
     public void Backspace()
     {
-        if (inputLocked || roundEnded || paused || howToPlayOpen || isInCorrectSequence || typedLetters.Count == 0)
+        if (inputLocked || roundEnded || paused || howToPlayOpen || loadingOpen || bloomPreGameOpen || bloomPostGameOpen || isInCorrectSequence || typedLetters.Count == 0)
             return;
 
         if (audioManager != null)
@@ -800,7 +917,7 @@ public class WordFillGameController : MonoBehaviour
 
     public void ClearAnswer()
     {
-        if (roundEnded || paused || howToPlayOpen || isInCorrectSequence || currentQuestion == null)
+        if (roundEnded || paused || howToPlayOpen || loadingOpen || bloomPreGameOpen || bloomPostGameOpen || isInCorrectSequence || currentQuestion == null)
             return;
 
         typedLetters.Clear();
@@ -916,6 +1033,25 @@ public class WordFillGameController : MonoBehaviour
             char temp = list[i];
             list[i] = list[randomIndex];
             list[randomIndex] = temp;
+        }
+    }
+
+    public void OnPlayAgain()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
+    public void OnHome()
+    {
+        SceneManager.LoadScene("Loader Scene");
+    }
+
+    public void OnRewardScreenOpen()
+    {
+        if (audioManager != null)
+        {
+            audioManager.StopNarration();
+            audioManager.StopBackgroundMusic();
         }
     }
 }
