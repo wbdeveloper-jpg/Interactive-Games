@@ -4131,14 +4131,14 @@ MonoBehaviour:
   wrongOverlayColor: {r: 1, g: 0.42981455, b: 0.4198113, a: 1}
   emptyOverlayColor: {r: 0.65, g: 0.65, b: 0.65, a: 0.58}
   contentMode: 0
-  textCardSize: {x: 190, y: 100}
+  textCardSize: {x: 150, y: 100}
   textSlotSize: {x: 200, y: 100}
   imageCardSize: {x: 125, y: 125}
   imageSlotSize: {x: 128, y: 128}
   useResponsiveSlots: 1
   minTextSlotSize: {x: 90, y: 70}
   minImageSlotSize: {x: 82, y: 82}
-  bankPlacementMode: 1
+  bankPlacementMode: 0
   organicBankPadding: {x: 64, y: 54}
   organicRotationRange: 10
   organicScaleRange: {x: 0.94, y: 1.06}

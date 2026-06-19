@@ -1,0 +1,318 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8f46c911d6c8a744d888a774ca54bbb7, type: 3}
+  m_Name: OddClawEnglishQuestionGenerator 1
+  m_EditorClassIdentifier: Assembly-CSharp::OddClawEnglishQuestionGenerator
+  minimumOptions: 2
+  maximumOptions: 6
+  mode: 2
+  wordBank:
+  - word: happy
+    synonym: glad
+    antonym: sad
+  - word: big
+    synonym: large
+    antonym: small
+  - word: fast
+    synonym: quick
+    antonym: slow
+  - word: hot
+    synonym: warm
+    antonym: cold
+  - word: easy
+    synonym: simple
+    antonym: hard
+  - word: brave
+    synonym: bold
+    antonym: afraid
+  - word: clean
+    synonym: neat
+    antonym: dirty
+  - word: bright
+    synonym: shiny
+    antonym: dark
+  - word: kind
+    synonym: nice
+    antonym: mean
+  - word: loud
+    synonym: noisy
+    antonym: quiet
+  - word: rich
+    synonym: wealthy
+    antonym: poor
+  - word: strong
+    synonym: powerful
+    antonym: weak
+  - word: early
+    synonym: soon
+    antonym: late
+  - word: empty
+    synonym: blank
+    antonym: full
+  - word: near
+    synonym: close
+    antonym: far
+  - word: soft
+    synonym: gentle
+    antonym: rough
+  - word: young
+    synonym: youthful
+    antonym: old
+  - word: smart
+    synonym: clever
+    antonym: foolish
+  - word: calm
+    synonym: peaceful
+    antonym: angry
+  - word: safe
+    synonym: secure
+    antonym: dangerous
+  - word: light
+    synonym: bright
+    antonym: heavy
+  - word: dry
+    synonym: arid
+    antonym: wet
+  - word: open
+    synonym: unlocked
+    antonym: closed
+  - word: begin
+    synonym: start
+    antonym: finish
+  - word: above
+    synonym: over
+    antonym: below
+  - word: true
+    synonym: correct
+    antonym: false
+  - word: love
+    synonym: like
+    antonym: hate
+  - word: friend
+    synonym: pal
+    antonym: enemy
+  - word: win
+    synonym: succeed
+    antonym: lose
+  - word: buy
+    synonym: purchase
+    antonym: sell
+  - word: come
+    synonym: arrive
+    antonym: go
+  - word: push
+    synonym: shove
+    antonym: pull
+  - word: give
+    synonym: offer
+    antonym: take
+  - word: laugh
+    synonym: giggle
+    antonym: cry
+  - word: build
+    synonym: make
+    antonym: break
+  - word: find
+    synonym: discover
+    antonym: lose
+  - word: raise
+    synonym: lift
+    antonym: lower
+  - word: remember
+    synonym: recall
+    antonym: forget
+  - word: shout
+    synonym: yell
+    antonym: whisper
+  - word: quick
+    synonym: swift
+    antonym: slow
+  - word: tiny
+    synonym: small
+    antonym: huge
+  - word: huge
+    synonym: giant
+    antonym: tiny
+  - word: beautiful
+    synonym: pretty
+    antonym: ugly
+  - word: thin
+    synonym: slim
+    antonym: thick
+  - word: wide
+    synonym: broad
+    antonym: narrow
+  - word: deep
+    synonym: low
+    antonym: shallow
+  - word: high
+    synonym: tall
+    antonym: low
+  - word: sweet
+    synonym: sugary
+    antonym: bitter
+  - word: fresh
+    synonym: new
+    antonym: stale
+  - word: smooth
+    synonym: even
+    antonym: bumpy
+  - word: sharp
+    synonym: pointed
+    antonym: blunt
+  - word: hard
+    synonym: tough
+    antonym: soft
+  - word: healthy
+    synonym: fit
+    antonym: sick
+  - word: honest
+    synonym: truthful
+    antonym: dishonest
+  - word: polite
+    synonym: respectful
+    antonym: rude
+  - word: careful
+    synonym: cautious
+    antonym: careless
+  - word: lazy
+    synonym: idle
+    antonym: active
+  - word: busy
+    synonym: occupied
+    antonym: free
+  - word: funny
+    synonym: silly
+    antonym: serious
+  - word: noisy
+    synonym: loud
+    antonym: silent
+  - word: quiet
+    synonym: silent
+    antonym: noisy
+  - word: clever
+    synonym: smart
+    antonym: silly
+  - word: weak
+    synonym: feeble
+    antonym: strong
+  - word: slow
+    synonym: sluggish
+    antonym: fast
+  - word: cold
+    synonym: chilly
+    antonym: hot
+  - word: wrong
+    synonym: incorrect
+    antonym: right
+  - word: right
+    synonym: correct
+    antonym: wrong
+  - word: best
+    synonym: greatest
+    antonym: worst
+  - word: worst
+    synonym: poorest
+    antonym: best
+  - word: first
+    synonym: earliest
+    antonym: last
+  - word: last
+    synonym: final
+    antonym: first
+  - word: inside
+    synonym: within
+    antonym: outside
+  - word: outside
+    synonym: outdoors
+    antonym: inside
+  - word: front
+    synonym: ahead
+    antonym: back
+  - word: back
+    synonym: rear
+    antonym: front
+  - word: top
+    synonym: upper
+    antonym: bottom
+  - word: bottom
+    synonym: lower
+    antonym: top
+  - word: left
+    synonym: port
+    antonym: right
+  - word: day
+    synonym: daytime
+    antonym: night
+  - word: night
+    synonym: darkness
+    antonym: day
+  - word: yes
+    synonym: sure
+    antonym: no
+  - word: no
+    synonym: never
+    antonym: yes
+  - word: up
+    synonym: above
+    antonym: down
+  - word: down
+    synonym: below
+    antonym: up
+  - word: add
+    synonym: join
+    antonym: remove
+  - word: remove
+    synonym: delete
+    antonym: add
+  - word: enter
+    synonym: come in
+    antonym: exit
+  - word: exit
+    synonym: leave
+    antonym: enter
+  - word: accept
+    synonym: receive
+    antonym: reject
+  - word: reject
+    synonym: refuse
+    antonym: accept
+  - word: allow
+    synonym: permit
+    antonym: forbid
+  - word: forbid
+    synonym: ban
+    antonym: allow
+  - word: increase
+    synonym: grow
+    antonym: decrease
+  - word: decrease
+    synonym: reduce
+    antonym: increase
+  - word: arrive
+    synonym: come
+    antonym: depart
+  - word: depart
+    synonym: leave
+    antonym: arrive
+  - word: float
+    synonym: drift
+    antonym: sink
+  - word: sink
+    synonym: drop
+    antonym: float
+  - word: catch
+    synonym: grab
+    antonym: release
+  - word: release
+    synonym: free
+    antonym: catch

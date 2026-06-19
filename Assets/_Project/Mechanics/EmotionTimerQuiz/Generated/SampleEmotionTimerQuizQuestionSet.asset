@@ -1,0 +1,640 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7070a5454e2c94a4e8283255aa29939a, type: 3}
+  m_Name: SampleEmotionTimerQuizQuestionSet
+  m_EditorClassIdentifier: Assembly-CSharp::EmotionTimerQuiz.EmotionTimerQuizQuestionSet
+  questions:
+  - id: Q001
+    situationText: Rajes sees a massive spider on his bed!
+    targetCharacter: 3
+    correctExpression: 3
+    timeLimitSeconds: 15
+  - id: Q002
+    situationText: Tina gets a new box of crayons from her teacher.
+    targetCharacter: 1
+    correctExpression: 0
+    timeLimitSeconds: 15
+  - id: Q003
+    situationText: Raj's paper boat tears before the race starts.
+    targetCharacter: 0
+    correctExpression: 1
+    timeLimitSeconds: 15
+  - id: Q004
+    situationText: Tanvi practices hard and speaks clearly on stage.
+    targetCharacter: 2
+    correctExpression: 4
+    timeLimitSeconds: 12
+  - id: Q005
+    situationText: Raj finds out his class is going on a picnic tomorrow!
+    targetCharacter: 0
+    correctExpression: 5
+    timeLimitSeconds: 10
+  - id: Q006
+    situationText: Tina drops her ice cream before taking a bite.
+    targetCharacter: 1
+    correctExpression: 1
+    timeLimitSeconds: 15
+  - id: Q007
+    situationText: Rajes tells the truth even when it feels difficult.
+    targetCharacter: 3
+    correctExpression: 4
+    timeLimitSeconds: 14
+  - id: Q008
+    situationText: Tanvi sees her little brother break her favorite pencil on purpose.
+    targetCharacter: 2
+    correctExpression: 2
+    timeLimitSeconds: 15
+  - id: Q009
+    situationText: Raj hears thunder loudly while walking home.
+    targetCharacter: 0
+    correctExpression: 3
+    timeLimitSeconds: 12
+  - id: Q010
+    situationText: Tina wins the classroom drawing star badge.
+    targetCharacter: 1
+    correctExpression: 5
+    timeLimitSeconds: 10
+  - id: Q011
+    situationText: Rajes shares his lunch with a friend who forgot food.
+    targetCharacter: 3
+    correctExpression: 0
+    timeLimitSeconds: 15
+  - id: Q012
+    situationText: Tanvi cannot find her school project before class.
+    targetCharacter: 2
+    correctExpression: 3
+    timeLimitSeconds: 13
+  - id: Q013
+    situationText: Raj finishes reading a story aloud without mistakes.
+    targetCharacter: 0
+    correctExpression: 4
+    timeLimitSeconds: 12
+  - id: Q014
+    situationText: Tina waits quietly while others get a turn first.
+    targetCharacter: 1
+    correctExpression: 1
+    timeLimitSeconds: 15
+  - id: Q015
+    situationText: Rajes sees someone push his friend in the line.
+    targetCharacter: 3
+    correctExpression: 2
+    timeLimitSeconds: 15
+  - id: Q016
+    situationText: Tanvi gets invited to play a new game at recess.
+    targetCharacter: 2
+    correctExpression: 0
+    timeLimitSeconds: 15
+  - id: Q017
+    situationText: Raj opens a gift and finds the toy he wanted.
+    targetCharacter: 0
+    correctExpression: 5
+    timeLimitSeconds: 10
+  - id: Q018
+    situationText: Tina has to speak in front of the whole class for the first time.
+    targetCharacter: 1
+    correctExpression: 3
+    timeLimitSeconds: 12
+  - id: Q019
+    situationText: Rajes solves a hard maths puzzle by himself.
+    targetCharacter: 3
+    correctExpression: 4
+    timeLimitSeconds: 12
+  - id: Q020
+    situationText: Tanvi loses a race after trying her best.
+    targetCharacter: 2
+    correctExpression: 1
+    timeLimitSeconds: 15
+  - id: Q021
+    situationText: Raj sees his friend take his eraser without asking.
+    targetCharacter: 0
+    correctExpression: 2
+    timeLimitSeconds: 15
+  - id: Q022
+    situationText: Tina helps a new student find the classroom.
+    targetCharacter: 1
+    correctExpression: 0
+    timeLimitSeconds: 15
+  - id: Q023
+    situationText: Rajes hears that tomorrow is the school fun fair.
+    targetCharacter: 3
+    correctExpression: 5
+    timeLimitSeconds: 10
+  - id: Q024
+    situationText: Tanvi stands up and answers the teacher clearly.
+    targetCharacter: 2
+    correctExpression: 4
+    timeLimitSeconds: 12
+  - id: Q025
+    situationText: Raj notices a puppy stuck near a busy road.
+    targetCharacter: 0
+    correctExpression: 3
+    timeLimitSeconds: 12
+  - id: Q026
+    situationText: Tina finds a shiny sticker inside her notebook.
+    targetCharacter: 1
+    correctExpression: 0
+    timeLimitSeconds: 15
+  - id: Q027
+    situationText: Raj loses his favorite pencil during class.
+    targetCharacter: 0
+    correctExpression: 1
+    timeLimitSeconds: 15
+  - id: Q028
+    situationText: Tanvi sees a dog barking loudly near the school gate.
+    targetCharacter: 2
+    correctExpression: 3
+    timeLimitSeconds: 12
+  - id: Q029
+    situationText: Rajes finishes a hard spelling test by himself.
+    targetCharacter: 3
+    correctExpression: 4
+    timeLimitSeconds: 12
+  - id: Q030
+    situationText: Raj hears that his team won the house points prize.
+    targetCharacter: 0
+    correctExpression: 5
+    timeLimitSeconds: 10
+  - id: Q031
+    situationText: Tina sees someone scribble on her drawing without asking.
+    targetCharacter: 1
+    correctExpression: 2
+    timeLimitSeconds: 15
+  - id: Q032
+    situationText: Tanvi shares her crayons with a new student.
+    targetCharacter: 2
+    correctExpression: 0
+    timeLimitSeconds: 15
+  - id: Q033
+    situationText: Rajes cannot find his lunch box after the bell rings.
+    targetCharacter: 3
+    correctExpression: 1
+    timeLimitSeconds: 15
+  - id: Q034
+    situationText: Raj walks into a dark room during a power cut.
+    targetCharacter: 0
+    correctExpression: 3
+    timeLimitSeconds: 12
+  - id: Q035
+    situationText: Tina reads a poem clearly in front of the class.
+    targetCharacter: 1
+    correctExpression: 4
+    timeLimitSeconds: 12
+  - id: Q036
+    situationText: Tanvi gets chosen to lead the morning activity.
+    targetCharacter: 2
+    correctExpression: 5
+    timeLimitSeconds: 10
+  - id: Q037
+    situationText: Rajes sees his toy car broken by someone else.
+    targetCharacter: 3
+    correctExpression: 2
+    timeLimitSeconds: 15
+  - id: Q038
+    situationText: Raj gets a kind note from his best friend.
+    targetCharacter: 0
+    correctExpression: 0
+    timeLimitSeconds: 15
+  - id: Q039
+    situationText: Tina misses the school bus in the morning.
+    targetCharacter: 1
+    correctExpression: 1
+    timeLimitSeconds: 15
+  - id: Q040
+    situationText: Tanvi hears a loud fire alarm during practice.
+    targetCharacter: 2
+    correctExpression: 3
+    timeLimitSeconds: 12
+  - id: Q041
+    situationText: Rajes answers the teacher's question correctly.
+    targetCharacter: 3
+    correctExpression: 4
+    timeLimitSeconds: 12
+  - id: Q042
+    situationText: Raj sees balloons and games ready for the class party.
+    targetCharacter: 0
+    correctExpression: 5
+    timeLimitSeconds: 10
+  - id: Q043
+    situationText: Tina waits a long time but someone cuts the line.
+    targetCharacter: 1
+    correctExpression: 2
+    timeLimitSeconds: 15
+  - id: Q044
+    situationText: Tanvi gets praised for keeping her desk neat.
+    targetCharacter: 2
+    correctExpression: 0
+    timeLimitSeconds: 15
+  - id: Q045
+    situationText: Rajes drops his craft model and it falls apart.
+    targetCharacter: 3
+    correctExpression: 1
+    timeLimitSeconds: 15
+  - id: Q046
+    situationText: Raj sees a big lizard on the classroom wall.
+    targetCharacter: 0
+    correctExpression: 3
+    timeLimitSeconds: 12
+  - id: Q047
+    situationText: Tina ties her shoelaces without help for the first time.
+    targetCharacter: 1
+    correctExpression: 4
+    timeLimitSeconds: 12
+  - id: Q048
+    situationText: Tanvi learns that tomorrow is sports day.
+    targetCharacter: 2
+    correctExpression: 5
+    timeLimitSeconds: 10
+  - id: Q049
+    situationText: Rajes sees someone hide his school bag as a joke.
+    targetCharacter: 3
+    correctExpression: 2
+    timeLimitSeconds: 15
+  - id: Q050
+    situationText: Raj helps his friend pick up fallen books.
+    targetCharacter: 0
+    correctExpression: 0
+    timeLimitSeconds: 15
+  - id: Q051
+    situationText: Tina breaks her favorite hair clip by mistake.
+    targetCharacter: 1
+    correctExpression: 1
+    timeLimitSeconds: 15
+  - id: Q052
+    situationText: Tanvi hears thunder while standing near a window.
+    targetCharacter: 2
+    correctExpression: 3
+    timeLimitSeconds: 12
+  - id: Q053
+    situationText: Rajes completes his handwriting page neatly.
+    targetCharacter: 3
+    correctExpression: 4
+    timeLimitSeconds: 12
+  - id: Q054
+    situationText: Raj gets picked for the school dance group.
+    targetCharacter: 0
+    correctExpression: 5
+    timeLimitSeconds: 10
+  - id: Q055
+    situationText: Tina sees her classmate tear a page from her book.
+    targetCharacter: 1
+    correctExpression: 2
+    timeLimitSeconds: 15
+  - id: Q056
+    situationText: Tanvi receives a smiley stamp from her teacher.
+    targetCharacter: 2
+    correctExpression: 0
+    timeLimitSeconds: 15
+  - id: Q057
+    situationText: Rajes forgets his lines during a small play.
+    targetCharacter: 3
+    correctExpression: 1
+    timeLimitSeconds: 15
+  - id: Q058
+    situationText: Raj sees a stranger shouting near the playground.
+    targetCharacter: 0
+    correctExpression: 3
+    timeLimitSeconds: 12
+  - id: Q059
+    situationText: Tina shows her project confidently to the class.
+    targetCharacter: 1
+    correctExpression: 4
+    timeLimitSeconds: 12
+  - id: Q060
+    situationText: Tanvi finds out her cousins are visiting tonight.
+    targetCharacter: 2
+    correctExpression: 5
+    timeLimitSeconds: 10
+  - id: Q061
+    situationText: Rajes sees someone splash water on his clean uniform.
+    targetCharacter: 3
+    correctExpression: 2
+    timeLimitSeconds: 15
+  - id: Q062
+    situationText: Raj gets a new storybook from the library.
+    targetCharacter: 0
+    correctExpression: 0
+    timeLimitSeconds: 15
+  - id: Q063
+    situationText: Tina's paper plane falls into a puddle.
+    targetCharacter: 1
+    correctExpression: 1
+    timeLimitSeconds: 15
+  - id: Q064
+    situationText: Tanvi gets lost for a moment in a big mall.
+    targetCharacter: 2
+    correctExpression: 3
+    timeLimitSeconds: 12
+  - id: Q065
+    situationText: Rajes raises his hand and gives the right answer.
+    targetCharacter: 3
+    correctExpression: 4
+    timeLimitSeconds: 12
+  - id: Q066
+    situationText: Raj is told he can plant a seed in the school garden.
+    targetCharacter: 0
+    correctExpression: 5
+    timeLimitSeconds: 10
+  - id: Q067
+    situationText: Tina sees her game turn taken by someone else.
+    targetCharacter: 1
+    correctExpression: 2
+    timeLimitSeconds: 15
+  - id: Q068
+    situationText: Tanvi makes her grandmother laugh with a funny story.
+    targetCharacter: 2
+    correctExpression: 0
+    timeLimitSeconds: 15
+  - id: Q069
+    situationText: Rajes watches his sandcastle get washed away.
+    targetCharacter: 3
+    correctExpression: 1
+    timeLimitSeconds: 15
+  - id: Q070
+    situationText: Raj hears a sudden loud noise behind him.
+    targetCharacter: 0
+    correctExpression: 3
+    timeLimitSeconds: 12
+  - id: Q071
+    situationText: Tina solves a puzzle after trying many times.
+    targetCharacter: 1
+    correctExpression: 4
+    timeLimitSeconds: 12
+  - id: Q072
+    situationText: Tanvi sees a magic show starting on stage.
+    targetCharacter: 2
+    correctExpression: 5
+    timeLimitSeconds: 10
+  - id: Q073
+    situationText: Rajes sees someone push ahead during lunch time.
+    targetCharacter: 3
+    correctExpression: 2
+    timeLimitSeconds: 15
+  - id: Q074
+    situationText: Raj gives water to a thirsty puppy.
+    targetCharacter: 0
+    correctExpression: 0
+    timeLimitSeconds: 15
+  - id: Q075
+    situationText: Tina's team loses the relay race.
+    targetCharacter: 1
+    correctExpression: 1
+    timeLimitSeconds: 15
+  - id: Q076
+    situationText: Tanvi has to walk past a very dark corridor.
+    targetCharacter: 2
+    correctExpression: 3
+    timeLimitSeconds: 12
+  - id: Q077
+    situationText: Rajes presents his drawing without feeling shy.
+    targetCharacter: 3
+    correctExpression: 4
+    timeLimitSeconds: 12
+  - id: Q078
+    situationText: Raj hears that his birthday cake is ready.
+    targetCharacter: 0
+    correctExpression: 5
+    timeLimitSeconds: 10
+  - id: Q079
+    situationText: Tina sees mud thrown on her clean shoes.
+    targetCharacter: 1
+    correctExpression: 2
+    timeLimitSeconds: 15
+  - id: Q080
+    situationText: Tanvi gets a warm hug from her mother after school.
+    targetCharacter: 2
+    correctExpression: 0
+    timeLimitSeconds: 15
+  - id: Q081
+    situationText: Rajes cannot go outside because it is raining heavily.
+    targetCharacter: 3
+    correctExpression: 1
+    timeLimitSeconds: 15
+  - id: Q082
+    situationText: Raj sees a bee flying close to his face.
+    targetCharacter: 0
+    correctExpression: 3
+    timeLimitSeconds: 12
+  - id: Q083
+    situationText: Tina counts money correctly at the pretend shop.
+    targetCharacter: 1
+    correctExpression: 4
+    timeLimitSeconds: 12
+  - id: Q084
+    situationText: Tanvi is invited to perform a song at assembly.
+    targetCharacter: 2
+    correctExpression: 5
+    timeLimitSeconds: 10
+  - id: Q085
+    situationText: Rajes sees his friend being teased unfairly.
+    targetCharacter: 3
+    correctExpression: 2
+    timeLimitSeconds: 15
+  - id: Q086
+    situationText: Raj finishes cleaning his room and feels proud.
+    targetCharacter: 0
+    correctExpression: 0
+    timeLimitSeconds: 15
+  - id: Q087
+    situationText: Tina forgets to bring her favorite lunch snack.
+    targetCharacter: 1
+    correctExpression: 1
+    timeLimitSeconds: 15
+  - id: Q088
+    situationText: Tanvi hears a dog growling near the gate.
+    targetCharacter: 2
+    correctExpression: 3
+    timeLimitSeconds: 12
+  - id: Q089
+    situationText: Rajes learns to ride his bicycle without support.
+    targetCharacter: 3
+    correctExpression: 4
+    timeLimitSeconds: 12
+  - id: Q090
+    situationText: Raj sees the school bus arriving for a picnic.
+    targetCharacter: 0
+    correctExpression: 5
+    timeLimitSeconds: 10
+  - id: Q091
+    situationText: Tina sees someone take credit for her idea.
+    targetCharacter: 1
+    correctExpression: 2
+    timeLimitSeconds: 15
+  - id: Q092
+    situationText: Tanvi gets a thank you card from her friend.
+    targetCharacter: 2
+    correctExpression: 0
+    timeLimitSeconds: 15
+  - id: Q093
+    situationText: Rajes loses a sticker he saved for many days.
+    targetCharacter: 3
+    correctExpression: 1
+    timeLimitSeconds: 15
+  - id: Q094
+    situationText: Raj sees a shadow moving outside his window at night.
+    targetCharacter: 0
+    correctExpression: 3
+    timeLimitSeconds: 12
+  - id: Q095
+    situationText: Tina stands tall and says sorry after a mistake.
+    targetCharacter: 1
+    correctExpression: 4
+    timeLimitSeconds: 12
+  - id: Q096
+    situationText: Tanvi opens a box and finds colorful craft supplies.
+    targetCharacter: 2
+    correctExpression: 5
+    timeLimitSeconds: 10
+  - id: Q097
+    situationText: Rajes sees his seat taken even though he kept his bag there.
+    targetCharacter: 3
+    correctExpression: 2
+    timeLimitSeconds: 15
+  - id: Q098
+    situationText: Raj gets a star for helping clean the classroom.
+    targetCharacter: 0
+    correctExpression: 0
+    timeLimitSeconds: 15
+  - id: Q099
+    situationText: Tina drops her clay model before showing it to the teacher.
+    targetCharacter: 1
+    correctExpression: 1
+    timeLimitSeconds: 15
+  - id: Q100
+    situationText: Tanvi hears a balloon burst very close to her.
+    targetCharacter: 2
+    correctExpression: 3
+    timeLimitSeconds: 12
+  - id: Q101
+    situationText: Rajes completes a difficult maze without help.
+    targetCharacter: 3
+    correctExpression: 4
+    timeLimitSeconds: 12
+  - id: Q102
+    situationText: Raj hears that his cousin is bringing a new board game.
+    targetCharacter: 0
+    correctExpression: 5
+    timeLimitSeconds: 10
+  - id: Q103
+    situationText: Tina sees her friend laughing after she falls down.
+    targetCharacter: 1
+    correctExpression: 2
+    timeLimitSeconds: 15
+  - id: Q104
+    situationText: Tanvi feeds birds with her father in the park.
+    targetCharacter: 2
+    correctExpression: 0
+    timeLimitSeconds: 15
+  - id: Q105
+    situationText: Rajes misses his friend who moved to another city.
+    targetCharacter: 3
+    correctExpression: 1
+    timeLimitSeconds: 15
+  - id: Q106
+    situationText: Raj has to visit the dentist for the first time.
+    targetCharacter: 0
+    correctExpression: 3
+    timeLimitSeconds: 12
+  - id: Q107
+    situationText: Tina finishes her homework before dinner by herself.
+    targetCharacter: 1
+    correctExpression: 4
+    timeLimitSeconds: 12
+  - id: Q108
+    situationText: Tanvi hears music start for her favorite dance.
+    targetCharacter: 2
+    correctExpression: 5
+    timeLimitSeconds: 10
+  - id: Q109
+    situationText: Rajes sees his painting smudged by another child.
+    targetCharacter: 3
+    correctExpression: 2
+    timeLimitSeconds: 15
+  - id: Q110
+    situationText: Raj gets to sit next to his best friend on the bus.
+    targetCharacter: 0
+    correctExpression: 0
+    timeLimitSeconds: 15
+  - id: Q111
+    situationText: Tina's kite string breaks and the kite flies away.
+    targetCharacter: 1
+    correctExpression: 1
+    timeLimitSeconds: 15
+  - id: Q112
+    situationText: Tanvi sees a big wave coming near her sand toys.
+    targetCharacter: 2
+    correctExpression: 3
+    timeLimitSeconds: 12
+  - id: Q113
+    situationText: Rajes gives a clear answer during quiz practice.
+    targetCharacter: 3
+    correctExpression: 4
+    timeLimitSeconds: 12
+  - id: Q114
+    situationText: Raj sees a surprise decoration in his classroom.
+    targetCharacter: 0
+    correctExpression: 5
+    timeLimitSeconds: 10
+  - id: Q115
+    situationText: Tina sees someone throw trash near her plants.
+    targetCharacter: 1
+    correctExpression: 2
+    timeLimitSeconds: 15
+  - id: Q116
+    situationText: Tanvi receives a new ribbon for her hair.
+    targetCharacter: 2
+    correctExpression: 0
+    timeLimitSeconds: 15
+  - id: Q117
+    situationText: Rajes cannot play because his football is flat.
+    targetCharacter: 3
+    correctExpression: 1
+    timeLimitSeconds: 15
+  - id: Q118
+    situationText: Raj hears a loud knock when he is alone in a room.
+    targetCharacter: 0
+    correctExpression: 3
+    timeLimitSeconds: 12
+  - id: Q119
+    situationText: Tina speaks politely to a guest without feeling shy.
+    targetCharacter: 1
+    correctExpression: 4
+    timeLimitSeconds: 12
+  - id: Q120
+    situationText: Tanvi hears that the class will watch a cartoon movie.
+    targetCharacter: 2
+    correctExpression: 5
+    timeLimitSeconds: 10
+  - id: Q121
+    situationText: Rajes sees someone break the class rules again and again.
+    targetCharacter: 3
+    correctExpression: 2
+    timeLimitSeconds: 15
+  - id: Q122
+    situationText: Raj gets a high five from his coach after practice.
+    targetCharacter: 0
+    correctExpression: 0
+    timeLimitSeconds: 15
+  - id: Q123
+    situationText: Tina cannot find her birthday card for her friend.
+    targetCharacter: 1
+    correctExpression: 1
+    timeLimitSeconds: 15
+  - id: Q124
+    situationText: Tanvi sees a spider crawling on her school bag.
+    targetCharacter: 2
+    correctExpression: 3
+    timeLimitSeconds: 12
+  - id: Q125
+    situationText: Rajes leads his group and explains the poster clearly.
+    targetCharacter: 3
+    correctExpression: 4
+    timeLimitSeconds: 12

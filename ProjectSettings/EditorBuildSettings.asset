@@ -51,6 +51,18 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/_Project/Mechanics/FractionPortionFill/Scenes/FractionPizza.unity
     guid: ea085e2192948704cb64ec9c2cccedb5
+  - enabled: 1
+    path: Assets/_Project/Mechanics/OddSuckMechanic/Scenes/OddSuckMechanics-Theme1.unity
+    guid: b8aa69e6762065f4db6b49e3f375eb86
+  - enabled: 1
+    path: Assets/_Project/Mechanics/EmotionTimerQuiz/Scenes/EmotionTimerQuiz.unity
+    guid: 2430dc138ce062044b23aee07bc08bab
+  - enabled: 1
+    path: Assets/_Project/Mechanics/OddClawCatch/Scenes/OddClawCatch.unity
+    guid: be27e3c015d902a45afd80d379d0ca3f
+  - enabled: 1
+    path: Assets/_Project/Mechanics/TagBasketSorter/Scenes/TagBasketSorter.unity
+    guid: 2f9734cf75bf7764a898efdfb00cbcf6
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0

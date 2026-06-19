@@ -471,7 +471,8 @@ public class OrderSortDragManager : MonoBehaviour, IGameSceneCallbacks, IGameAud
             return;
         }
 
-        RefreshBankGridCellSize();
+        //RefreshBankGridCellSize();
+        RefreshBankLayoutMode();
         ConfigureSlotsParentForResponsiveSlots();
         Canvas.ForceUpdateCanvases();
 
@@ -551,6 +552,29 @@ public class OrderSortDragManager : MonoBehaviour, IGameSceneCallbacks, IGameAud
             grid.cellSize = GetActiveCardSize();
     }
 
+    private void RefreshBankLayoutMode()
+    {
+        if (bankParent == null)
+            return;
+
+        GridLayoutGroup grid = bankParent.GetComponent<GridLayoutGroup>();
+
+        if (bankPlacementMode == OrderSortBankPlacementMode.GridLayoutGroup)
+        {
+            if (grid == null)
+                grid = bankParent.gameObject.AddComponent<GridLayoutGroup>();
+
+            grid.enabled = true;
+            grid.cellSize = GetActiveCardSize();
+            grid.spacing = new Vector2(14f, 14f);
+            grid.padding = new RectOffset(16, 16, 16, 16);
+            grid.childAlignment = TextAnchor.MiddleCenter;
+            return;
+        }
+
+        if (grid != null)
+            grid.enabled = false;
+    }
     private void CreateSlots(int count)
     {
         for (int i = 0; i < count; i++)

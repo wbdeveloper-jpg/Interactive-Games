@@ -4881,7 +4881,7 @@ MonoBehaviour:
   sfxAudioManager: {fileID: 1066288187}
   summaryOverlayView: {fileID: 1686424809}
   howToPlayOverlayView: {fileID: 552299994}
-  activityConfig: {fileID: 11400000, guid: 2c7aff51945b816449530155beb0d159, type: 2}
+  activityConfig: {fileID: 11400000, guid: eee3034fa2b7e6a47821e37cab3440e0, type: 2}
   startOnPlay: 1
   applyGridFromConfig: 1
   applyCardAspectRatioFromConfig: 1
