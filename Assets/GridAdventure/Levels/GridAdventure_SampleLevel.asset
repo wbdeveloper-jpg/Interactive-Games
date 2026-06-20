@@ -1,0 +1,94 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4ca1638266a6904d811adc991eeac3c, type: 3}
+  m_Name: GridAdventure_SampleLevel
+  m_EditorClassIdentifier: Assembly-CSharp::GridAdventureLevelData
+  levelTitle: Grid Adventure
+  columns: 3
+  rows: 3
+  basketTitle: ITEM BASKET
+  randomizeWhenMoreThanGridCells: 1
+  randomSeed: 0
+  itemDisplayMode: 0
+  items:
+  - itemId: leaf
+    displayName: Leaf
+    gridCoordinate: A1
+    clueText: I am a tiny pore on a leaf that helps plants exchange gases.
+    sprite: {fileID: 21300000, guid: 610ba4d1c54adda44854f6b2c65f94fa, type: 3}
+    hintAudioClip: {fileID: 0}
+  - itemId: sun
+    displayName: Sun
+    gridCoordinate: A2
+    clueText: 'Without me, living things cannot get energy for their activities. '
+    sprite: {fileID: 21300000, guid: 6178e001d0821fd4e9408fbe7b44205e, type: 3}
+    hintAudioClip: {fileID: 0}
+  - itemId: cloud
+    displayName: Cloud
+    gridCoordinate: A3
+    clueText: "Taking in oxygen and giving out carbon dioxide is my job.\_"
+    sprite: {fileID: 21300000, guid: 9900d0c2b2b345b428e54ed371127ee5, type: 3}
+    hintAudioClip: {fileID: 0}
+  - itemId: flower
+    displayName: Flower
+    gridCoordinate: B1
+    clueText: Butterflies and cockroaches use me as a special feeler.
+    sprite: {fileID: 21300000, guid: 2e126d7d0802fce48bb506c8c03e855e, type: 3}
+    hintAudioClip: {fileID: 0}
+  - itemId: tree
+    displayName: Tree
+    gridCoordinate: B2
+    clueText: Chicks hatch from the eggs laid by members of my group.
+    sprite: {fileID: 21300000, guid: c65fa0da4f0fd7647a94a7ee7386d51e, type: 3}
+    hintAudioClip: {fileID: 0}
+  - itemId: bird
+    displayName: Bird
+    gridCoordinate: B3
+    clueText: Unlike solids, I can flow easily from one place to another.
+    sprite: {fileID: 21300000, guid: 9fc5d465a5d436f4b8224e96db14daab, type: 3}
+    hintAudioClip: {fileID: 0}
+  - itemId: rain
+    displayName: Rain
+    gridCoordinate: C1
+    clueText: Animals remove me as a liquid waste.
+    sprite: {fileID: 21300000, guid: 5c97abee26bf56d40a679a064fe8a31f, type: 3}
+    hintAudioClip: {fileID: 0}
+  - itemId: apple
+    displayName: Apple
+    gridCoordinate: C2
+    clueText: Find the apple and place it here.
+    sprite: {fileID: 4431669299945094479, guid: abfea997190715d4ca2122a29edb655c, type: 3}
+    hintAudioClip: {fileID: 0}
+  - itemId: butterfly
+    displayName: Butterfly
+    gridCoordinate: C3
+    clueText: Find the butterfly and place it here.
+    sprite: {fileID: -6971130704447038223, guid: 9f5e036381e1fb14f97033a71848e477, type: 3}
+    hintAudioClip: {fileID: 0}
+  - itemId: mushroom
+    displayName: Mushroom
+    gridCoordinate: A1
+    clueText: Find the mushroom and place it here.
+    sprite: {fileID: 1605280486352939776, guid: 2a5be7078f3421949b690b5dfc653937, type: 3}
+    hintAudioClip: {fileID: 0}
+  - itemId: bee
+    displayName: Bee
+    gridCoordinate: B2
+    clueText: Find the bee and place it here.
+    sprite: {fileID: -8343700758840089298, guid: 9f5e036381e1fb14f97033a71848e477, type: 3}
+    hintAudioClip: {fileID: 0}
+  - itemId: moon
+    displayName: Moon
+    gridCoordinate: C3
+    clueText: Find the moon and place it here.
+    sprite: {fileID: 21300000, guid: c2c3a5b224f9abe48adc1cc4febb03ce, type: 3}
+    hintAudioClip: {fileID: 0}
