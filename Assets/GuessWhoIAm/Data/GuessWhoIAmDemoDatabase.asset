@@ -1,0 +1,615 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5bfeddc40f1fbfd468e8c2da0b3aac42, type: 3}
+  m_Name: GuessWhoIAmDemoDatabase
+  m_EditorClassIdentifier: Assembly-CSharp::GuessWhoIAm.GuessWhoQuestionDatabase
+  questions:
+  - questionId: animal_001
+    answer: Cat
+    clue1: I am a small animal that people may keep at home.
+    clue2: I have soft fur and I like to chase small moving things.
+    clue3: I say meow.
+    manualWrongOptions:
+    - Dog
+    - Rabbit
+    - Goat
+    correctAudio: {fileID: 0}
+    wrongAudio: {fileID: 0}
+    revealAudio: {fileID: 0}
+  - questionId: animal_002
+    answer: Dog
+    clue1: I am a four-legged animal that people may keep at home.
+    clue2: I am loyal and like to guard the house.
+    clue3: I say bow-wow.
+    manualWrongOptions:
+    - Cat
+    - Rabbit
+    - Cow
+    correctAudio: {fileID: 0}
+    wrongAudio: {fileID: 0}
+    revealAudio: {fileID: 0}
+  - questionId: animal_003
+    answer: Cow
+    clue1: I am a big farm animal.
+    clue2: I eat grass and give something people drink.
+    clue3: I give milk.
+    manualWrongOptions:
+    - Goat
+    - Buffalo
+    - Horse
+    correctAudio: {fileID: 0}
+    wrongAudio: {fileID: 0}
+    revealAudio: {fileID: 0}
+  - questionId: animal_004
+    answer: Goat
+    clue1: I am a farm animal that eats grass and leaves.
+    clue2: I have small horns and can climb on rocks.
+    clue3: I say bleat bleat.
+    manualWrongOptions:
+    - Cow
+    - Sheep
+    - Deer
+    correctAudio: {fileID: 0}
+    wrongAudio: {fileID: 0}
+    revealAudio: {fileID: 0}
+  - questionId: animal_005
+    answer: Elephant
+    clue1: I am a very big animal.
+    clue2: I have large ears and a long body part on my face.
+    clue3: I use my trunk to pick things.
+    manualWrongOptions:
+    - Rhino
+    - Hippo
+    - Giraffe
+    correctAudio: {fileID: 0}
+    wrongAudio: {fileID: 0}
+    revealAudio: {fileID: 0}
+  - questionId: animal_006
+    answer: Lion
+    clue1: I am a wild animal.
+    clue2: I am called the king of the jungle.
+    clue3: The male has a big mane.
+    manualWrongOptions:
+    - Tiger
+    - Leopard
+    - Bear
+    correctAudio: {fileID: 0}
+    wrongAudio: {fileID: 0}
+    revealAudio: {fileID: 0}
+  - questionId: animal_007
+    answer: Tiger
+    clue1: I am a big wild cat.
+    clue2: I have stripes on my body.
+    clue3: I am orange with black stripes.
+    manualWrongOptions:
+    - Lion
+    - Leopard
+    - Cheetah
+    correctAudio: {fileID: 0}
+    wrongAudio: {fileID: 0}
+    revealAudio: {fileID: 0}
+  - questionId: animal_008
+    answer: Monkey
+    clue1: I am an animal that can climb trees.
+    clue2: I like bananas and swing with my hands.
+    clue3: I have a long tail and can copy people.
+    manualWrongOptions:
+    - Squirrel
+    - Bear
+    - Kangaroo
+    correctAudio: {fileID: 0}
+    wrongAudio: {fileID: 0}
+    revealAudio: {fileID: 0}
+  - questionId: animal_009
+    answer: Rabbit
+    clue1: I am a small animal with soft fur.
+    clue2: I hop and like to eat carrots.
+    clue3: I have long ears.
+    manualWrongOptions:
+    - Cat
+    - Squirrel
+    - Hamster
+    correctAudio: {fileID: 0}
+    wrongAudio: {fileID: 0}
+    revealAudio: {fileID: 0}
+  - questionId: animal_010
+    answer: Giraffe
+    clue1: I am a tall wild animal.
+    clue2: I eat leaves from high trees.
+    clue3: I have a very long neck.
+    manualWrongOptions:
+    - Elephant
+    - Camel
+    - Zebra
+    correctAudio: {fileID: 0}
+    wrongAudio: {fileID: 0}
+    revealAudio: {fileID: 0}
+  - questionId: animal_011
+    answer: Zebra
+    clue1: I am a wild animal that looks like a horse.
+    clue2: My body has black and white lines.
+    clue3: I have black and white stripes.
+    manualWrongOptions:
+    - Horse
+    - Donkey
+    - Giraffe
+    correctAudio: {fileID: 0}
+    wrongAudio: {fileID: 0}
+    revealAudio: {fileID: 0}
+  - questionId: animal_012
+    answer: Camel
+    clue1: I am an animal that can live in hot dry places.
+    clue2: I can walk on sand and carry people.
+    clue3: I have a hump on my back.
+    manualWrongOptions:
+    - Horse
+    - Donkey
+    - Giraffe
+    correctAudio: {fileID: 0}
+    wrongAudio: {fileID: 0}
+    revealAudio: {fileID: 0}
+  - questionId: animal_013
+    answer: Fish
+    clue1: I am an animal that lives in water.
+    clue2: I swim using fins.
+    clue3: I breathe with gills.
+    manualWrongOptions:
+    - Frog
+    - Turtle
+    - Duck
+    correctAudio: {fileID: 0}
+    wrongAudio: {fileID: 0}
+    revealAudio: {fileID: 0}
+  - questionId: animal_014
+    answer: Frog
+    clue1: I am a small animal that can live near water.
+    clue2: I jump and catch insects with my tongue.
+    clue3: I say croak.
+    manualWrongOptions:
+    - Fish
+    - Turtle
+    - Lizard
+    correctAudio: {fileID: 0}
+    wrongAudio: {fileID: 0}
+    revealAudio: {fileID: 0}
+  - questionId: animal_015
+    answer: Butterfly
+    clue1: I am a small flying creature.
+    clue2: I have colorful wings and sit on flowers.
+    clue3: I grow from a caterpillar.
+    manualWrongOptions:
+    - Bee
+    - Dragonfly
+    - Bird
+    correctAudio: {fileID: 0}
+    wrongAudio: {fileID: 0}
+    revealAudio: {fileID: 0}
+  - questionId: fruit_001
+    answer: Apple
+    clue1: I am a fruit that many children eat.
+    clue2: I can be red or green and crunchy.
+    clue3: People say one of me a day keeps the doctor away.
+    manualWrongOptions:
+    - Pear
+    - Guava
+    - Peach
+    correctAudio: {fileID: 0}
+    wrongAudio: {fileID: 0}
+    revealAudio: {fileID: 0}
+  - questionId: fruit_002
+    answer: Banana
+    clue1: I am a fruit that is usually yellow.
+    clue2: I am long and soft inside.
+    clue3: Monkeys are often shown eating me.
+    manualWrongOptions:
+    - Mango
+    - Pineapple
+    - Papaya
+    correctAudio: {fileID: 0}
+    wrongAudio: {fileID: 0}
+    revealAudio: {fileID: 0}
+  - questionId: fruit_003
+    answer: Mango
+    clue1: I am a sweet fruit.
+    clue2: I am yellow or orange inside and have one big seed.
+    clue3: People call me the king of fruits.
+    manualWrongOptions:
+    - Banana
+    - Papaya
+    - Orange
+    correctAudio: {fileID: 0}
+    wrongAudio: {fileID: 0}
+    revealAudio: {fileID: 0}
+  - questionId: fruit_004
+    answer: Orange
+    clue1: I am a round fruit.
+    clue2: I am juicy and full of vitamin C.
+    clue3: My name is also my color.
+    manualWrongOptions:
+    - Apple
+    - Lemon
+    - Mango
+    correctAudio: {fileID: 0}
+    wrongAudio: {fileID: 0}
+    revealAudio: {fileID: 0}
+  - questionId: fruit_005
+    answer: Grapes
+    clue1: I am a fruit that grows in bunches.
+    clue2: I can be green or purple and very small.
+    clue3: Many of me are joined on one stem.
+    manualWrongOptions:
+    - Cherry
+    - Berries
+    - Plum
+    correctAudio: {fileID: 0}
+    wrongAudio: {fileID: 0}
+    revealAudio: {fileID: 0}
+  - questionId: fruit_006
+    answer: Watermelon
+    clue1: I am a big fruit.
+    clue2: I am green outside and red inside.
+    clue3: I have many black seeds and lots of water.
+    manualWrongOptions:
+    - Muskmelon
+    - Papaya
+    - Pumpkin
+    correctAudio: {fileID: 0}
+    wrongAudio: {fileID: 0}
+    revealAudio: {fileID: 0}
+  - questionId: fruit_007
+    answer: Pineapple
+    clue1: I am a tropical fruit.
+    clue2: I have a rough outside and a leafy top.
+    clue3: My outside looks spiky.
+    manualWrongOptions:
+    - Jackfruit
+    - Mango
+    - Papaya
+    correctAudio: {fileID: 0}
+    wrongAudio: {fileID: 0}
+    revealAudio: {fileID: 0}
+  - questionId: fruit_008
+    answer: Strawberry
+    clue1: I am a small red fruit.
+    clue2: I have tiny seeds on my outside.
+    clue3: My shape looks like a heart.
+    manualWrongOptions:
+    - Cherry
+    - Apple
+    - Pomegranate
+    correctAudio: {fileID: 0}
+    wrongAudio: {fileID: 0}
+    revealAudio: {fileID: 0}
+  - questionId: fruit_009
+    answer: Papaya
+    clue1: I am a soft fruit.
+    clue2: I am orange inside and have many black seeds in the middle.
+    clue3: My name starts with Pa.
+    manualWrongOptions:
+    - Mango
+    - Muskmelon
+    - Watermelon
+    correctAudio: {fileID: 0}
+    wrongAudio: {fileID: 0}
+    revealAudio: {fileID: 0}
+  - questionId: fruit_010
+    answer: Pomegranate
+    clue1: I am a fruit with many small juicy parts inside.
+    clue2: My inside has many red seeds.
+    clue3: People eat my red seeds one by one.
+    manualWrongOptions:
+    - Apple
+    - Orange
+    - Guava
+    correctAudio: {fileID: 0}
+    wrongAudio: {fileID: 0}
+    revealAudio: {fileID: 0}
+  - questionId: fruit_011
+    answer: Guava
+    clue1: I am a round fruit.
+    clue2: I can be green outside and pink or white inside.
+    clue3: I have many tiny hard seeds.
+    manualWrongOptions:
+    - Apple
+    - Pear
+    - Peach
+    correctAudio: {fileID: 0}
+    wrongAudio: {fileID: 0}
+    revealAudio: {fileID: 0}
+  - questionId: fruit_012
+    answer: Lemon
+    clue1: I am a small fruit.
+    clue2: I am yellow and sour.
+    clue3: People squeeze me into water or food.
+    manualWrongOptions:
+    - Orange
+    - Mango
+    - Guava
+    correctAudio: {fileID: 0}
+    wrongAudio: {fileID: 0}
+    revealAudio: {fileID: 0}
+  - questionId: veg_001
+    answer: Carrot
+    clue1: I am a vegetable that grows under the ground.
+    clue2: I am orange and rabbits are shown eating me.
+    clue3: I am long and crunchy.
+    manualWrongOptions:
+    - Radish
+    - Potato
+    - Beetroot
+    correctAudio: {fileID: 0}
+    wrongAudio: {fileID: 0}
+    revealAudio: {fileID: 0}
+  - questionId: veg_002
+    answer: Potato
+    clue1: I am a vegetable that grows under the ground.
+    clue2: I am brown outside and used to make chips.
+    clue3: French fries are made from me.
+    manualWrongOptions:
+    - Carrot
+    - Onion
+    - Turnip
+    correctAudio: {fileID: 0}
+    wrongAudio: {fileID: 0}
+    revealAudio: {fileID: 0}
+  - questionId: veg_003
+    answer: Tomato
+    clue1: I am used in salads and cooking.
+    clue2: I am red and juicy.
+    clue3: Some people call me a fruit, but we use me like a vegetable.
+    manualWrongOptions:
+    - Red Capsicum
+    - Carrot
+    - Beetroot
+    correctAudio: {fileID: 0}
+    wrongAudio: {fileID: 0}
+    revealAudio: {fileID: 0}
+  - questionId: veg_004
+    answer: Onion
+    clue1: I am a vegetable used in cooking.
+    clue2: I have many layers.
+    clue3: I can make your eyes water when cut.
+    manualWrongOptions:
+    - Garlic
+    - Cabbage
+    - Potato
+    correctAudio: {fileID: 0}
+    wrongAudio: {fileID: 0}
+    revealAudio: {fileID: 0}
+  - questionId: veg_005
+    answer: Cabbage
+    clue1: I am a leafy vegetable.
+    clue2: I am round and have many leaves packed together.
+    clue3: People chop me for salad and noodles.
+    manualWrongOptions:
+    - Lettuce
+    - Spinach
+    - Cauliflower
+    correctAudio: {fileID: 0}
+    wrongAudio: {fileID: 0}
+    revealAudio: {fileID: 0}
+  - questionId: veg_006
+    answer: Cauliflower
+    clue1: I am a vegetable that looks like a flower.
+    clue2: I am usually white with green leaves around me.
+    clue3: My name has flower in it.
+    manualWrongOptions:
+    - Cabbage
+    - Broccoli
+    - Turnip
+    correctAudio: {fileID: 0}
+    wrongAudio: {fileID: 0}
+    revealAudio: {fileID: 0}
+  - questionId: veg_007
+    answer: Spinach
+    clue1: I am a leafy vegetable.
+    clue2: I am green and soft when cooked.
+    clue3: Popeye is famous for eating me.
+    manualWrongOptions:
+    - Coriander
+    - Mint
+    - Cabbage
+    correctAudio: {fileID: 0}
+    wrongAudio: {fileID: 0}
+    revealAudio: {fileID: 0}
+  - questionId: veg_008
+    answer: Brinjal
+    clue1: I am a vegetable used in curry.
+    clue2: I am usually purple and shiny.
+    clue3: I am also called eggplant.
+    manualWrongOptions:
+    - Beetroot
+    - Purple Cabbage
+    - Onion
+    correctAudio: {fileID: 0}
+    wrongAudio: {fileID: 0}
+    revealAudio: {fileID: 0}
+  - questionId: veg_009
+    answer: Cucumber
+    clue1: I am a cool vegetable eaten raw.
+    clue2: I am long, green, and watery.
+    clue3: People put my slices in salad.
+    manualWrongOptions:
+    - Bottle Gourd
+    - Zucchini
+    - Green Chilli
+    correctAudio: {fileID: 0}
+    wrongAudio: {fileID: 0}
+    revealAudio: {fileID: 0}
+  - questionId: veg_010
+    answer: Pumpkin
+    clue1: I am a large vegetable.
+    clue2: I am round and orange.
+    clue3: People make lantern faces from me in some countries.
+    manualWrongOptions:
+    - Watermelon
+    - Papaya
+    - Carrot
+    correctAudio: {fileID: 0}
+    wrongAudio: {fileID: 0}
+    revealAudio: {fileID: 0}
+  - questionId: veg_011
+    answer: Peas
+    clue1: I am a green vegetable.
+    clue2: I am small and round, and live inside a pod.
+    clue3: Many of me come together in one pod.
+    manualWrongOptions:
+    - Beans
+    - Corn
+    - Green Gram
+    correctAudio: {fileID: 0}
+    wrongAudio: {fileID: 0}
+    revealAudio: {fileID: 0}
+  - questionId: veg_012
+    answer: Corn
+    clue1: I am a yellow food grown on a plant.
+    clue2: My small yellow grains are attached to a cob.
+    clue3: People eat me as sweet corn or popcorn.
+    manualWrongOptions:
+    - Peas
+    - Wheat
+    - Rice
+    correctAudio: {fileID: 0}
+    wrongAudio: {fileID: 0}
+    revealAudio: {fileID: 0}
+  - questionId: object_001
+    answer: Pencil
+    clue1: I am a school item.
+    clue2: You use me to write and can erase my marks.
+    clue3: I have graphite inside.
+    manualWrongOptions:
+    - Pen
+    - Crayon
+    - Marker
+    correctAudio: {fileID: 0}
+    wrongAudio: {fileID: 0}
+    revealAudio: {fileID: 0}
+  - questionId: object_002
+    answer: Eraser
+    clue1: I am a school item.
+    clue2: I help remove pencil marks.
+    clue3: Students rub me on paper.
+    manualWrongOptions:
+    - Sharpener
+    - Pencil
+    - Ruler
+    correctAudio: {fileID: 0}
+    wrongAudio: {fileID: 0}
+    revealAudio: {fileID: 0}
+  - questionId: object_003
+    answer: Sharpener
+    clue1: I am a school item.
+    clue2: I help make a pencil tip pointy.
+    clue3: You turn a pencil inside me.
+    manualWrongOptions:
+    - Eraser
+    - Ruler
+    - Glue
+    correctAudio: {fileID: 0}
+    wrongAudio: {fileID: 0}
+    revealAudio: {fileID: 0}
+  - questionId: object_004
+    answer: Ruler
+    clue1: I am a school item.
+    clue2: I help draw straight lines and measure length.
+    clue3: I have numbers and centimetres on me.
+    manualWrongOptions:
+    - Pencil
+    - Scale Balance
+    - Compass
+    correctAudio: {fileID: 0}
+    wrongAudio: {fileID: 0}
+    revealAudio: {fileID: 0}
+  - questionId: object_005
+    answer: Book
+    clue1: I am used for learning or stories.
+    clue2: I have many pages.
+    clue3: You read me.
+    manualWrongOptions:
+    - Notebook
+    - Newspaper
+    - Diary
+    correctAudio: {fileID: 0}
+    wrongAudio: {fileID: 0}
+    revealAudio: {fileID: 0}
+  - questionId: object_006
+    answer: Clock
+    clue1: I am found in homes and classrooms.
+    clue2: I show hours and minutes.
+    clue3: People look at me to know the time.
+    manualWrongOptions:
+    - Calendar
+    - Watch
+    - Calculator
+    correctAudio: {fileID: 0}
+    wrongAudio: {fileID: 0}
+    revealAudio: {fileID: 0}
+  - questionId: object_007
+    answer: Umbrella
+    clue1: I am useful outside.
+    clue2: I protect you from rain and strong sun.
+    clue3: You open me above your head.
+    manualWrongOptions:
+    - Raincoat
+    - Hat
+    - Bag
+    correctAudio: {fileID: 0}
+    wrongAudio: {fileID: 0}
+    revealAudio: {fileID: 0}
+  - questionId: object_008
+    answer: Chair
+    clue1: I am furniture.
+    clue2: I have legs and a back.
+    clue3: You sit on me.
+    manualWrongOptions:
+    - Table
+    - Sofa
+    - Bed
+    correctAudio: {fileID: 0}
+    wrongAudio: {fileID: 0}
+    revealAudio: {fileID: 0}
+  - questionId: object_009
+    answer: Table
+    clue1: I am furniture.
+    clue2: You keep books, food, or things on me.
+    clue3: I have a flat top.
+    manualWrongOptions:
+    - Chair
+    - Desk
+    - Shelf
+    correctAudio: {fileID: 0}
+    wrongAudio: {fileID: 0}
+    revealAudio: {fileID: 0}
+  - questionId: object_010
+    answer: Spoon
+    clue1: I am used while eating.
+    clue2: I help you eat rice, soup, or dessert.
+    clue3: I have a small bowl-shaped end.
+    manualWrongOptions:
+    - Fork
+    - Plate
+    - Cup
+    correctAudio: {fileID: 0}
+    wrongAudio: {fileID: 0}
+    revealAudio: {fileID: 0}
+  - questionId: object_011
+    answer: Bottle
+    clue1: I am used to carry something.
+    clue2: I can hold water for school or travel.
+    clue3: You drink from me after opening my cap.
+    manualWrongOptions:
+    - Glass
+    - Cup
+    - Jug
+    correctAudio: {fileID: 0}
+    wrongAudio: {fileID: 0}
+    revealAudio: {fileID: 0}

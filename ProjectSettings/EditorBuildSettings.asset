@@ -46,7 +46,7 @@ EditorBuildSettings:
     path: Assets/_Project/Mechanics/SkyFallGame/Scenes/Scenes/SkyFallScene1.unity
     guid: bad3627701c4fa944a809818268a35a8
   - enabled: 1
-    path: Assets/_Project/Mechanics/DictationGame/Scene/DictationGame1.unity
+    path: Assets/_Project/Mechanics/DictationGame/Scene/DictationGameEnglishEdition.unity
     guid: 674ea015e1c0a4541b6a9628fa98b17f
   - enabled: 1
     path: Assets/_Project/Mechanics/FractionPortionFill/Scenes/FractionPizza.unity
@@ -66,6 +66,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/_Project/Mechanics/GridAdventure/Scenes/GridAdventure.unity
     guid: 4d14d773813288241a64232724922d4e
+  - enabled: 1
+    path: Assets/_Project/Mechanics/GuessWhoIAm/Scenes/GuessWhoIam1.unity
+    guid: 7b21755d4588bea41bdff7909b8df1be
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0
