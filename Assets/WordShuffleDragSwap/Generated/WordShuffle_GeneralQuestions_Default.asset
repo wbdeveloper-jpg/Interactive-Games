@@ -1,0 +1,65 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3b08ad0ab6ac18340b35c8dc8bd98aeb, type: 3}
+  m_Name: WordShuffle_GeneralQuestions_Default
+  m_EditorClassIdentifier: Assembly-CSharp::WordShuffleDragSwap.WordShuffleQuestionDatabase
+  questions:
+  - Question: Which animal says meow?
+    Answer: CAT
+    Hint: 
+    Picture: {fileID: 0}
+    VoiceOver: {fileID: 0}
+  - Question: What do we drink when we are thirsty?
+    Answer: WATER
+    Hint: 
+    Picture: {fileID: 0}
+    VoiceOver: {fileID: 0}
+  - Question: Which planet do we live on?
+    Answer: EARTH
+    Hint: 
+    Picture: {fileID: 0}
+    VoiceOver: {fileID: 0}
+  - Question: What color is grass usually?
+    Answer: GREEN
+    Hint: 
+    Picture: {fileID: 0}
+    VoiceOver: {fileID: 0}
+  - Question: Which fruit is yellow and curved?
+    Answer: BANANA
+    Hint: 
+    Picture: {fileID: 0}
+    VoiceOver: {fileID: 0}
+  - Question: What do we use to write in a notebook?
+    Answer: PENCIL
+    Hint: 
+    Picture: {fileID: 0}
+    VoiceOver: {fileID: 0}
+  - Question: Which shape has three sides?
+    Answer: TRIANGLE
+    Hint: 
+    Picture: {fileID: 0}
+    VoiceOver: {fileID: 0}
+  - Question: What do bees make?
+    Answer: HONEY
+    Hint: 
+    Picture: {fileID: 0}
+    VoiceOver: {fileID: 0}
+  - Question: Which vehicle flies in the sky?
+    Answer: PLANE
+    Hint: 
+    Picture: {fileID: 0}
+    VoiceOver: {fileID: 0}
+  - Question: What comes after Monday?
+    Answer: TUESDAY
+    Hint: 
+    Picture: {fileID: 0}
+    VoiceOver: {fileID: 0}

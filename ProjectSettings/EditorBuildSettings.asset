@@ -69,6 +69,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/_Project/Mechanics/GuessWhoIAm/Scenes/GuessWhoIam1.unity
     guid: 7b21755d4588bea41bdff7909b8df1be
+  - enabled: 1
+    path: Assets/_Project/Mechanics/WordShuffleDragSwap/Scenes/WordShuffleDragSwap.unity
+    guid: 8c64b6beef71d2c4eaee1ce4af80328c
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0
