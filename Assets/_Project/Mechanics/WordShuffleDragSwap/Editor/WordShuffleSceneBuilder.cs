@@ -16,6 +16,7 @@ namespace WordShuffleDragSwap.EditorTools
         private const string GeneratedFolder = "Assets/WordShuffleDragSwap/Generated";
         private const string DatabasePath = GeneratedFolder + "/WordShuffle_Grade3_4_Default.asset";
         private const string QuestionDatabasePath = GeneratedFolder + "/WordShuffle_GeneralQuestions_Default.asset";
+        private const string Grade3VacationCancelletionDatabasePath = GeneratedFolder + "/Grade_3_Vacation Cancelletion.asset";
 
         private static readonly string[] DefaultGradeWords =
         {
@@ -31,6 +32,20 @@ namespace WordShuffleDragSwap.EditorTools
             "pillow", "carpet", "mirror", "candle", "music", "guitar", "soccer", "tennis", "cricket", "ladder"
         };
 
+        private static readonly string[] Grade3VacationCancelletionWords =
+        {
+            "action", "motion", "station", "nation", "vacation",
+            "education", "information", "conversation", "question", "attention",
+            "celebration", "invitation", "collection", "direction", "protection",
+            "decoration", "population", "operation", "transportation", "donation",
+            "pollution", "solution", "tradition", "competition", "condition",
+            "position", "addition", "subtraction", "multiplication", "division",
+            "observation", "imagination", "creation", "preparation", "organization",
+            "communication", "recreation", "construction", "attraction", "instruction",
+            "correction", "connection", "selection", "description", "production",
+            "explanation", "permission", "admission", "graduation", "constitution"
+        };
+
         private static readonly WordShuffleQuestionEntry[] DefaultGeneralQuestions =
         {
             new WordShuffleQuestionEntry { Question = "Which animal says meow?", Answer = "cat" },
@@ -44,6 +59,264 @@ namespace WordShuffleDragSwap.EditorTools
             new WordShuffleQuestionEntry { Question = "Which vehicle flies in the sky?", Answer = "plane" },
             new WordShuffleQuestionEntry { Question = "What comes after Monday?", Answer = "tuesday" }
         };
+
+        private const string Grade3VacationCancellationGenralQuestionDatabasePath =
+    GeneratedFolder + "/Grade3VacationCancellationGenralQuestion.asset";
+
+        private static readonly WordShuffleQuestionEntry[]
+            Grade3VacationCancellationGenralQuestion =
+        {
+    new WordShuffleQuestionEntry
+    {
+        Question = "Unscramble the letters to make the word.\nClue: Something you do.",
+        Answer = "action"
+    },
+    new WordShuffleQuestionEntry
+    {
+        Question = "Unscramble the letters to make the word.\nClue: Moving from one place to another.",
+        Answer = "motion"
+    },
+    new WordShuffleQuestionEntry
+    {
+        Question = "Unscramble the letters to make the word.\nClue: A place where trains stop.",
+        Answer = "station"
+    },
+    new WordShuffleQuestionEntry
+    {
+        Question = "Unscramble the letters to make the word.\nClue: A country and its people.",
+        Answer = "nation"
+    },
+    new WordShuffleQuestionEntry
+    {
+        Question = "Unscramble the letters to make the word.\nClue: One part of something bigger.",
+        Answer = "section"
+    },
+    new WordShuffleQuestionEntry
+    {
+        Question = "Unscramble the letters to make the word.\nClue: One choice you can make.",
+        Answer = "option"
+    },
+    new WordShuffleQuestionEntry
+    {
+        Question = "Unscramble the letters to make the word.\nClue: A cream used on the skin.",
+        Answer = "lotion"
+    },
+    new WordShuffleQuestionEntry
+    {
+        Question = "Unscramble the letters to make the word.\nClue: A magic drink in a story.",
+        Answer = "potion"
+    },
+    new WordShuffleQuestionEntry
+    {
+        Question = "Unscramble the letters to make the word.\nClue: One part of a larger amount.",
+        Answer = "portion"
+    },
+    new WordShuffleQuestionEntry
+    {
+        Question = "Unscramble the letters to make the word.\nClue: Care taken to stay safe.",
+        Answer = "caution"
+    },
+    new WordShuffleQuestionEntry
+    {
+        Question = "Unscramble the letters to make the word.\nClue: Words written under a picture.",
+        Answer = "caption"
+    },
+    new WordShuffleQuestionEntry
+    {
+        Question = "Unscramble the letters to make the word.\nClue: A made-up story.",
+        Answer = "fiction"
+    },
+    new WordShuffleQuestionEntry
+    {
+        Question = "Unscramble the letters to make the word.\nClue: The job something does.",
+        Answer = "function"
+    },
+    new WordShuffleQuestionEntry
+    {
+        Question = "Unscramble the letters to make the word.\nClue: A part of a whole number.",
+        Answer = "fraction"
+    },
+    new WordShuffleQuestionEntry
+    {
+        Question = "Unscramble the letters to make the word.\nClue: A break from school or work.",
+        Answer = "vacation"
+    },
+    new WordShuffleQuestionEntry
+    {
+        Question = "Unscramble the letters to make the word.\nClue: Something you ask.",
+        Answer = "question"
+    },
+    new WordShuffleQuestionEntry
+    {
+        Question = "Unscramble the letters to make the word.\nClue: Putting numbers together.",
+        Answer = "addition"
+    },
+    new WordShuffleQuestionEntry
+    {
+        Question = "Unscramble the letters to make the word.\nClue: The answer to a problem.",
+        Answer = "solution"
+    },
+    new WordShuffleQuestionEntry
+    {
+        Question = "Unscramble the letters to make the word.\nClue: The place where something is.",
+        Answer = "position"
+    },
+    new WordShuffleQuestionEntry
+    {
+        Question = "Unscramble the letters to make the word.\nClue: The place where something can be found.",
+        Answer = "location"
+    },
+    new WordShuffleQuestionEntry
+    {
+        Question = "Unscramble the letters to make the word.\nClue: A way two things are connected.",
+        Answer = "relation"
+    },
+    new WordShuffleQuestionEntry
+    {
+        Question = "Unscramble the letters to make the word.\nClue: What you do after something happens.",
+        Answer = "reaction"
+    },
+    new WordShuffleQuestionEntry
+    {
+        Question = "Unscramble the letters to make the word.\nClue: Turning around in a circle.",
+        Answer = "rotation"
+    },
+    new WordShuffleQuestionEntry
+    {
+        Question = "Unscramble the letters to make the word.\nClue: Something that has been made.",
+        Answer = "creation"
+    },
+    new WordShuffleQuestionEntry
+    {
+        Question = "Unscramble the letters to make the word.\nClue: Something given to help others.",
+        Answer = "donation"
+    },
+    new WordShuffleQuestionEntry
+    {
+        Question = "Unscramble the letters to make the word.\nClue: The way you need to go.",
+        Answer = "direction"
+    },
+    new WordShuffleQuestionEntry
+    {
+        Question = "Unscramble the letters to make the word.\nClue: Listening and looking carefully.",
+        Answer = "attention"
+    },
+    new WordShuffleQuestionEntry
+    {
+        Question = "Unscramble the letters to make the word.\nClue: A group of things kept together.",
+        Answer = "collection"
+    },
+    new WordShuffleQuestionEntry
+    {
+        Question = "Unscramble the letters to make the word.\nClue: How something is right now.",
+        Answer = "condition"
+    },
+    new WordShuffleQuestionEntry
+    {
+        Question = "Unscramble the letters to make the word.\nClue: Something people have done for many years.",
+        Answer = "tradition"
+    },
+    new WordShuffleQuestionEntry
+    {
+        Question = "Unscramble the letters to make the word.\nClue: Learning at school.",
+        Answer = "education"
+    },
+    new WordShuffleQuestionEntry
+    {
+        Question = "Unscramble the letters to make the word.\nClue: Harmful waste in air, water, or land.",
+        Answer = "pollution"
+    },
+    new WordShuffleQuestionEntry
+    {
+        Question = "Unscramble the letters to make the word.\nClue: Keeping someone or something safe.",
+        Answer = "protection"
+    },
+    new WordShuffleQuestionEntry
+    {
+        Question = "Unscramble the letters to make the word.\nClue: A message asking someone to come.",
+        Answer = "invitation"
+    },
+    new WordShuffleQuestionEntry
+    {
+        Question = "Unscramble the letters to make the word.\nClue: A happy event for a special day.",
+        Answer = "celebration"
+    },
+    new WordShuffleQuestionEntry
+    {
+        Question = "Unscramble the letters to make the word.\nClue: Something used to make a place look nice.",
+        Answer = "decoration"
+    },
+    new WordShuffleQuestionEntry
+    {
+        Question = "Unscramble the letters to make the word.\nClue: A medical job done by a doctor.",
+        Answer = "operation"
+    },
+    new WordShuffleQuestionEntry
+    {
+        Question = "Unscramble the letters to make the word.\nClue: An event where people try to win.",
+        Answer = "competition"
+    },
+    new WordShuffleQuestionEntry
+    {
+        Question = "Unscramble the letters to make the word.\nClue: Something you notice by watching.",
+        Answer = "observation"
+    },
+    new WordShuffleQuestionEntry
+    {
+        Question = "Unscramble the letters to make the word.\nClue: Making pictures or ideas in your mind.",
+        Answer = "imagination"
+    },
+    new WordShuffleQuestionEntry
+    {
+        Question = "Unscramble the letters to make the word.\nClue: Getting ready for something.",
+        Answer = "preparation"
+    },
+    new WordShuffleQuestionEntry
+    {
+        Question = "Unscramble the letters to make the word.\nClue: Fun activities done in free time.",
+        Answer = "recreation"
+    },
+    new WordShuffleQuestionEntry
+    {
+        Question = "Unscramble the letters to make the word.\nClue: Something that makes people want to visit.",
+        Answer = "attraction"
+    },
+    new WordShuffleQuestionEntry
+    {
+        Question = "Unscramble the letters to make the word.\nClue: A step that tells you what to do.",
+        Answer = "instruction"
+    },
+    new WordShuffleQuestionEntry
+    {
+        Question = "Unscramble the letters to make the word.\nClue: Fixing something that is wrong.",
+        Answer = "correction"
+    },
+    new WordShuffleQuestionEntry
+    {
+        Question = "Unscramble the letters to make the word.\nClue: A link between two things.",
+        Answer = "connection"
+    },
+    new WordShuffleQuestionEntry
+    {
+        Question = "Unscramble the letters to make the word.\nClue: A group of things that were chosen.",
+        Answer = "selection"
+    },
+    new WordShuffleQuestionEntry
+    {
+        Question = "Unscramble the letters to make the word.\nClue: The making of something.",
+        Answer = "production"
+    },
+    new WordShuffleQuestionEntry
+    {
+        Question = "Unscramble the letters to make the word.\nClue: Facts that help you learn something.",
+        Answer = "information"
+    },
+    new WordShuffleQuestionEntry
+    {
+        Question = "Unscramble the letters to make the word.\nClue: A talk between two or more people.",
+        Answer = "conversation"
+    }
+};
 
         [MenuItem("Tools/Word Shuffle Drag Swap/Create Complete Scene")]
         [MenuItem("Tools/Word Shuffle Drag Swap/Create Complete Scene - V6.2 Professional Overlays")]
@@ -770,6 +1043,74 @@ namespace WordShuffleDragSwap.EditorTools
             SerializedProperty property = serializedObject.FindProperty(propertyName);
             if (property != null)
                 property.boolValue = value;
+        }
+
+        [MenuItem("Tools/Word Shuffle Drag Swap/Create Grade 3 Vacation Cancelletion Database")]
+        public static void CreateGrade3VacationCancelletionDatabase()
+        {
+            EnsureFolders();
+
+            WordShuffleWordDatabase database = AssetDatabase.LoadAssetAtPath<WordShuffleWordDatabase>(Grade3VacationCancelletionDatabasePath);
+
+            if (database == null)
+            {
+                database = ScriptableObject.CreateInstance<WordShuffleWordDatabase>();
+                database.EditorSetWords(Grade3VacationCancelletionWords);
+                AssetDatabase.CreateAsset(database, Grade3VacationCancelletionDatabasePath);
+            }
+            else
+            {
+                database.EditorSetWords(Grade3VacationCancelletionWords);
+                EditorUtility.SetDirty(database);
+            }
+
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+
+            Selection.activeObject = database;
+
+            Debug.Log("Created/updated word database: " + Grade3VacationCancelletionDatabasePath);
+        }
+
+        [MenuItem(
+    "Tools/Word Shuffle Drag Swap/Create Grade 3 Vacation Cancellation General Questions")]
+        public static void CreateGrade3VacationCancellationGenralQuestionDatabase()
+        {
+            EnsureFolders();
+
+            WordShuffleQuestionDatabase database =
+                AssetDatabase.LoadAssetAtPath<WordShuffleQuestionDatabase>(
+                    Grade3VacationCancellationGenralQuestionDatabasePath);
+
+            if (database == null)
+            {
+                database =
+                    ScriptableObject.CreateInstance<WordShuffleQuestionDatabase>();
+
+                database.EditorSetQuestions(
+                    Grade3VacationCancellationGenralQuestion);
+
+                AssetDatabase.CreateAsset(
+                    database,
+                    Grade3VacationCancellationGenralQuestionDatabasePath);
+            }
+            else
+            {
+                database.EditorSetQuestions(
+                    Grade3VacationCancellationGenralQuestion);
+
+                EditorUtility.SetDirty(database);
+            }
+
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+
+            Selection.activeObject = database;
+            EditorGUIUtility.PingObject(database);
+
+            Debug.Log(
+                "Created or updated Grade 3 Vacation Cancellation General Question database: "
+                + Grade3VacationCancellationGenralQuestionDatabasePath);
         }
     }
 }

@@ -42,6 +42,9 @@ namespace WordShuffleDragSwap
         [Header("General Question Mode")]
         [SerializeField] private WordShuffleQuestionDatabase questionDatabase;
 
+        [Header("General Hint Text")]
+        public string backupHint = "Unscamble the Word.";
+
         [Header("Game Settings")]
         [SerializeField, Min(1)] private int roundsPerGame = 10;
         [SerializeField] private bool allowRepeatedWords;
@@ -1002,7 +1005,7 @@ namespace WordShuffleDragSwap
                     WordShuffleWordEntry entry = validWords[Random.Range(0, validWords.Count)];
                     sessionRounds.Add(new WordShuffleRuntimeRound
                     {
-                        QuestionText = string.IsNullOrWhiteSpace(entry.Hint) ? "Unscramble the word" : entry.Hint,
+                        QuestionText = string.IsNullOrWhiteSpace(entry.Hint) ? backupHint : entry.Hint,
                         Answer = entry.CleanWord(),
                         Picture = entry.Picture,
                         VoiceOver = entry.VoiceOver
@@ -1016,7 +1019,7 @@ namespace WordShuffleDragSwap
                     WordShuffleWordEntry entry = validWords[i];
                     sessionRounds.Add(new WordShuffleRuntimeRound
                     {
-                        QuestionText = string.IsNullOrWhiteSpace(entry.Hint) ? "Unscramble the word" : entry.Hint,
+                        QuestionText = string.IsNullOrWhiteSpace(entry.Hint) ? backupHint : entry.Hint,
                         Answer = entry.CleanWord(),
                         Picture = entry.Picture,
                         VoiceOver = entry.VoiceOver
@@ -1798,8 +1801,8 @@ namespace WordShuffleDragSwap
                 return;
 
             instructionText.text = roundMode == WordShuffleRoundMode.EnglishWords
-                ? "Drag a tile onto another tile to swap letters"
-                : "Drag a tile onto another tile to build the correct answer";
+                ? "Drag one letter onto another. They will change places."
+                : "Drag one letter onto another. They will change places.";
         }
 
         private void SetupRoundHints()

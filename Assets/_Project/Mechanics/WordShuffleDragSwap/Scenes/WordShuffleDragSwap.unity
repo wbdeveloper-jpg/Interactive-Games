@@ -2915,7 +2915,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 98f0fcfee7d32814dbc76aa0aca83d7e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WordShuffleDragSwap.WordShuffleDragSwapManager
-  roundMode: 1
+  roundMode: 0
   wordDatabase: {fileID: 11400000, guid: 14c347c25e2febd41b91540947ddb386, type: 2}
   questionDatabase: {fileID: 11400000, guid: 5db82466b2db4b5498adfcd2bfff59c1, type: 2}
   roundsPerGame: 10

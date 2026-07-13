@@ -1539,7 +1539,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 1009.79987, y: 1009.79987}
+  m_SizeDelta: {x: 1009.8, y: 1009.8}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &235341150
 MonoBehaviour:
@@ -5286,7 +5286,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 930.0257, y: 930.0257}
+  m_SizeDelta: {x: 930.0258, y: 930.0258}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &884347553
 MonoBehaviour:
@@ -10542,7 +10542,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Profit: 1000'
+  m_text: 'Score: 1000'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -10921,7 +10921,7 @@ MonoBehaviour:
   minRequestsPerQuestion: 1
   maxRequestsPerQuestion: 2
   useCommonPortionCountsOnly: 1
-  avoidWholePizzaFractions: 1
+  avoidWholePizzaFractions: 0
   keepOperationFractionsOnPizzaDenominator: 1
   mixedMode:
     includeDirect: 1
@@ -12846,7 +12846,7 @@ MonoBehaviour:
   m_ChildAlignment: 1
   m_StartCorner: 0
   m_StartAxis: 0
-  m_CellSize: {x: 309.85, y: 114.02999}
+  m_CellSize: {x: 309.85, y: 114.03001}
   m_Spacing: {x: 0, y: 14}
   m_Constraint: 1
   m_ConstraintCount: 1
@@ -12921,7 +12921,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 818.4226, y: 818.4226}
+  m_SizeDelta: {x: 818.4227, y: 818.4227}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:

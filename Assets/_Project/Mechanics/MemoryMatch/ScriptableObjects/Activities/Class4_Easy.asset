@@ -16,7 +16,7 @@ MonoBehaviour:
   displayName: Class 4 Normal
   classLevel: 4
   gridColumns: 4
-  gridRows: 3
+  gridRows: 2
   cardAspectRatio: 0.9
   matchCheckDelay: 0.25
   wrongFlipBackDelay: 0.65

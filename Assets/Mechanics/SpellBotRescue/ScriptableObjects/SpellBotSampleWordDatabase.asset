@@ -1,0 +1,227 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7922a0f13841e784da6be430f379eb47, type: 3}
+  m_Name: SpellBotSampleWordDatabase
+  m_EditorClassIdentifier: Assembly-CSharp::NarayanaGames.SpellBotRescue.SpellBotWordDatabase
+  entries:
+  - incorrectWord: frend
+    correctWord: friend
+    hintText: A person you like and spend time with.
+    difficultyTier: 3
+  - incorrectWord: becaus
+    correctWord: because
+    hintText: A word used to give a reason.
+    difficultyTier: 3
+  - incorrectWord: animel
+    correctWord: animal
+    hintText: A living creature like a dog, cat, or elephant.
+    difficultyTier: 3
+  - incorrectWord: famly
+    correctWord: family
+    hintText: People who live with or care for you.
+    difficultyTier: 3
+  - incorrectWord: skool
+    correctWord: school
+    hintText: A place where children learn.
+    difficultyTier: 3
+  - incorrectWord: happpy
+    correctWord: happy
+    hintText: Feeling joy or gladness.
+    difficultyTier: 3
+  - incorrectWord: brithday
+    correctWord: birthday
+    hintText: The day someone was born.
+    difficultyTier: 3
+  - incorrectWord: buterfly
+    correctWord: butterfly
+    hintText: A colorful flying insect.
+    difficultyTier: 3
+  - incorrectWord: watter
+    correctWord: water
+    hintText: A clear liquid we drink.
+    difficultyTier: 3
+  - incorrectWord: pepole
+    correctWord: people
+    hintText: More than one person.
+    difficultyTier: 3
+  - incorrectWord: rainbo
+    correctWord: rainbow
+    hintText: Colorful arc seen after rain.
+    difficultyTier: 3
+  - incorrectWord: libary
+    correctWord: library
+    hintText: A place with many books.
+    difficultyTier: 3
+  - incorrectWord: faverite
+    correctWord: favorite
+    hintText: Something you like the most.
+    difficultyTier: 3
+  - incorrectWord: monky
+    correctWord: monkey
+    hintText: An animal that can climb and swing.
+    difficultyTier: 3
+  - incorrectWord: kittenn
+    correctWord: kitten
+    hintText: A baby cat.
+    difficultyTier: 3
+  - incorrectWord: diffrent
+    correctWord: different
+    hintText: Not the same.
+    difficultyTier: 4
+  - incorrectWord: anser
+    correctWord: answer
+    hintText: A reply to a question.
+    difficultyTier: 4
+  - incorrectWord: quikly
+    correctWord: quickly
+    hintText: Doing something fast.
+    difficultyTier: 4
+  - incorrectWord: tomorow
+    correctWord: tomorrow
+    hintText: The day after today.
+    difficultyTier: 4
+  - incorrectWord: yestarday
+    correctWord: yesterday
+    hintText: The day before today.
+    difficultyTier: 4
+  - incorrectWord: importent
+    correctWord: important
+    hintText: Something that matters a lot.
+    difficultyTier: 4
+  - incorrectWord: minit
+    correctWord: minute
+    hintText: Sixty seconds.
+    difficultyTier: 4
+  - incorrectWord: suddnly
+    correctWord: suddenly
+    hintText: Happening quickly without warning.
+    difficultyTier: 4
+  - incorrectWord: saftey
+    correctWord: safety
+    hintText: Being protected from danger.
+    difficultyTier: 4
+  - incorrectWord: jungel
+    correctWord: jungle
+    hintText: A thick forest with many plants and animals.
+    difficultyTier: 4
+  - incorrectWord: mountin
+    correctWord: mountain
+    hintText: A very high hill.
+    difficultyTier: 4
+  - incorrectWord: seperate
+    correctWord: separate
+    hintText: To keep apart.
+    difficultyTier: 4
+  - incorrectWord: nervus
+    correctWord: nervous
+    hintText: Feeling worried or afraid.
+    difficultyTier: 4
+  - incorrectWord: curius
+    correctWord: curious
+    hintText: Wanting to know or learn.
+    difficultyTier: 4
+  - incorrectWord: stomack
+    correctWord: stomach
+    hintText: The body part where food goes.
+    difficultyTier: 4
+  - incorrectWord: magestic
+    correctWord: majestic
+    hintText: Grand, royal, or magnificent.
+    difficultyTier: 5
+  - incorrectWord: majestick
+    correctWord: majestic
+    hintText: Grand, royal, or magnificent.
+    difficultyTier: 5
+  - incorrectWord: exellent
+    correctWord: excellent
+    hintText: Extremely good.
+    difficultyTier: 5
+  - incorrectWord: beutiful
+    correctWord: beautiful
+    hintText: Very pretty or lovely.
+    difficultyTier: 5
+  - incorrectWord: choclate
+    correctWord: chocolate
+    hintText: A sweet brown treat.
+    difficultyTier: 5
+  - incorrectWord: enviroment
+    correctWord: environment
+    hintText: The world around us.
+    difficultyTier: 5
+  - incorrectWord: neccesary
+    correctWord: necessary
+    hintText: Something that is needed.
+    difficultyTier: 5
+  - incorrectWord: knowlege
+    correctWord: knowledge
+    hintText: Information and understanding.
+    difficultyTier: 5
+  - incorrectWord: adventur
+    correctWord: adventure
+    hintText: An exciting journey or experience.
+    difficultyTier: 5
+  - incorrectWord: misterious
+    correctWord: mysterious
+    hintText: Hard to explain or understand.
+    difficultyTier: 5
+  - incorrectWord: imaginashun
+    correctWord: imagination
+    hintText: The ability to create ideas in your mind.
+    difficultyTier: 5
+  - incorrectWord: confidense
+    correctWord: confidence
+    hintText: Believing you can do something.
+    difficultyTier: 5
+  - incorrectWord: responsable
+    correctWord: responsible
+    hintText: Able to be trusted to do the right thing.
+    difficultyTier: 5
+  - incorrectWord: generous
+    correctWord: generous
+    hintText: Willing to share or give.
+    difficultyTier: 5
+  - incorrectWord: genrous
+    correctWord: generous
+    hintText: Willing to share or give.
+    difficultyTier: 5
+  - incorrectWord: obediant
+    correctWord: obedient
+    hintText: Following rules or instructions.
+    difficultyTier: 5
+  - incorrectWord: patiense
+    correctWord: patience
+    hintText: Waiting calmly without getting upset.
+    difficultyTier: 5
+  - incorrectWord: bravery
+    correctWord: bravery
+    hintText: Being brave.
+    difficultyTier: 5
+  - incorrectWord: bravry
+    correctWord: bravery
+    hintText: Being brave.
+    difficultyTier: 5
+  - incorrectWord: discoverd
+    correctWord: discovered
+    hintText: Found something new.
+    difficultyTier: 5
+  - incorrectWord: scientest
+    correctWord: scientist
+    hintText: A person who studies science.
+    difficultyTier: 5
+  - incorrectWord: creativ
+    correctWord: creative
+    hintText: Able to make new ideas or things.
+    difficultyTier: 5
+  - incorrectWord: achievment
+    correctWord: achievement
+    hintText: Something good gained by effort.
+    difficultyTier: 5

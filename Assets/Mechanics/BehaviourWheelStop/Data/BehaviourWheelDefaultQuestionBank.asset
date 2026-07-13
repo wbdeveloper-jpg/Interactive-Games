@@ -1,0 +1,421 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 19a0d014090971d419125008511ad1cf, type: 3}
+  m_Name: BehaviourWheelDefaultQuestionBank
+  m_EditorClassIdentifier: Assembly-CSharp::Narayanagroup.BehaviourWheelStop.BehaviourWheelQuestionBank
+  defaultBehaviourOptions:
+  - Caring
+  - Selfish
+  - Kind
+  - Respectful
+  - Ignorant
+  - Protective
+  questions:
+  - questionText: The King ignores the elderly people. What behaviour is this?
+    options:
+    - Caring
+    - Selfish
+    - Kind
+    - Respectful
+    - Ignorant
+    - Protective
+    optionIcons: []
+    correctAnswer: Ignorant
+    explanation: Ignoring elderly people shows ignorant behaviour.
+    quizMode: 0
+    difficulty: 1
+  - questionText: The King only thinks about his own wishes. What behaviour is this?
+    options:
+    - Caring
+    - Selfish
+    - Kind
+    - Respectful
+    - Ignorant
+    - Protective
+    optionIcons: []
+    correctAnswer: Selfish
+    explanation: Thinking only about oneself shows selfish behaviour.
+    quizMode: 0
+    difficulty: 1
+  - questionText: Dadu guides Dev with care. What behaviour is this?
+    options:
+    - Caring
+    - Selfish
+    - Kind
+    - Respectful
+    - Ignorant
+    - Protective
+    optionIcons: []
+    correctAnswer: Caring
+    explanation: Guiding someone gently shows caring behaviour.
+    quizMode: 0
+    difficulty: 1
+  - questionText: Dadu tries to keep Dev safe. What behaviour is this?
+    options:
+    - Caring
+    - Selfish
+    - Kind
+    - Respectful
+    - Ignorant
+    - Protective
+    optionIcons: []
+    correctAnswer: Protective
+    explanation: Keeping someone safe shows protective behaviour.
+    quizMode: 0
+    difficulty: 1
+  - questionText: Dev listens to Dadu carefully. What behaviour is this?
+    options:
+    - Caring
+    - Selfish
+    - Kind
+    - Respectful
+    - Ignorant
+    - Protective
+    optionIcons: []
+    correctAnswer: Respectful
+    explanation: Listening carefully to elders shows respectful behaviour.
+    quizMode: 0
+    difficulty: 1
+  - questionText: The Princess speaks kindly to others. What behaviour is this?
+    options:
+    - Caring
+    - Selfish
+    - Kind
+    - Respectful
+    - Ignorant
+    - Protective
+    optionIcons: []
+    correctAnswer: Kind
+    explanation: Speaking gently and nicely shows kindness.
+    quizMode: 0
+    difficulty: 1
+  - questionText: The King does not care about the feelings of others. What behaviour
+      is this?
+    options:
+    - Caring
+    - Selfish
+    - Kind
+    - Respectful
+    - Ignorant
+    - Protective
+    optionIcons: []
+    correctAnswer: Selfish
+    explanation: Not caring about others' feelings can be selfish.
+    quizMode: 0
+    difficulty: 1
+  - questionText: Dev helps an elderly person. What behaviour is this?
+    options:
+    - Caring
+    - Selfish
+    - Kind
+    - Respectful
+    - Ignorant
+    - Protective
+    optionIcons: []
+    correctAnswer: Kind
+    explanation: Helping someone shows kind behaviour.
+    quizMode: 0
+    difficulty: 1
+  - questionText: Dadu worries about Dev's safety. What behaviour is this?
+    options:
+    - Caring
+    - Selfish
+    - Kind
+    - Respectful
+    - Ignorant
+    - Protective
+    optionIcons: []
+    correctAnswer: Protective
+    explanation: Worrying about someone's safety shows protective behaviour.
+    quizMode: 0
+    difficulty: 1
+  - questionText: The Princess shows concern for people around her. What behaviour
+      is this?
+    options:
+    - Caring
+    - Selfish
+    - Kind
+    - Respectful
+    - Ignorant
+    - Protective
+    optionIcons: []
+    correctAnswer: Caring
+    explanation: Showing concern for others is caring.
+    quizMode: 0
+    difficulty: 1
+  - questionText: Dev talks politely to Dadu. What behaviour is this?
+    options:
+    - Caring
+    - Selfish
+    - Kind
+    - Respectful
+    - Ignorant
+    - Protective
+    optionIcons: []
+    correctAnswer: Respectful
+    explanation: Talking politely to elders shows respect.
+    quizMode: 0
+    difficulty: 1
+  - questionText: The King refuses to listen to good advice. What behaviour is this?
+    options:
+    - Caring
+    - Selfish
+    - Kind
+    - Respectful
+    - Ignorant
+    - Protective
+    optionIcons: []
+    correctAnswer: Ignorant
+    explanation: Refusing to listen to good advice can show ignorance.
+    quizMode: 0
+    difficulty: 1
+  - questionText: The Minister follows only what pleases the King. What behaviour
+      is this?
+    options:
+    - Caring
+    - Selfish
+    - Kind
+    - Respectful
+    - Ignorant
+    - Protective
+    optionIcons: []
+    correctAnswer: Selfish
+    explanation: Supporting only selfish wishes can show selfish behaviour.
+    quizMode: 0
+    difficulty: 1
+  - questionText: The Saint gives guidance to others. What behaviour is this?
+    options:
+    - Caring
+    - Selfish
+    - Kind
+    - Respectful
+    - Ignorant
+    - Protective
+    optionIcons: []
+    correctAnswer: Caring
+    explanation: Giving helpful guidance shows caring behaviour.
+    quizMode: 0
+    difficulty: 1
+  - questionText: Dev thinks about what is right and wrong. What behaviour is this?
+    options:
+    - Caring
+    - Selfish
+    - Kind
+    - Respectful
+    - Ignorant
+    - Protective
+    optionIcons: []
+    correctAnswer: Respectful
+    explanation: Thinking carefully about others and values shows respect.
+    quizMode: 0
+    difficulty: 1
+  - questionText: The Princess cares about the problems of others. What behaviour
+      is this?
+    options:
+    - Caring
+    - Selfish
+    - Kind
+    - Respectful
+    - Ignorant
+    - Protective
+    optionIcons: []
+    correctAnswer: Caring
+    explanation: Caring about others' problems shows caring behaviour.
+    quizMode: 0
+    difficulty: 1
+  - questionText: The King treats elderly people as unimportant. What behaviour is
+      this?
+    options:
+    - Caring
+    - Selfish
+    - Kind
+    - Respectful
+    - Ignorant
+    - Protective
+    optionIcons: []
+    correctAnswer: Ignorant
+    explanation: Treating elderly people as unimportant shows ignorance.
+    quizMode: 0
+    difficulty: 1
+  - questionText: Dadu supports Dev during confusion. What behaviour is this?
+    options:
+    - Caring
+    - Selfish
+    - Kind
+    - Respectful
+    - Ignorant
+    - Protective
+    optionIcons: []
+    correctAnswer: Kind
+    explanation: Supporting someone in confusion is kind.
+    quizMode: 0
+    difficulty: 1
+  - questionText: Dev respects elderly people. What behaviour is this?
+    options:
+    - Caring
+    - Selfish
+    - Kind
+    - Respectful
+    - Ignorant
+    - Protective
+    optionIcons: []
+    correctAnswer: Respectful
+    explanation: Respecting elders is respectful behaviour.
+    quizMode: 0
+    difficulty: 1
+  - questionText: Dadu warns Dev about possible danger. What behaviour is this?
+    options:
+    - Caring
+    - Selfish
+    - Kind
+    - Respectful
+    - Ignorant
+    - Protective
+    optionIcons: []
+    correctAnswer: Protective
+    explanation: Warning someone about danger shows protective behaviour.
+    quizMode: 0
+    difficulty: 1
+  - questionText: The Princess tries to understand others. What behaviour is this?
+    options:
+    - Caring
+    - Selfish
+    - Kind
+    - Respectful
+    - Ignorant
+    - Protective
+    optionIcons: []
+    correctAnswer: Caring
+    explanation: Trying to understand others shows care.
+    quizMode: 0
+    difficulty: 1
+  - questionText: The King wants things only his own way. What behaviour is this?
+    options:
+    - Caring
+    - Selfish
+    - Kind
+    - Respectful
+    - Ignorant
+    - Protective
+    optionIcons: []
+    correctAnswer: Selfish
+    explanation: Wanting everything only one's own way shows selfish behaviour.
+    quizMode: 0
+    difficulty: 1
+  - questionText: The Minister ignores the suffering of elderly people. What behaviour
+      is this?
+    options:
+    - Caring
+    - Selfish
+    - Kind
+    - Respectful
+    - Ignorant
+    - Protective
+    optionIcons: []
+    correctAnswer: Ignorant
+    explanation: Ignoring suffering shows ignorant behaviour.
+    quizMode: 0
+    difficulty: 1
+  - questionText: Dev behaves gently with Dadu. What behaviour is this?
+    options:
+    - Caring
+    - Selfish
+    - Kind
+    - Respectful
+    - Ignorant
+    - Protective
+    optionIcons: []
+    correctAnswer: Kind
+    explanation: Gentle behaviour is kind.
+    quizMode: 0
+    difficulty: 1
+  - questionText: Dadu speaks wisely to guide Dev. What behaviour is this?
+    options:
+    - Caring
+    - Selfish
+    - Kind
+    - Respectful
+    - Ignorant
+    - Protective
+    optionIcons: []
+    correctAnswer: Caring
+    explanation: Wise guidance with concern shows caring behaviour.
+    quizMode: 0
+    difficulty: 1
+  - questionText: The Saint helps people understand what is right. What behaviour
+      is this?
+    options:
+    - Caring
+    - Selfish
+    - Kind
+    - Respectful
+    - Ignorant
+    - Protective
+    optionIcons: []
+    correctAnswer: Kind
+    explanation: Helping others understand the right thing is kind.
+    quizMode: 0
+    difficulty: 1
+  - questionText: Dev does not make fun of elderly people. What behaviour is this?
+    options:
+    - Caring
+    - Selfish
+    - Kind
+    - Respectful
+    - Ignorant
+    - Protective
+    optionIcons: []
+    correctAnswer: Respectful
+    explanation: Not making fun of elders shows respect.
+    quizMode: 0
+    difficulty: 1
+  - questionText: Dadu stands by Dev when Dev needs help. What behaviour is this?
+    options:
+    - Caring
+    - Selfish
+    - Kind
+    - Respectful
+    - Ignorant
+    - Protective
+    optionIcons: []
+    correctAnswer: Protective
+    explanation: Standing by someone in need can show protective behaviour.
+    quizMode: 0
+    difficulty: 1
+  - questionText: The King ignores advice because he thinks he knows best. What behaviour
+      is this?
+    options:
+    - Caring
+    - Selfish
+    - Kind
+    - Respectful
+    - Ignorant
+    - Protective
+    optionIcons: []
+    correctAnswer: Ignorant
+    explanation: Ignoring advice due to pride shows ignorance.
+    quizMode: 0
+    difficulty: 1
+  - questionText: The Princess shows gentle behaviour toward people. What behaviour
+      is this?
+    options:
+    - Caring
+    - Selfish
+    - Kind
+    - Respectful
+    - Ignorant
+    - Protective
+    optionIcons: []
+    correctAnswer: Kind
+    explanation: Gentle behaviour shows kindness.
+    quizMode: 0
+    difficulty: 1

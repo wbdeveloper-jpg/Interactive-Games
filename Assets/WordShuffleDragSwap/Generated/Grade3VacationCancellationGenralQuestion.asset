@@ -1,0 +1,414 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3b08ad0ab6ac18340b35c8dc8bd98aeb, type: 3}
+  m_Name: Grade3VacationCancellationGenralQuestion
+  m_EditorClassIdentifier: Assembly-CSharp::WordShuffleDragSwap.WordShuffleQuestionDatabase
+  questions:
+  - Question: 'Unscramble the letters to make the word.
+
+      Clue: Something you
+      do.'
+    Answer: ACTION
+    Hint: 
+    Picture: {fileID: 0}
+    VoiceOver: {fileID: 0}
+  - Question: 'Unscramble the letters to make the word.
+
+      Clue: Moving from
+      one place to another.'
+    Answer: MOTION
+    Hint: 
+    Picture: {fileID: 0}
+    VoiceOver: {fileID: 0}
+  - Question: 'Unscramble the letters to make the word.
+
+      Clue: A place where
+      trains stop.'
+    Answer: STATION
+    Hint: 
+    Picture: {fileID: 0}
+    VoiceOver: {fileID: 0}
+  - Question: 'Unscramble the letters to make the word.
+
+      Clue: A country and
+      its people.'
+    Answer: NATION
+    Hint: 
+    Picture: {fileID: 0}
+    VoiceOver: {fileID: 0}
+  - Question: 'Unscramble the letters to make the word.
+
+      Clue: One part of
+      something bigger.'
+    Answer: SECTION
+    Hint: 
+    Picture: {fileID: 0}
+    VoiceOver: {fileID: 0}
+  - Question: 'Unscramble the letters to make the word.
+
+      Clue: One choice you
+      can make.'
+    Answer: OPTION
+    Hint: 
+    Picture: {fileID: 0}
+    VoiceOver: {fileID: 0}
+  - Question: 'Unscramble the letters to make the word.
+
+      Clue: A cream used
+      on the skin.'
+    Answer: LOTION
+    Hint: 
+    Picture: {fileID: 0}
+    VoiceOver: {fileID: 0}
+  - Question: 'Unscramble the letters to make the word.
+
+      Clue: A magic drink
+      in a story.'
+    Answer: POTION
+    Hint: 
+    Picture: {fileID: 0}
+    VoiceOver: {fileID: 0}
+  - Question: 'Unscramble the letters to make the word.
+
+      Clue: One part of
+      a larger amount.'
+    Answer: PORTION
+    Hint: 
+    Picture: {fileID: 0}
+    VoiceOver: {fileID: 0}
+  - Question: 'Unscramble the letters to make the word.
+
+      Clue: Care taken to
+      stay safe.'
+    Answer: CAUTION
+    Hint: 
+    Picture: {fileID: 0}
+    VoiceOver: {fileID: 0}
+  - Question: 'Unscramble the letters to make the word.
+
+      Clue: Words written
+      under a picture.'
+    Answer: CAPTION
+    Hint: 
+    Picture: {fileID: 0}
+    VoiceOver: {fileID: 0}
+  - Question: 'Unscramble the letters to make the word.
+
+      Clue: A made-up story.'
+    Answer: FICTION
+    Hint: 
+    Picture: {fileID: 0}
+    VoiceOver: {fileID: 0}
+  - Question: 'Unscramble the letters to make the word.
+
+      Clue: The job something
+      does.'
+    Answer: FUNCTION
+    Hint: 
+    Picture: {fileID: 0}
+    VoiceOver: {fileID: 0}
+  - Question: 'Unscramble the letters to make the word.
+
+      Clue: A part of a
+      whole number.'
+    Answer: FRACTION
+    Hint: 
+    Picture: {fileID: 0}
+    VoiceOver: {fileID: 0}
+  - Question: 'Unscramble the letters to make the word.
+
+      Clue: A break from
+      school or work.'
+    Answer: VACATION
+    Hint: 
+    Picture: {fileID: 0}
+    VoiceOver: {fileID: 0}
+  - Question: 'Unscramble the letters to make the word.
+
+      Clue: Something you
+      ask.'
+    Answer: QUESTION
+    Hint: 
+    Picture: {fileID: 0}
+    VoiceOver: {fileID: 0}
+  - Question: 'Unscramble the letters to make the word.
+
+      Clue: Putting numbers
+      together.'
+    Answer: ADDITION
+    Hint: 
+    Picture: {fileID: 0}
+    VoiceOver: {fileID: 0}
+  - Question: 'Unscramble the letters to make the word.
+
+      Clue: The answer to
+      a problem.'
+    Answer: SOLUTION
+    Hint: 
+    Picture: {fileID: 0}
+    VoiceOver: {fileID: 0}
+  - Question: 'Unscramble the letters to make the word.
+
+      Clue: The place where
+      something is.'
+    Answer: POSITION
+    Hint: 
+    Picture: {fileID: 0}
+    VoiceOver: {fileID: 0}
+  - Question: 'Unscramble the letters to make the word.
+
+      Clue: The place where
+      something can be found.'
+    Answer: LOCATION
+    Hint: 
+    Picture: {fileID: 0}
+    VoiceOver: {fileID: 0}
+  - Question: 'Unscramble the letters to make the word.
+
+      Clue: A way two things
+      are connected.'
+    Answer: RELATION
+    Hint: 
+    Picture: {fileID: 0}
+    VoiceOver: {fileID: 0}
+  - Question: 'Unscramble the letters to make the word.
+
+      Clue: What you do
+      after something happens.'
+    Answer: REACTION
+    Hint: 
+    Picture: {fileID: 0}
+    VoiceOver: {fileID: 0}
+  - Question: 'Unscramble the letters to make the word.
+
+      Clue: Turning around
+      in a circle.'
+    Answer: ROTATION
+    Hint: 
+    Picture: {fileID: 0}
+    VoiceOver: {fileID: 0}
+  - Question: 'Unscramble the letters to make the word.
+
+      Clue: Something that
+      has been made.'
+    Answer: CREATION
+    Hint: 
+    Picture: {fileID: 0}
+    VoiceOver: {fileID: 0}
+  - Question: 'Unscramble the letters to make the word.
+
+      Clue: Something given
+      to help others.'
+    Answer: DONATION
+    Hint: 
+    Picture: {fileID: 0}
+    VoiceOver: {fileID: 0}
+  - Question: 'Unscramble the letters to make the word.
+
+      Clue: The way you
+      need to go.'
+    Answer: DIRECTION
+    Hint: 
+    Picture: {fileID: 0}
+    VoiceOver: {fileID: 0}
+  - Question: 'Unscramble the letters to make the word.
+
+      Clue: Listening and
+      looking carefully.'
+    Answer: ATTENTION
+    Hint: 
+    Picture: {fileID: 0}
+    VoiceOver: {fileID: 0}
+  - Question: 'Unscramble the letters to make the word.
+
+      Clue: A group of things
+      kept together.'
+    Answer: COLLECTION
+    Hint: 
+    Picture: {fileID: 0}
+    VoiceOver: {fileID: 0}
+  - Question: 'Unscramble the letters to make the word.
+
+      Clue: How something
+      is right now.'
+    Answer: CONDITION
+    Hint: 
+    Picture: {fileID: 0}
+    VoiceOver: {fileID: 0}
+  - Question: 'Unscramble the letters to make the word.
+
+      Clue: Something people
+      have done for many years.'
+    Answer: TRADITION
+    Hint: 
+    Picture: {fileID: 0}
+    VoiceOver: {fileID: 0}
+  - Question: 'Unscramble the letters to make the word.
+
+      Clue: Learning at
+      school.'
+    Answer: EDUCATION
+    Hint: 
+    Picture: {fileID: 0}
+    VoiceOver: {fileID: 0}
+  - Question: 'Unscramble the letters to make the word.
+
+      Clue: Harmful waste
+      in air, water, or land.'
+    Answer: POLLUTION
+    Hint: 
+    Picture: {fileID: 0}
+    VoiceOver: {fileID: 0}
+  - Question: 'Unscramble the letters to make the word.
+
+      Clue: Keeping someone
+      or something safe.'
+    Answer: PROTECTION
+    Hint: 
+    Picture: {fileID: 0}
+    VoiceOver: {fileID: 0}
+  - Question: 'Unscramble the letters to make the word.
+
+      Clue: A message asking
+      someone to come.'
+    Answer: INVITATION
+    Hint: 
+    Picture: {fileID: 0}
+    VoiceOver: {fileID: 0}
+  - Question: 'Unscramble the letters to make the word.
+
+      Clue: A happy event
+      for a special day.'
+    Answer: CELEBRATION
+    Hint: 
+    Picture: {fileID: 0}
+    VoiceOver: {fileID: 0}
+  - Question: 'Unscramble the letters to make the word.
+
+      Clue: Something used
+      to make a place look nice.'
+    Answer: DECORATION
+    Hint: 
+    Picture: {fileID: 0}
+    VoiceOver: {fileID: 0}
+  - Question: 'Unscramble the letters to make the word.
+
+      Clue: A medical job
+      done by a doctor.'
+    Answer: OPERATION
+    Hint: 
+    Picture: {fileID: 0}
+    VoiceOver: {fileID: 0}
+  - Question: 'Unscramble the letters to make the word.
+
+      Clue: An event where
+      people try to win.'
+    Answer: COMPETITION
+    Hint: 
+    Picture: {fileID: 0}
+    VoiceOver: {fileID: 0}
+  - Question: 'Unscramble the letters to make the word.
+
+      Clue: Something you
+      notice by watching.'
+    Answer: OBSERVATION
+    Hint: 
+    Picture: {fileID: 0}
+    VoiceOver: {fileID: 0}
+  - Question: 'Unscramble the letters to make the word.
+
+      Clue: Making pictures
+      or ideas in your mind.'
+    Answer: IMAGINATION
+    Hint: 
+    Picture: {fileID: 0}
+    VoiceOver: {fileID: 0}
+  - Question: 'Unscramble the letters to make the word.
+
+      Clue: Getting ready
+      for something.'
+    Answer: PREPARATION
+    Hint: 
+    Picture: {fileID: 0}
+    VoiceOver: {fileID: 0}
+  - Question: 'Unscramble the letters to make the word.
+
+      Clue: Fun activities
+      done in free time.'
+    Answer: RECREATION
+    Hint: 
+    Picture: {fileID: 0}
+    VoiceOver: {fileID: 0}
+  - Question: 'Unscramble the letters to make the word.
+
+      Clue: Something that
+      makes people want to visit.'
+    Answer: ATTRACTION
+    Hint: 
+    Picture: {fileID: 0}
+    VoiceOver: {fileID: 0}
+  - Question: 'Unscramble the letters to make the word.
+
+      Clue: A step that
+      tells you what to do.'
+    Answer: INSTRUCTION
+    Hint: 
+    Picture: {fileID: 0}
+    VoiceOver: {fileID: 0}
+  - Question: 'Unscramble the letters to make the word.
+
+      Clue: Fixing something
+      that is wrong.'
+    Answer: CORRECTION
+    Hint: 
+    Picture: {fileID: 0}
+    VoiceOver: {fileID: 0}
+  - Question: 'Unscramble the letters to make the word.
+
+      Clue: A link between
+      two things.'
+    Answer: CONNECTION
+    Hint: 
+    Picture: {fileID: 0}
+    VoiceOver: {fileID: 0}
+  - Question: 'Unscramble the letters to make the word.
+
+      Clue: A group of things
+      that were chosen.'
+    Answer: SELECTION
+    Hint: 
+    Picture: {fileID: 0}
+    VoiceOver: {fileID: 0}
+  - Question: 'Unscramble the letters to make the word.
+
+      Clue: The making of
+      something.'
+    Answer: PRODUCTION
+    Hint: 
+    Picture: {fileID: 0}
+    VoiceOver: {fileID: 0}
+  - Question: 'Unscramble the letters to make the word.
+
+      Clue: Facts that help
+      you learn something.'
+    Answer: INFORMATION
+    Hint: 
+    Picture: {fileID: 0}
+    VoiceOver: {fileID: 0}
+  - Question: 'Unscramble the letters to make the word.
+
+      Clue: A talk between
+      two or more people.'
+    Answer: CONVERSATION
+    Hint: 
+    Picture: {fileID: 0}
+    VoiceOver: {fileID: 0}

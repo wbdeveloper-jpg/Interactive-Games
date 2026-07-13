@@ -613,22 +613,53 @@ namespace ImageChoiceRevealGame
             }
         }
 
-        private List<ImageChoiceRevealOptionData> BuildDistractorPool(ImageChoiceRevealQuestionData question, ImageChoiceRevealOptionData correctOption)
+        private List<ImageChoiceRevealOptionData> BuildDistractorPool(
+    ImageChoiceRevealQuestionData question,
+    ImageChoiceRevealOptionData correctOption)
         {
-            List<ImageChoiceRevealOptionData> distractors = new List<ImageChoiceRevealOptionData>();
-            List<ImageChoiceRevealOptionData> questionDistractors = question.GetDistractorOptionData();
+            List<ImageChoiceRevealOptionData> distractors =
+                new List<ImageChoiceRevealOptionData>();
+
+            // Number of wrong options required for this question.
+            int requiredDistractorCount = Mathf.Max(0, optionsPerQuestion - 1);
+
+            // First, add the distractors manually assigned to this question.
+            List<ImageChoiceRevealOptionData> questionDistractors =
+                question.GetDistractorOptionData();
 
             for (int i = 0; i < questionDistractors.Count; i++)
-                AddUniqueOption(distractors, questionDistractors[i], correctOption);
-
-            // Fallback: borrow correct options from other valid questions.
-            for (int i = 0; i < questions.Count; i++)
             {
-                ImageChoiceRevealQuestionData otherQuestion = questions[i];
-                if (otherQuestion == null || otherQuestion == question || !otherQuestion.IsValid())
-                    continue;
+                AddUniqueOption(
+                    distractors,
+                    questionDistractors[i],
+                    correctOption
+                );
+            }
 
-                AddUniqueOption(distractors, otherQuestion.GetCorrectOptionData(), correctOption);
+            // Fallback only when this question does not have enough distractors.
+            if (distractors.Count < requiredDistractorCount)
+            {
+                for (int i = 0; i < questions.Count; i++)
+                {
+                    ImageChoiceRevealQuestionData otherQuestion = questions[i];
+
+                    if (otherQuestion == null ||
+                        otherQuestion == question ||
+                        !otherQuestion.IsValid())
+                    {
+                        continue;
+                    }
+
+                    AddUniqueOption(
+                        distractors,
+                        otherQuestion.GetCorrectOptionData(),
+                        correctOption
+                    );
+
+                    // Stop immediately when the missing slots are filled.
+                    if (distractors.Count >= requiredDistractorCount)
+                        break;
+                }
             }
 
             Shuffle(distractors);

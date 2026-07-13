@@ -127,7 +127,6 @@ namespace DictationGame
 
         private readonly List<SkillEntry> bloomSkills = new List<SkillEntry>
         {
-            new SkillEntry(BloomSkillType.Remember, 100f),
             new SkillEntry(BloomSkillType.Understand, 75f),
             new SkillEntry(BloomSkillType.Apply, 50f)
         };
@@ -712,16 +711,18 @@ namespace DictationGame
         private string BuildDefaultHowToPlayText()
         {
             string playMode = audioManager != null && audioManager.AutoPlayOnRoundStart
-                ? "Each question plays automatically. Listen carefully, then type what you heard."
-                : "Press Play Audio, listen carefully, then type what you heard.";
+                ? "1. Listen carefully. The audio will play by itself."
+                : "1. Tap the Play Audio button and listen carefully.";
 
-            string retryMode = allowRetryCurrentRound
-                ? "Practice Mode is ON: you can replay the same round before continuing."
-                : "Challenge Mode is ON: answer each round and continue forward.";
+            string retryLine = allowRetryCurrentRound
+                ? "5. You can try the same question again before going to the next one."
+                : "5. After answering, go to the next question.";
 
-            return playMode + "\n\n" +
-                   "Use the custom keyboard only. You get limited replays and optional hints, but they reduce your score.\n\n" +
-                   retryMode;
+            return playMode + "\n" +
+                   "2. Type exactly what you hear.\n" +
+                   "3. Use replay if you need to listen again.\n" +
+                   "4. Hints can help you, but they may reduce your score.\n" +
+                   retryLine;
         }
 
         private void BindButtons()

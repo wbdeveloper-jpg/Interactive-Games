@@ -1388,5 +1388,10 @@ namespace NGEducation.MemoryMatch
                 scoreLine +
                 timeLine;
         }
+
+        public void GoHome()
+        {
+            SceneManager.LoadScene("Loader Scene");
+        }
     }
 }

@@ -1,0 +1,429 @@
+fileFormatVersion: 2
+guid: ae68600c14816a6478449c7bc352f249
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 7412117487187861480
+    second: Place a Tuberose flower stick in a glass of coloured water. (3)_0
+  - first:
+      213: -759433379729468875
+    second: Place a Tuberose flower stick in a glass of coloured water. (3)_1
+  - first:
+      213: -3940803453182151515
+    second: Place a Tuberose flower stick in a glass of coloured water. (3)_2
+  - first:
+      213: -6244038558368030537
+    second: Place a Tuberose flower stick in a glass of coloured water. (3)_3
+  - first:
+      213: -4813254016903230606
+    second: Place a Tuberose flower stick in a glass of coloured water. (3)_4
+  - first:
+      213: -3941180984538701443
+    second: Place a Tuberose flower stick in a glass of coloured water. (3)_5
+  - first:
+      213: 1527785486604804442
+    second: Place a Tuberose flower stick in a glass of coloured water. (3)_6
+  - first:
+      213: -5111250180958942869
+    second: Place a Tuberose flower stick in a glass of coloured water. (3)_7
+  - first:
+      213: 6101467950539288098
+    second: Place a Tuberose flower stick in a glass of coloured water. (3)_8
+  - first:
+      213: 3104703219782074128
+    second: Place a Tuberose flower stick in a glass of coloured water. (3)_9
+  - first:
+      213: 5615918898923930247
+    second: Place a Tuberose flower stick in a glass of coloured water. (3)_10
+  - first:
+      213: 3014405920082151214
+    second: Place a Tuberose flower stick in a glass of coloured water. (3)_11
+  - first:
+      213: 7115255651537033301
+    second: Place a Tuberose flower stick in a glass of coloured water. (3)_12
+  - first:
+      213: -6962598413487483933
+    second: Place a Tuberose flower stick in a glass of coloured water. (3)_13
+  - first:
+      213: 8510562385519691350
+    second: Place a Tuberose flower stick in a glass of coloured water. (3)_14
+  - first:
+      213: -8443223881183419120
+    second: Place a Tuberose flower stick in a glass of coloured water. (3)_15
+  - first:
+      213: -1686054299099021067
+    second: Place a Tuberose flower stick in a glass of coloured water. (3)_16
+  - first:
+      213: 326868206245860174
+    second: Place a Tuberose flower stick in a glass of coloured water. (3)_17
+  - first:
+      213: 2761226271808275488
+    second: Place a Tuberose flower stick in a glass of coloured water. (3)_18
+  - first:
+      213: -5973500746148583661
+    second: Place a Tuberose flower stick in a glass of coloured water. (3)_19
+  - first:
+      213: 3492293376748614602
+    second: Place a Tuberose flower stick in a glass of coloured water. (3)_20
+  - first:
+      213: 9099554861322218832
+    second: Place a Tuberose flower stick in a glass of coloured water. (3)_21
+  - first:
+      213: 7929220983214128933
+    second: Place a Tuberose flower stick in a glass of coloured water. (3)_22
+  - first:
+      213: 2639806050972499471
+    second: Place a Tuberose flower stick in a glass of coloured water. (3)_23
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: iOS
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Place a Tuberose flower stick in a glass of coloured water. (3)_0
+      rect:
+        serializedVersion: 2
+        x: 96
+        y: 893
+        width: 126
+        height: 120
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8ef1b4165912dd660800000000000000
+      internalID: 7412117487187861480
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Place a Tuberose flower stick in a glass of coloured water. (3)_1
+      rect:
+        serializedVersion: 2
+        x: 360
+        y: 642
+        width: 353
+        height: 406
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 53296a26d53f575f0800000000000000
+      internalID: -759433379729468875
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Place a Tuberose flower stick in a glass of coloured water. (3)_2
+      rect:
+        serializedVersion: 2
+        x: 975
+        y: 731
+        width: 625
+        height: 307
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5a4f17b73247f49c0800000000000000
+      internalID: -3940803453182151515
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Place a Tuberose flower stick in a glass of coloured water. (3)_3
+      rect:
+        serializedVersion: 2
+        x: 14
+        y: 292
+        width: 324
+        height: 305
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7b0a1a47308b859a0800000000000000
+      internalID: -6244038558368030537
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Place a Tuberose flower stick in a glass of coloured water. (3)_15
+      rect:
+        serializedVersion: 2
+        x: 542
+        y: 102
+        width: 389
+        height: 382
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 015a7fa3d94a3da80800000000000000
+      internalID: -8443223881183419120
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Place a Tuberose flower stick in a glass of coloured water. (3)_16
+      rect:
+        serializedVersion: 2
+        x: 1087
+        y: 110
+        width: 389
+        height: 382
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5f0ce2e4c8ee998e0800000000000000
+      internalID: -1686054299099021067
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Place a Tuberose flower stick in a glass of coloured water. (3)_4
+      rect:
+        serializedVersion: 2
+        x: 1654
+        y: 770
+        width: 205
+        height: 235
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4dcfb040bcbe14a42b2225cefa18218e
+      internalID: -4813254016903230606
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Place a Tuberose flower stick in a glass of coloured water. (3)_5
+      rect:
+        serializedVersion: 2
+        x: 1489
+        y: 357
+        width: 389
+        height: 329
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1ca72fdfcfefe5d49b1a4306f767b6c2
+      internalID: -3941180984538701443
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: c7b5972dc8bf33840a6f38a4ca8b83c3
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      Place a Tuberose flower stick in a glass of coloured water. (3)_0: 7412117487187861480
+      Place a Tuberose flower stick in a glass of coloured water. (3)_1: -759433379729468875
+      Place a Tuberose flower stick in a glass of coloured water. (3)_10: 5615918898923930247
+      Place a Tuberose flower stick in a glass of coloured water. (3)_11: 3014405920082151214
+      Place a Tuberose flower stick in a glass of coloured water. (3)_12: 7115255651537033301
+      Place a Tuberose flower stick in a glass of coloured water. (3)_13: -6962598413487483933
+      Place a Tuberose flower stick in a glass of coloured water. (3)_14: 8510562385519691350
+      Place a Tuberose flower stick in a glass of coloured water. (3)_15: -8443223881183419120
+      Place a Tuberose flower stick in a glass of coloured water. (3)_16: -1686054299099021067
+      Place a Tuberose flower stick in a glass of coloured water. (3)_17: 326868206245860174
+      Place a Tuberose flower stick in a glass of coloured water. (3)_18: 2761226271808275488
+      Place a Tuberose flower stick in a glass of coloured water. (3)_19: -5973500746148583661
+      Place a Tuberose flower stick in a glass of coloured water. (3)_2: -3940803453182151515
+      Place a Tuberose flower stick in a glass of coloured water. (3)_20: 3492293376748614602
+      Place a Tuberose flower stick in a glass of coloured water. (3)_21: 9099554861322218832
+      Place a Tuberose flower stick in a glass of coloured water. (3)_22: 7929220983214128933
+      Place a Tuberose flower stick in a glass of coloured water. (3)_23: 2639806050972499471
+      Place a Tuberose flower stick in a glass of coloured water. (3)_24: -390918826
+      Place a Tuberose flower stick in a glass of coloured water. (3)_3: -6244038558368030537
+      Place a Tuberose flower stick in a glass of coloured water. (3)_4: -4813254016903230606
+      Place a Tuberose flower stick in a glass of coloured water. (3)_5: -3941180984538701443
+      Place a Tuberose flower stick in a glass of coloured water. (3)_6: 1527785486604804442
+      Place a Tuberose flower stick in a glass of coloured water. (3)_7: -5111250180958942869
+      Place a Tuberose flower stick in a glass of coloured water. (3)_8: 6101467950539288098
+      Place a Tuberose flower stick in a glass of coloured water. (3)_9: 3104703219782074128
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

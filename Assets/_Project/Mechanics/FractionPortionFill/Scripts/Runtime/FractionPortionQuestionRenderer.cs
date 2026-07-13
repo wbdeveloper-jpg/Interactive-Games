@@ -79,16 +79,15 @@ public class FractionPortionQuestionRenderer : MonoBehaviour
         if (showSliceCountPrefix)
             builder.Append(question.portionCount).Append("-slice pizza  |  ");
 
-        builder.Append("Make: ");
         for (int i = 0; i < question.requests.Count; i++)
         {
             FractionPortionFillManager.RuntimeRequest request = question.requests[i];
             if (request == null)
                 continue;
 
-            builder.Append(request.itemName).Append(" = ");
+            builder.Append("Cover ");
             builder.Append(BuildRequestMath(request));
-            builder.Append(" of pizza");
+            builder.Append(" of the pizza with ").Append(request.itemName);
 
             if (i < question.requests.Count - 1)
                 builder.Append(requestSeparator);

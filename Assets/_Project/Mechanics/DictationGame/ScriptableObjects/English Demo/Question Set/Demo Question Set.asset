@@ -18,6 +18,10 @@ MonoBehaviour:
   - {fileID: 11400000, guid: a6bd2020aa5977144bce22ba4d202ea2, type: 2}
   - {fileID: 11400000, guid: d7823ae6c2414af4499985540c6af40f, type: 2}
   - {fileID: 11400000, guid: e7af5584c97b27341a0482bf17867e99, type: 2}
+  - {fileID: 11400000, guid: 0fb419286094fbf48ae6bda8eeb807fc, type: 2}
+  - {fileID: 11400000, guid: f0bbc7e0fc08d4a41bf94608557de977, type: 2}
+  - {fileID: 11400000, guid: 2c4fda5d41118a647a6abf1d2ca3cb7f, type: 2}
+  - {fileID: 11400000, guid: 9dcb3597bbbf9694f9a63be84856e032, type: 2}
   totalRoundsPerSession: 5
   easyCount: 4
   mediumCount: 3

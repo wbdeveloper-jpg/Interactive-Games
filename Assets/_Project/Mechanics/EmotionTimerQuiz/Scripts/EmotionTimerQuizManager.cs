@@ -36,7 +36,7 @@ namespace EmotionTimerQuiz
         public float expectedMaxTimeFallbackSeconds = 120f;
         private readonly List<SkillEntry> bloomSkills = new List<SkillEntry>
         {
-            new SkillEntry(BloomSkillType.Remember, 100f),
+            new SkillEntry(BloomSkillType.Evaluate, 100f),
             new SkillEntry(BloomSkillType.Understand, 75f)
         };
 

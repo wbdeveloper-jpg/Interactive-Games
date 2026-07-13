@@ -92,15 +92,15 @@ public class FractionPortionFillManager : MonoBehaviour, IGameSceneCallbacks, IG
         public string GetQuestionText()
         {
             if (terms.Count == 0)
-                return requiredUnits + " " + itemName;
+                return "Cover " + requiredUnits + (requiredUnits == 1 ? " slice" : " slices") + " of the pizza with " + itemName;
 
             if (operationType == OperationType.Addition && terms.Count >= 2)
-                return terms[0].GetText() + " + " + terms[1].GetText() + " " + itemName;
+                return "Cover " + terms[0].GetText() + " + " + terms[1].GetText() + " of the pizza with " + itemName;
 
             if (operationType == OperationType.Subtraction && terms.Count >= 2)
-                return terms[0].GetText() + " - " + terms[1].GetText() + " " + itemName;
+                return "Cover " + terms[0].GetText() + " - " + terms[1].GetText() + " of the pizza with " + itemName;
 
-            return terms[0].GetText() + " " + itemName;
+            return "Cover " + terms[0].GetText() + " of the pizza with " + itemName;
         }
     }
 
@@ -1618,7 +1618,7 @@ public class FractionPortionFillManager : MonoBehaviour, IGameSceneCallbacks, IG
         for (int i = 0; i < question.requests.Count; i++)
         {
             RuntimeRequest request = question.requests[i];
-            builder.Append("• ").Append(request.itemName).Append(": cover ");
+            builder.Append("• Cover ");
 
             for (int t = 0; t < request.terms.Count; t++)
             {
@@ -1628,7 +1628,7 @@ public class FractionPortionFillManager : MonoBehaviour, IGameSceneCallbacks, IG
                 builder.Append(FormatFractionRich(request.terms[t]));
             }
 
-            builder.Append(" of the pizza");
+            builder.Append(" of the pizza with ").Append(request.itemName);
 
             if (i < question.requests.Count - 1)
                 builder.Append("\n");
