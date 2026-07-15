@@ -170,6 +170,7 @@ public class SkyFallGameManager : MonoBehaviour, IGameSceneCallbacks, IGameAudio
     private float spawnTimer;
     private bool isRunning;
     private bool isResolvingItem;
+    private bool gameplaySuspendedForTutorial;
     private int carrierDirection = 1;
     private float carrierBaseY;
     private bool hasCarrierBaseY;
@@ -181,6 +182,11 @@ public class SkyFallGameManager : MonoBehaviour, IGameSceneCallbacks, IGameAudio
     public bool IsRunning
     {
         get { return isRunning; }
+    }
+
+    public bool IsGameplaySuspendedForTutorial
+    {
+        get { return gameplaySuspendedForTutorial; }
     }
 
     public bool IsBloomPreGameComplete
@@ -243,6 +249,21 @@ public class SkyFallGameManager : MonoBehaviour, IGameSceneCallbacks, IGameAudio
 
         if (basketDrag != null)
             basketDrag.enabled = enabled;
+    }
+
+    public void SetTutorialGameplayHold(bool hold)
+    {
+        if (gameplaySuspendedForTutorial == hold)
+            return;
+
+        gameplaySuspendedForTutorial = hold;
+
+        if (!hold && isRunning)
+        {
+            _startTime = Time.time;
+            spawnTimer = 0f;
+            StartCarrierTrip();
+        }
     }
 
     private void CacheBasketDrag()
@@ -319,6 +340,15 @@ public class SkyFallGameManager : MonoBehaviour, IGameSceneCallbacks, IGameAudio
             return;
         }
 
+        if (gameplaySuspendedForTutorial)
+        {
+            // Keep the scene visually alive during the practice catch.
+            // Real timer updates and spawning remain suspended below this return.
+            MoveCarrier(Time.deltaTime);
+            UpdateHUD();
+            return;
+        }
+
         float deltaTime = Time.deltaTime;
         elapsedTime += deltaTime;
 
@@ -359,6 +389,7 @@ public class SkyFallGameManager : MonoBehaviour, IGameSceneCallbacks, IGameAudio
         spawnTimer = 0f;
         isRunning = true;
         isResolvingItem = false;
+        gameplaySuspendedForTutorial = false;
         _startTime = Time.time;
 
         SetGameplayInputEnabled(true);
@@ -794,6 +825,7 @@ public class SkyFallGameManager : MonoBehaviour, IGameSceneCallbacks, IGameAudio
 
         isRunning = false;
         isResolvingItem = false;
+        gameplaySuspendedForTutorial = false;
         SetGameplayInputEnabled(false);
         ClearActiveItems();
         PlayClip(gameOverClip);

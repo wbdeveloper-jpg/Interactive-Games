@@ -9,83 +9,68 @@ EditorBuildSettings:
     path: Assets/Loader Scene/Loader Scene.unity
     guid: 98af264abec0a2d48aa661452128d39f
   - enabled: 1
-    path: Assets/_Project/Legacy/Maze  in the Jungle/Scenes/the-law-of-the-jungle.unity
-    guid: 8c9cfa26abfee488c85f1582747f6a02
-  - enabled: 0
-    path: Assets/_Project/Legacy/Old man with Beard/Old Man with beard.unity
-    guid: 0088ca4f999d3f048b5d382866aba8c5
+    path: Assets/All Games/Class 3/English Coursebook/a-tale-of-tiranga.unity
+    guid: e9a60071089c52c4591fe31f9668765b
   - enabled: 1
-    path: Assets/_Project/Legacy/Being Honest/Game 8/being-honest.unity
-    guid: 248157980acebf247aeebc7f906fb8e1
-  - enabled: 1
-    path: Assets/_Project/Legacy/Girls are Smarter than Men/little-girls-are-wiser-than-men.unity
-    guid: 361ff62dfac946541aecb4fe1caea4cb
-  - enabled: 1
-    path: Assets/_Project/Legacy/All the Bells are Ringing/all-the-bells-are-ringing.unity
+    path: Assets/All Games/Class 3/English Coursebook/all-the-bells-are-ringing.unity
     guid: 6600a85aeed9b144897ff2f1ce47b02d
   - enabled: 1
-    path: Assets/_Project/Legacy/Twinkle Twinkle/twinkle-twinkle.unity
-    guid: ca001fe2b8662af4c82014884510e88b
+    path: Assets/All Games/Class 3/English Coursebook/being-honest.unity
+    guid: 17485fa567a1a234cae6ac29bb6c9fb2
   - enabled: 1
-    path: Assets/_Project/Mechanics/MemoryMatch/Scenes/whom-shall-the-bird-belong-to.unity
-    guid: 048d44e8a268031468e81deadaff591d
+    path: Assets/All Games/Class 3/English Coursebook/whom-shall-the-bird-belong-to.unity
+    guid: f4dc2ee63ea828348b495b9389e1eeec
   - enabled: 1
-    path: Assets/_Project/Mechanics/ImageChoiceRevealGame/Scenes/my-shadow.unity
-    guid: bb1dcde23555b084b8e46dc2f61ba09e
+    path: Assets/All Games/Class 3/English Coursebook/dreamy-world.unity
+    guid: 82ff002054891a248a5f8cc1ba427a81
   - enabled: 1
-    path: Assets/_Project/Mechanics/SentenceWordSearch/Scenes/SentenceWordSearch1.unity
-    guid: 47b89e1de8e2e8a4591772a7d84b5bd1
+    path: Assets/All Games/Class 3/English Coursebook/little-girls-are-wiser-than-men.unity
+    guid: c4ba32cf73ef80343970106fa6f60bae
   - enabled: 1
-    path: Assets/_Project/Mechanics/WordFillGame/Scenes/WordFillGame1.unity
-    guid: c547da8fdefed9346b22b6be9bf4d856
+    path: Assets/All Games/Class 3/English Coursebook/my-shadow.unity
+    guid: 8dc4c91fbafb170429fd3bf8a355d5f6
   - enabled: 1
-    path: Assets/_Project/Mechanics/OrderSortDrag/Scenes/OrderSortDrag.unity
-    guid: 66868a0f2cc9b384f8741031f3f9d264
+    path: Assets/All Games/Class 3/English Coursebook/the-law-of-the-jungle.unity
+    guid: 3518820caca4c4a4cbd9edd3217e3b31
   - enabled: 1
-    path: Assets/_Project/Mechanics/SkyFallGame/Scenes/Scenes/SkyFallScene1.unity
-    guid: bad3627701c4fa944a809818268a35a8
+    path: Assets/All Games/Class 3/English Coursebook/the-magic-of-the-hills.unity
+    guid: 6a02d74dc40108b459e6d14a8eb8fa41
   - enabled: 1
-    path: Assets/_Project/Mechanics/DictationGame/Scene/the-magic-of-the-hills.unity
-    guid: 674ea015e1c0a4541b6a9628fa98b17f
+    path: Assets/All Games/Class 3/English Coursebook/twinkle-twinkle.unity
+    guid: 2587caf303f222c4ead524bf1e7f8861
   - enabled: 1
-    path: Assets/_Project/Mechanics/FractionPortionFill/Scenes/FractionPizza.unity
+    path: Assets/All Games/Class 3/English Coursebook/vacation-cancellation.unity
+    guid: a48891669d162eb4aa8f71f1933ced58
+  - enabled: 1
+    path: Assets/All Games/Class 4/English Coursebook/never-to-lose-hope.unity
+    guid: 06f89eff692a14a4ca4a37aec7c237d2
+  - enabled: 1
+    path: Assets/All Games/Class 4/English Coursebook/short-stories-from-our-street-of-manmaru.unity
+    guid: de35229839bef734383f8110c8353865
+  - enabled: 1
+    path: Assets/All Games/Class 4/English Coursebook/the-camp.unity
+    guid: 80b814e315e1f2e4982bc97ee8ad7a1a
+  - enabled: 1
+    path: Assets/All Games/Class 4/English Coursebook/the-sticky-stone.unity
+    guid: 9acc4672a6c369944b9f5a8f4ba2580a
+  - enabled: 1
+    path: Assets/All Games/Class 4/English Coursebook/when-frankenstein-was-just-a-kid.unity
+    guid: cf9c6c7ea3e8a6140a2288324cbbc17f
+  - enabled: 1
+    path: Assets/All Games/Class 5/English Coursebook/footprints-of-the-turtles.unity
+    guid: d4357b5e5487ed344873a3e150ae6702
+  - enabled: 1
+    path: Assets/All Games/Class 5/English Coursebook/the-big-paw's-leafy-experiment.unity
+    guid: 15b31571f43a86c4799e461a07bbf51a
+  - enabled: 1
+    path: Assets/All Games/Class 5/English Coursebook/the-land-of-no-grey-hair.unity
+    guid: b238aa456fe626e4e9af279210151413
+  - enabled: 1
+    path: Assets/All Games/Class 3/Mathematics/addition.unity
+    guid: 461e5d7cf391fe344b4ec90c8d00c1fc
+  - enabled: 1
+    path: Assets/All Games/Class 3/Mathematics/fraction-class-3.unity
     guid: ea085e2192948704cb64ec9c2cccedb5
-  - enabled: 1
-    path: Assets/_Project/Mechanics/OddSuckMechanic/Scenes/OddSuckMechanics-Theme1.unity
-    guid: b8aa69e6762065f4db6b49e3f375eb86
-  - enabled: 1
-    path: Assets/_Project/Mechanics/EmotionTimerQuiz/Scenes/dreamy-world.unity
-    guid: 2430dc138ce062044b23aee07bc08bab
-  - enabled: 1
-    path: Assets/_Project/Mechanics/OddClawCatch/Scenes/OddClawCatch.unity
-    guid: be27e3c015d902a45afd80d379d0ca3f
-  - enabled: 1
-    path: Assets/_Project/Mechanics/TagBasketSorter/Scenes/TagBasketSorter.unity
-    guid: 2f9734cf75bf7764a898efdfb00cbcf6
-  - enabled: 1
-    path: Assets/_Project/Mechanics/GridAdventure/Scenes/GridAdventure.unity
-    guid: 4d14d773813288241a64232724922d4e
-  - enabled: 1
-    path: Assets/_Project/Mechanics/GuessWhoIAm/Scenes/GuessWhoIam1.unity
-    guid: 7b21755d4588bea41bdff7909b8df1be
-  - enabled: 1
-    path: Assets/_Project/Mechanics/WordShuffleDragSwap/Scenes/WordShuffleDragSwap.unity
-    guid: 8c64b6beef71d2c4eaee1ce4af80328c
-  - enabled: 1
-    path: Assets/_Project/Mechanics/SpellBotRescue/Scenes/SpellBotRescue.unity
-    guid: 2fdd2ab166fccdd47bd25b86ac97d151
-  - enabled: 1
-    path: Assets/_Project/Mechanics/TreasureQuest/Scenes/TreasureQuest.unity
-    guid: eda89790e6f9f654bbe929e6fa5b54e0
-  - enabled: 1
-    path: Assets/_Project/Mechanics/SentenceWordSearch/Scenes/a-tale-of-tiranga.unity
-    guid: 588d99eee33e496498c19c7c23e0a65d
-  - enabled: 1
-    path: Assets/_Project/Mechanics/WordShuffleDragSwap/Scenes/vacation-cancellation.unity
-    guid: 8e258267fcd8cfe4eb7dfe220bdaf12b
-  - enabled: 1
-    path: Assets/_Project/Mechanics/BehaviourWheelStop/Scenes/BehaviourWheel.unity
-    guid: c8561766be551644b990d7d316d766d8
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0

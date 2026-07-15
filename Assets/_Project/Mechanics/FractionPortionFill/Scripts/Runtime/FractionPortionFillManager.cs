@@ -9,6 +9,8 @@ using TMPro;
 using DG.Tweening;
 using RewardSystem;
 
+// UPDATED BUILD: Per-operation difficulty, rare mixed-number subtraction,
+// Score wording, and direct pauseProfitText compatibility for editor scripts.
 public class FractionPortionFillManager : MonoBehaviour, IGameSceneCallbacks, IGameAudioCallbacks
 {
     public enum QuestionMode
@@ -24,6 +26,19 @@ public class FractionPortionFillManager : MonoBehaviour, IGameSceneCallbacks, IG
         Direct,
         Addition,
         Subtraction
+    }
+
+    public enum StandardQuestionDifficulty
+    {
+        Normal,
+        Easy
+    }
+
+    public enum SubtractionQuestionDifficulty
+    {
+        Normal,
+        Easy,
+        Hard
     }
 
     [Serializable]
@@ -56,14 +71,24 @@ public class FractionPortionFillManager : MonoBehaviour, IGameSceneCallbacks, IG
     {
         public int numerator;
         public int denominator;
+        public bool displayAsMixedNumber;
 
-        public FractionTerm(int numerator, int denominator, bool simplify = true)
+        public FractionTerm(int numerator, int denominator, bool simplify = true, bool displayAsMixedNumber = false)
         {
             this.numerator = numerator;
             this.denominator = Mathf.Max(1, denominator);
+            this.displayAsMixedNumber = displayAsMixedNumber;
             if (simplify)
                 Simplify();
         }
+
+        public bool ShouldDisplayAsMixedNumber => displayAsMixedNumber
+            && denominator > 1
+            && Mathf.Abs(numerator) > denominator
+            && numerator % denominator != 0;
+
+        public int WholeNumber => numerator / denominator;
+        public int RemainderNumerator => Mathf.Abs(numerator % denominator);
 
         public void Simplify()
         {
@@ -77,6 +102,12 @@ public class FractionPortionFillManager : MonoBehaviour, IGameSceneCallbacks, IG
 
         public string GetText()
         {
+            if (denominator == 1)
+                return numerator.ToString();
+
+            if (ShouldDisplayAsMixedNumber)
+                return WholeNumber + " " + RemainderNumerator + "/" + denominator;
+
             return numerator + "/" + denominator;
         }
     }
@@ -118,6 +149,16 @@ public class FractionPortionFillManager : MonoBehaviour, IGameSceneCallbacks, IG
 
     [Header("Runtime Question Generation")]
     public QuestionMode questionMode = QuestionMode.MixedRuntime;
+    [Header("Difficulty By Operation")]
+    [Tooltip("Easy keeps the denominator equal to the pizza slice count. Normal preserves the original simplified direct-fraction behaviour.")]
+    public StandardQuestionDifficulty directDifficulty = StandardQuestionDifficulty.Normal;
+    [Tooltip("Easy keeps both denominators equal to the pizza slice count. Normal preserves the original addition behaviour.")]
+    public StandardQuestionDifficulty additionDifficulty = StandardQuestionDifficulty.Normal;
+    [Tooltip("Hard preserves Normal behaviour but can rarely generate a mixed-number subtraction whose answer still fits one pizza.")]
+    public SubtractionQuestionDifficulty subtractionDifficulty = SubtractionQuestionDifficulty.Normal;
+    [Tooltip("Chance that a Hard subtraction request uses mixed numbers. 0.05 means 5%.")]
+    [Range(0f, 1f)] public float hardMixedNumberChance = 0.05f;
+    [Header("Question Quantity And Fractions")]
     [Min(10)] public int rounds = 10;
     [Range(2, 12)] public int minPortionCount = 4;
     [Range(2, 12)] public int maxPortionCount = 12;
@@ -140,7 +181,7 @@ public class FractionPortionFillManager : MonoBehaviour, IGameSceneCallbacks, IG
     public bool returnClearedItemsToBasket = false;
     public bool showCannotCompleteButton = true;
 
-    [Header("Money / Scoring")]
+    [Header("Scoring")]
     public int perfectOrderReward = 100;
     public int wrongOrderPenalty = 50;
     public int hintCost = 20;
@@ -337,7 +378,7 @@ public class FractionPortionFillManager : MonoBehaviour, IGameSceneCallbacks, IG
         return Mathf.Clamp(count, Mathf.Max(1, min), Mathf.Max(1, max));
     }
 
-    private int money;
+    private int score;
     private int successfulOrders;
     private int wrongOrders;
     private int correctCannotServeOrders;
@@ -499,7 +540,7 @@ public class FractionPortionFillManager : MonoBehaviour, IGameSceneCallbacks, IG
             gameplayRoot.SetActive(true);
         HidePanel(loadingPanel);
 
-        money = 0;
+        score = 0;
         successfulOrders = 0;
         wrongOrders = 0;
         correctCannotServeOrders = 0;
@@ -528,7 +569,7 @@ public class FractionPortionFillManager : MonoBehaviour, IGameSceneCallbacks, IG
         PlayClip(uiClickClip);
         isPaused = !isPaused;
         if (pauseProfitText != null)
-            pauseProfitText.text = "Current Profit: " + money;
+            pauseProfitText.text = "Current Score: " + score;
         if (pausePanel != null)
         {
             pausePanel.SetActive(isPaused);
@@ -834,7 +875,7 @@ public class FractionPortionFillManager : MonoBehaviour, IGameSceneCallbacks, IG
 
         if (operationType == OperationType.Direct)
         {
-            request.terms.Add(new FractionTerm(targetUnits, portionCount));
+            AddDirectTerm(request, targetUnits, portionCount);
             return request;
         }
 
@@ -843,13 +884,14 @@ public class FractionPortionFillManager : MonoBehaviour, IGameSceneCallbacks, IG
             if (targetUnits < 2)
             {
                 request.operationType = OperationType.Direct;
-                request.terms.Add(new FractionTerm(targetUnits, portionCount));
+                AddDirectTerm(request, targetUnits, portionCount);
                 return request;
             }
 
             int first = UnityEngine.Random.Range(1, targetUnits);
             int second = targetUnits - first;
-            bool simplifyOperationTerms = !keepOperationFractionsOnPizzaDenominator;
+            bool simplifyOperationTerms = additionDifficulty != StandardQuestionDifficulty.Easy
+                && !keepOperationFractionsOnPizzaDenominator;
             request.terms.Add(new FractionTerm(first, portionCount, simplifyOperationTerms));
             request.terms.Add(new FractionTerm(second, portionCount, simplifyOperationTerms));
             return request;
@@ -857,23 +899,76 @@ public class FractionPortionFillManager : MonoBehaviour, IGameSceneCallbacks, IG
 
         if (operationType == OperationType.Subtraction)
         {
+            if (subtractionDifficulty == SubtractionQuestionDifficulty.Hard
+                && UnityEngine.Random.value < Mathf.Clamp01(hardMixedNumberChance)
+                && TryAddHardMixedNumberSubtraction(request, targetUnits, portionCount))
+            {
+                return request;
+            }
+
             int maxSecond = (portionCount - 1) - targetUnits;
             if (maxSecond < 1)
             {
                 request.operationType = OperationType.Direct;
-                request.terms.Add(new FractionTerm(targetUnits, portionCount));
+                AddDirectTerm(request, targetUnits, portionCount);
                 return request;
             }
 
             int second = UnityEngine.Random.Range(1, maxSecond + 1);
             int first = targetUnits + second;
-            bool simplifyOperationTerms = !keepOperationFractionsOnPizzaDenominator;
+            bool simplifyOperationTerms = subtractionDifficulty != SubtractionQuestionDifficulty.Easy
+                && !keepOperationFractionsOnPizzaDenominator;
             request.terms.Add(new FractionTerm(first, portionCount, simplifyOperationTerms));
             request.terms.Add(new FractionTerm(second, portionCount, simplifyOperationTerms));
             return request;
         }
 
         return null;
+    }
+
+    private void AddDirectTerm(RuntimeRequest request, int targetUnits, int portionCount)
+    {
+        if (request == null)
+            return;
+
+        bool simplify = directDifficulty != StandardQuestionDifficulty.Easy;
+        request.terms.Add(new FractionTerm(targetUnits, portionCount, simplify));
+    }
+
+    private bool TryAddHardMixedNumberSubtraction(RuntimeRequest request, int targetUnits, int portionCount)
+    {
+        if (request == null || portionCount < 2 || targetUnits <= 0 || targetUnits >= portionCount)
+            return false;
+
+        // Prefer two mixed-number operands. If that is not possible (for example, halves),
+        // use one mixed number minus a whole number. The result is always targetUnits/portionCount.
+        int fractionalOffset = -1;
+        for (int guard = 0; guard < 20; guard++)
+        {
+            int candidate = UnityEngine.Random.Range(1, portionCount);
+            if ((candidate + targetUnits) % portionCount != 0)
+            {
+                fractionalOffset = candidate;
+                break;
+            }
+        }
+
+        if (fractionalOffset < 0)
+            fractionalOffset = 0;
+
+        int wholeOffset = UnityEngine.Random.Range(1, 3);
+        int secondNumerator = wholeOffset * portionCount + fractionalOffset;
+        int firstNumerator = secondNumerator + targetUnits;
+
+        FractionTerm firstTerm = new FractionTerm(firstNumerator, portionCount, true, true);
+        FractionTerm secondTerm = new FractionTerm(secondNumerator, portionCount, true, true);
+
+        if (!firstTerm.ShouldDisplayAsMixedNumber && !secondTerm.ShouldDisplayAsMixedNumber)
+            return false;
+
+        request.terms.Add(firstTerm);
+        request.terms.Add(secondTerm);
+        return true;
     }
 
     private void BuildInitialStock(RuntimeQuestion question)
@@ -1090,7 +1185,7 @@ public class FractionPortionFillManager : MonoBehaviour, IGameSceneCallbacks, IG
 
         questionActive = false;
         successfulOrders++;
-        money += Mathf.Max(0, perfectOrderReward);
+        score += Mathf.Max(0, perfectOrderReward);
         UpdateScoreUI();
 
         if (autoNextQuestion)
@@ -1301,7 +1396,7 @@ public class FractionPortionFillManager : MonoBehaviour, IGameSceneCallbacks, IG
                 + "\nCorrect Can't Serve: " + correctCannotServeOrders
                 + "\nWrong Orders: " + wrongOrders + " (-" + (wrongOrders * wrongOrderPenalty) + ")"
                 + "\nHints Used: " + hintsUsed + " (-" + (hintsUsed * hintCost) + ")"
-                + "\nProfit: " + money;
+                + "\nScore: " + score;
         }
     }
 
@@ -1409,7 +1504,7 @@ public class FractionPortionFillManager : MonoBehaviour, IGameSceneCallbacks, IG
 
         hintUsedThisQuestion = true;
         hintsUsed++;
-        money -= Mathf.Max(0, hintCost);
+        score -= Mathf.Max(0, hintCost);
         UpdateScoreUI();
         PlayClip(hintClip != null ? hintClip : uiClickClip);
 
@@ -1642,14 +1737,19 @@ public class FractionPortionFillManager : MonoBehaviour, IGameSceneCallbacks, IG
         if (term == null)
             return string.Empty;
 
+        if (term.denominator == 1)
+            return term.numerator.ToString();
+
         string slashSpace = orderFractionSlashSideSpace ?? string.Empty;
         string slash = string.IsNullOrEmpty(orderFractionSlash) ? "/" : orderFractionSlash;
         int sizePercent = Mathf.Clamp(orderFractionSizePercent, 70, 150);
         float numeratorOffset = Mathf.Max(0f, orderFractionNumeratorOffsetEm);
         float denominatorOffset = Mathf.Max(0f, orderFractionDenominatorOffsetEm);
+        int displayNumerator = term.ShouldDisplayAsMixedNumber ? term.RemainderNumerator : term.numerator;
+        string mixedPrefix = term.ShouldDisplayAsMixedNumber ? term.WholeNumber + " " : string.Empty;
 
-        return "<size=" + sizePercent + "%><voffset=" + numeratorOffset.ToString("0.###") + "em>"
-            + term.numerator + "</voffset>"
+        return mixedPrefix + "<size=" + sizePercent + "%><voffset=" + numeratorOffset.ToString("0.###") + "em>"
+            + displayNumerator + "</voffset>"
             + slashSpace + slash + slashSpace
             + "<voffset=-" + denominatorOffset.ToString("0.###") + "em>"
             + term.denominator + "</voffset></size>";
@@ -1794,7 +1894,7 @@ public class FractionPortionFillManager : MonoBehaviour, IGameSceneCallbacks, IG
     private void ApplyWrongOrderPenalty()
     {
         wrongOrders++;
-        money -= Mathf.Max(0, wrongOrderPenalty);
+        score -= Mathf.Max(0, wrongOrderPenalty);
         UpdateScoreUI();
     }
 
@@ -1828,7 +1928,7 @@ public class FractionPortionFillManager : MonoBehaviour, IGameSceneCallbacks, IG
     private void UpdateScoreUI()
     {
         if (scoreText != null)
-            scoreText.text = "Profit: " + money;
+            scoreText.text = "Score: " + score;
     }
 
     private void UpdateTimerUI()
@@ -1982,7 +2082,7 @@ public class FractionPortionFillManager : MonoBehaviour, IGameSceneCallbacks, IG
             if (text == null)
                 continue;
 
-            bool usePrimary = IsPrimaryText(text.name);
+            bool usePrimary = text == scoreText || text == pauseProfitText || IsPrimaryText(text.name);
             TMP_FontAsset chosenFont = usePrimary ? primaryFont : (secondaryFont != null ? secondaryFont : primaryFont);
             if (chosenFont != null)
                 text.font = chosenFont;
@@ -1998,7 +2098,7 @@ public class FractionPortionFillManager : MonoBehaviour, IGameSceneCallbacks, IG
         return lower.Contains("title")
             || lower.Contains("question")
             || lower.Contains("result")
-            || lower.Contains("profit")
+            || lower.Contains("score")
             || lower.Contains("round")
             || lower.Contains("timer")
             || lower.Contains("time")

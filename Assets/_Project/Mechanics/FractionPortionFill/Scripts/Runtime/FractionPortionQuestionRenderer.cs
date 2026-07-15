@@ -163,17 +163,23 @@ public class FractionPortionQuestionRenderer : MonoBehaviour
         if (term == null)
             return string.Empty;
 
+        if (term.denominator == 1)
+            return term.numerator.ToString();
+
+        int displayNumerator = term.ShouldDisplayAsMixedNumber ? term.RemainderNumerator : term.numerator;
+        string mixedPrefix = term.ShouldDisplayAsMixedNumber ? term.WholeNumber + " " : string.Empty;
+
         if (!useTmpRichTextFractions)
-            return term.numerator + "/" + term.denominator;
+            return mixedPrefix + displayNumerator + "/" + term.denominator;
 
         if (useSupSubTags)
-            return "<size=" + inlineFractionSizePercent + "%><sup>" + term.numerator + "</sup>" + fractionSlashSideSpace + fractionSlash + fractionSlashSideSpace + "<sub>" + term.denominator + "</sub></size>";
+            return mixedPrefix + "<size=" + inlineFractionSizePercent + "%><sup>" + displayNumerator + "</sup>" + fractionSlashSideSpace + fractionSlash + fractionSlashSideSpace + "<sub>" + term.denominator + "</sub></size>";
 
         string up = fractionVerticalOffsetEm.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture);
         string down = (-fractionVerticalOffsetEm).ToString("0.##", System.Globalization.CultureInfo.InvariantCulture);
 
-        return "<size=" + inlineFractionSizePercent + "%>"
-            + "<voffset=" + up + "em><size=" + fractionNumberSizePercent + "%>" + term.numerator + "</size></voffset>"
+        return mixedPrefix + "<size=" + inlineFractionSizePercent + "%>"
+            + "<voffset=" + up + "em><size=" + fractionNumberSizePercent + "%>" + displayNumerator + "</size></voffset>"
             + fractionSlashSideSpace + fractionSlash + fractionSlashSideSpace
             + "<voffset=" + down + "em><size=" + fractionNumberSizePercent + "%>" + term.denominator + "</size></voffset>"
             + "</size>";

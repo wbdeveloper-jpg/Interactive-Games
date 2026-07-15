@@ -7,44 +7,60 @@ using TMPro;
 public class Redirection : MonoBehaviour
 {
     [Header("Loading UI")]
-    public GameObject loadingScreen;      // A UI Panel for the loading overlay
-    public Slider progressBar;            // Optional: progress bar (0 to 1)
-    public TextMeshProUGUI loadingText;              // Optional: "Loading... 72%"
+    public GameObject loadingScreen;
+    public Slider progressBar;
+    public TextMeshProUGUI loadingText;
 
+    // Load using Build Index
     public void LoadGameIndex(int sceneIndex)
     {
         StartCoroutine(LoadSceneAsync(sceneIndex));
     }
 
+    // Load using Scene Name
+    public void LoadGameScene(string sceneName)
+    {
+        StartCoroutine(LoadSceneAsync(sceneName));
+    }
+
     private IEnumerator LoadSceneAsync(int sceneIndex)
     {
-        // Show loading screen
+        AsyncOperation operation = SceneManager.LoadSceneAsync(sceneIndex);
+        yield return StartCoroutine(HandleSceneLoading(operation));
+    }
+
+    private IEnumerator LoadSceneAsync(string sceneName)
+    {
+        AsyncOperation operation = SceneManager.LoadSceneAsync(sceneName);
+        yield return StartCoroutine(HandleSceneLoading(operation));
+    }
+
+    private IEnumerator HandleSceneLoading(AsyncOperation operation)
+    {
         if (loadingScreen != null)
             loadingScreen.SetActive(true);
 
-        // Begin loading in background (don't activate yet)
-        AsyncOperation operation = SceneManager.LoadSceneAsync(sceneIndex);
-        operation.allowSceneActivation = false;  // Pause at 90% until we're ready
+        operation.allowSceneActivation = false;
 
         while (!operation.isDone)
         {
-            // Unity loads to 0.9 then waits if allowSceneActivation = false
-            float progress = Mathf.Clamp01(operation.progress / 0.9f);  // Normalize to 0-1
+            float progress = Mathf.Clamp01(operation.progress / 0.9f);
 
-            // Update UI
             if (progressBar != null)
                 progressBar.value = progress;
 
             if (loadingText != null)
                 loadingText.text = $"Loading... {(int)(progress * 100)}%";
 
-            // Once fully loaded (progress hits 1.0 after normalization)
             if (operation.progress >= 0.9f)
             {
-                // Optional: wait a moment so user sees 100%
-                yield return new WaitForSeconds(0.2f);
+                if (progressBar != null)
+                    progressBar.value = 1f;
 
-                // Now actually switch the scene
+                if (loadingText != null)
+                    loadingText.text = "Loading... 100%";
+
+                yield return new WaitForSecondsRealtime(0.2f);
                 operation.allowSceneActivation = true;
             }
 

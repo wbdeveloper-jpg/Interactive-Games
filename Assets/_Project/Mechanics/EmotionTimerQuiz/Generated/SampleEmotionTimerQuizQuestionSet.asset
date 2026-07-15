@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EmotionTimerQuiz.EmotionTimerQuizQuestionSet
   questions:
   - id: Q001
-    situationText: Rajes sees a massive spider on his bed!
+    situationText: Rajesh sees a massive spider on his bed!
     targetCharacter: 3
     correctExpression: 3
     timeLimitSeconds: 15
@@ -44,7 +44,7 @@ MonoBehaviour:
     correctExpression: 1
     timeLimitSeconds: 15
   - id: Q007
-    situationText: Rajes tells the truth even when it feels difficult.
+    situationText: Rajesh tells the truth even when it feels difficult.
     targetCharacter: 3
     correctExpression: 4
     timeLimitSeconds: 14
@@ -64,7 +64,7 @@ MonoBehaviour:
     correctExpression: 5
     timeLimitSeconds: 10
   - id: Q011
-    situationText: Rajes shares his lunch with a friend who forgot food.
+    situationText: Rajesh shares his lunch with a friend who forgot food.
     targetCharacter: 3
     correctExpression: 0
     timeLimitSeconds: 15
@@ -84,7 +84,7 @@ MonoBehaviour:
     correctExpression: 1
     timeLimitSeconds: 15
   - id: Q015
-    situationText: Rajes sees someone push his friend in the line.
+    situationText: Rajesh sees someone push his friend in the line.
     targetCharacter: 3
     correctExpression: 2
     timeLimitSeconds: 15
@@ -104,7 +104,7 @@ MonoBehaviour:
     correctExpression: 3
     timeLimitSeconds: 12
   - id: Q019
-    situationText: Rajes solves a hard maths puzzle by himself.
+    situationText: Rajesh solves a hard maths puzzle by himself.
     targetCharacter: 3
     correctExpression: 4
     timeLimitSeconds: 12
@@ -124,7 +124,7 @@ MonoBehaviour:
     correctExpression: 0
     timeLimitSeconds: 15
   - id: Q023
-    situationText: Rajes hears that tomorrow is the school fun fair.
+    situationText: Rajesh hears that tomorrow is the school fun fair.
     targetCharacter: 3
     correctExpression: 5
     timeLimitSeconds: 10
@@ -154,7 +154,7 @@ MonoBehaviour:
     correctExpression: 3
     timeLimitSeconds: 12
   - id: Q029
-    situationText: Rajes finishes a hard spelling test by himself.
+    situationText: Rajesh finishes a hard spelling test by himself.
     targetCharacter: 3
     correctExpression: 4
     timeLimitSeconds: 12
@@ -174,7 +174,7 @@ MonoBehaviour:
     correctExpression: 0
     timeLimitSeconds: 15
   - id: Q033
-    situationText: Rajes cannot find his lunch box after the bell rings.
+    situationText: Rajesh cannot find his lunch box after the bell rings.
     targetCharacter: 3
     correctExpression: 1
     timeLimitSeconds: 15
@@ -194,7 +194,7 @@ MonoBehaviour:
     correctExpression: 5
     timeLimitSeconds: 10
   - id: Q037
-    situationText: Rajes sees his toy car broken by someone else.
+    situationText: Rajesh sees his toy car broken by someone else.
     targetCharacter: 3
     correctExpression: 2
     timeLimitSeconds: 15
@@ -214,7 +214,7 @@ MonoBehaviour:
     correctExpression: 3
     timeLimitSeconds: 12
   - id: Q041
-    situationText: Rajes answers the teacher's question correctly.
+    situationText: Rajesh answers the teacher's question correctly.
     targetCharacter: 3
     correctExpression: 4
     timeLimitSeconds: 12
@@ -234,7 +234,7 @@ MonoBehaviour:
     correctExpression: 0
     timeLimitSeconds: 15
   - id: Q045
-    situationText: Rajes drops his craft model and it falls apart.
+    situationText: Rajesh drops his craft model and it falls apart.
     targetCharacter: 3
     correctExpression: 1
     timeLimitSeconds: 15
@@ -254,7 +254,7 @@ MonoBehaviour:
     correctExpression: 5
     timeLimitSeconds: 10
   - id: Q049
-    situationText: Rajes sees someone hide his school bag as a joke.
+    situationText: Rajesh sees someone hide his school bag as a joke.
     targetCharacter: 3
     correctExpression: 2
     timeLimitSeconds: 15
@@ -274,7 +274,7 @@ MonoBehaviour:
     correctExpression: 3
     timeLimitSeconds: 12
   - id: Q053
-    situationText: Rajes completes his handwriting page neatly.
+    situationText: Rajesh completes his handwriting page neatly.
     targetCharacter: 3
     correctExpression: 4
     timeLimitSeconds: 12
@@ -294,7 +294,7 @@ MonoBehaviour:
     correctExpression: 0
     timeLimitSeconds: 15
   - id: Q057
-    situationText: Rajes forgets his lines during a small play.
+    situationText: Rajesh forgets his lines during a small play.
     targetCharacter: 3
     correctExpression: 1
     timeLimitSeconds: 15
@@ -314,7 +314,7 @@ MonoBehaviour:
     correctExpression: 5
     timeLimitSeconds: 10
   - id: Q061
-    situationText: Rajes sees someone splash water on his clean uniform.
+    situationText: Rajesh sees someone splash water on his clean uniform.
     targetCharacter: 3
     correctExpression: 2
     timeLimitSeconds: 15
@@ -334,7 +334,7 @@ MonoBehaviour:
     correctExpression: 3
     timeLimitSeconds: 12
   - id: Q065
-    situationText: Rajes raises his hand and gives the right answer.
+    situationText: Rajesh raises his hand and gives the right answer.
     targetCharacter: 3
     correctExpression: 4
     timeLimitSeconds: 12
@@ -354,7 +354,7 @@ MonoBehaviour:
     correctExpression: 0
     timeLimitSeconds: 15
   - id: Q069
-    situationText: Rajes watches his sandcastle get washed away.
+    situationText: Rajesh watches his sandcastle get washed away.
     targetCharacter: 3
     correctExpression: 1
     timeLimitSeconds: 15
@@ -374,7 +374,7 @@ MonoBehaviour:
     correctExpression: 5
     timeLimitSeconds: 10
   - id: Q073
-    situationText: Rajes sees someone push ahead during lunch time.
+    situationText: Rajesh sees someone push ahead during lunch time.
     targetCharacter: 3
     correctExpression: 2
     timeLimitSeconds: 15
@@ -394,7 +394,7 @@ MonoBehaviour:
     correctExpression: 3
     timeLimitSeconds: 12
   - id: Q077
-    situationText: Rajes presents his drawing without feeling shy.
+    situationText: Rajesh presents his drawing without feeling shy.
     targetCharacter: 3
     correctExpression: 4
     timeLimitSeconds: 12
@@ -414,7 +414,7 @@ MonoBehaviour:
     correctExpression: 0
     timeLimitSeconds: 15
   - id: Q081
-    situationText: Rajes cannot go outside because it is raining heavily.
+    situationText: Rajesh cannot go outside because it is raining heavily.
     targetCharacter: 3
     correctExpression: 1
     timeLimitSeconds: 15
@@ -434,7 +434,7 @@ MonoBehaviour:
     correctExpression: 5
     timeLimitSeconds: 10
   - id: Q085
-    situationText: Rajes sees his friend being teased unfairly.
+    situationText: Rajesh sees his friend being teased unfairly.
     targetCharacter: 3
     correctExpression: 2
     timeLimitSeconds: 15
@@ -454,7 +454,7 @@ MonoBehaviour:
     correctExpression: 3
     timeLimitSeconds: 12
   - id: Q089
-    situationText: Rajes learns to ride his bicycle without support.
+    situationText: Rajesh learns to ride his bicycle without support.
     targetCharacter: 3
     correctExpression: 4
     timeLimitSeconds: 12
@@ -474,7 +474,7 @@ MonoBehaviour:
     correctExpression: 0
     timeLimitSeconds: 15
   - id: Q093
-    situationText: Rajes loses a sticker he saved for many days.
+    situationText: Rajesh loses a sticker he saved for many days.
     targetCharacter: 3
     correctExpression: 1
     timeLimitSeconds: 15
@@ -494,7 +494,7 @@ MonoBehaviour:
     correctExpression: 5
     timeLimitSeconds: 10
   - id: Q097
-    situationText: Rajes sees his seat taken even though he kept his bag there.
+    situationText: Rajesh sees his seat taken even though he kept his bag there.
     targetCharacter: 3
     correctExpression: 2
     timeLimitSeconds: 15
@@ -514,7 +514,7 @@ MonoBehaviour:
     correctExpression: 3
     timeLimitSeconds: 12
   - id: Q101
-    situationText: Rajes completes a difficult maze without help.
+    situationText: Rajesh completes a difficult maze without help.
     targetCharacter: 3
     correctExpression: 4
     timeLimitSeconds: 12
@@ -534,7 +534,7 @@ MonoBehaviour:
     correctExpression: 0
     timeLimitSeconds: 15
   - id: Q105
-    situationText: Rajes misses his friend who moved to another city.
+    situationText: Rajesh misses his friend who moved to another city.
     targetCharacter: 3
     correctExpression: 1
     timeLimitSeconds: 15
@@ -554,7 +554,7 @@ MonoBehaviour:
     correctExpression: 5
     timeLimitSeconds: 10
   - id: Q109
-    situationText: Rajes sees his painting smudged by another child.
+    situationText: Rajesh sees his painting smudged by another child.
     targetCharacter: 3
     correctExpression: 2
     timeLimitSeconds: 15
@@ -574,7 +574,7 @@ MonoBehaviour:
     correctExpression: 3
     timeLimitSeconds: 12
   - id: Q113
-    situationText: Rajes gives a clear answer during quiz practice.
+    situationText: Rajesh gives a clear answer during quiz practice.
     targetCharacter: 3
     correctExpression: 4
     timeLimitSeconds: 12
@@ -594,7 +594,7 @@ MonoBehaviour:
     correctExpression: 0
     timeLimitSeconds: 15
   - id: Q117
-    situationText: Rajes cannot play because his football is flat.
+    situationText: Rajesh cannot play because his football is flat.
     targetCharacter: 3
     correctExpression: 1
     timeLimitSeconds: 15
@@ -614,7 +614,7 @@ MonoBehaviour:
     correctExpression: 5
     timeLimitSeconds: 10
   - id: Q121
-    situationText: Rajes sees someone break the class rules again and again.
+    situationText: Rajesh sees someone break the class rules again and again.
     targetCharacter: 3
     correctExpression: 2
     timeLimitSeconds: 15
@@ -634,7 +634,7 @@ MonoBehaviour:
     correctExpression: 3
     timeLimitSeconds: 12
   - id: Q125
-    situationText: Rajes leads his group and explains the poster clearly.
+    situationText: Rajesh leads his group and explains the poster clearly.
     targetCharacter: 3
     correctExpression: 4
     timeLimitSeconds: 12

@@ -318,6 +318,193 @@ namespace WordShuffleDragSwap.EditorTools
     }
 };
 
+        private const string Grade4NeverLoseHopeQuestionDatabasePath =
+    GeneratedFolder + "/Grade4NeverLoseHopeQuestions.asset";
+
+        private static readonly WordShuffleQuestionEntry[]
+            Grade4NeverLoseHopeQuestions =
+        {
+            // Keep the same 35 question entries here
+            // Questions based on the textbook
+    new WordShuffleQuestionEntry
+    {
+        Question = "Rearrange letters to fill the blank\nHello! Is it an _______ medical service?",
+        Answer = "emergency"
+    },
+    new WordShuffleQuestionEntry
+    {
+        Question = "Rearrange letters to fill the blank\nPlease send an _______ to Broadway near Children's Park.",
+        Answer = "ambulance"
+    },
+    new WordShuffleQuestionEntry
+    {
+        Question = "Rearrange letters to fill the blank\nMy friend is badly _______.",
+        Answer = "injured"
+    },
+    new WordShuffleQuestionEntry
+    {
+        Question = "Rearrange letters to fill the blank\nMy friend's knee is _______.",
+        Answer = "bleeding"
+    },
+    new WordShuffleQuestionEntry
+    {
+        Question = "Rearrange letters to fill the blank\nHer _______ is normal.",
+        Answer = "pulse"
+    },
+    new WordShuffleQuestionEntry
+    {
+        Question = "Rearrange letters to fill the blank\nHer eyes are open, so she is _______.",
+        Answer = "awake"
+    },
+    new WordShuffleQuestionEntry
+    {
+        Question = "Rearrange letters to fill the blank\nMy friend went to the nearby _______.",
+        Answer = "pharmacy"
+    },
+    new WordShuffleQuestionEntry
+    {
+        Question = "Rearrange letters to fill the blank\nWe need a gauze _______ for the wound.",
+        Answer = "dressing"
+    },
+    new WordShuffleQuestionEntry
+    {
+        Question = "Rearrange letters to fill the blank\nShall I allow her to drink _______?",
+        Answer = "water"
+    },
+
+    // Additional easy questions
+    new WordShuffleQuestionEntry
+    {
+        Question = "Rearrange letters to fill the blank\nA _______ helps sick people.",
+        Answer = "doctor"
+    },
+    new WordShuffleQuestionEntry
+    {
+        Question = "Rearrange letters to fill the blank\nA _______ takes care of patients.",
+        Answer = "nurse"
+    },
+    new WordShuffleQuestionEntry
+    {
+        Question = "Rearrange letters to fill the blank\nSick people are treated in a _______.",
+        Answer = "hospital"
+    },
+    new WordShuffleQuestionEntry
+    {
+        Question = "Rearrange letters to fill the blank\nThe doctor gave me some _______.",
+        Answer = "medicine"
+    },
+    new WordShuffleQuestionEntry
+    {
+        Question = "Rearrange letters to fill the blank\nA sick person is called a _______.",
+        Answer = "patient"
+    },
+    new WordShuffleQuestionEntry
+    {
+        Question = "Rearrange letters to fill the blank\nCover the cut with a _______.",
+        Answer = "bandage"
+    },
+    new WordShuffleQuestionEntry
+    {
+        Question = "Rearrange letters to fill the blank\nThe fall left a _______ on his knee.",
+        Answer = "wound"
+    },
+    new WordShuffleQuestionEntry
+    {
+        Question = "Rearrange letters to fill the blank\nThe doctor works at a small _______.",
+        Answer = "clinic"
+    },
+    new WordShuffleQuestionEntry
+    {
+        Question = "Rearrange letters to fill the blank\nThe doctor gave me a _______ to swallow.",
+        Answer = "tablet"
+    },
+    new WordShuffleQuestionEntry
+    {
+        Question = "Rearrange letters to fill the blank\nThe child took a spoonful of cough _______.",
+        Answer = "syrup"
+    },
+    new WordShuffleQuestionEntry
+    {
+        Question = "Rearrange letters to fill the blank\nA high body temperature is called a _______.",
+        Answer = "fever"
+    },
+    new WordShuffleQuestionEntry
+    {
+        Question = "Rearrange letters to fill the blank\nA bad _______ can make your throat hurt.",
+        Answer = "cough"
+    },
+    new WordShuffleQuestionEntry
+    {
+        Question = "Rearrange letters to fill the blank\nGood food helps us stay _______.",
+        Answer = "healthy"
+    },
+    new WordShuffleQuestionEntry
+    {
+        Question = "Rearrange letters to fill the blank\nCall for _______ during an emergency.",
+        Answer = "help"
+    },
+    new WordShuffleQuestionEntry
+    {
+        Question = "Rearrange letters to fill the blank\nFollow the rules to stay _______.",
+        Answer = "safe"
+    },
+    new WordShuffleQuestionEntry
+    {
+        Question = "Rearrange letters to fill the blank\nA sick person needs plenty of _______.",
+        Answer = "rest"
+    },
+    new WordShuffleQuestionEntry
+    {
+        Question = "Rearrange letters to fill the blank\nDoctors take _______ of sick people.",
+        Answer = "care"
+    },
+    new WordShuffleQuestionEntry
+    {
+        Question = "Rearrange letters to fill the blank\nThe cut is causing me _______.",
+        Answer = "pain"
+    },
+    new WordShuffleQuestionEntry
+    {
+        Question = "Rearrange letters to fill the blank\nMedicine can help the wound _______.",
+        Answer = "heal"
+    },
+    new WordShuffleQuestionEntry
+    {
+        Question = "Rearrange letters to fill the blank\nAlways keep the wound _______.",
+        Answer = "clean"
+    },
+    new WordShuffleQuestionEntry
+    {
+        Question = "Rearrange letters to fill the blank\nAlways _______ your hands before eating.",
+        Answer = "wash"
+    },
+    new WordShuffleQuestionEntry
+    {
+        Question = "Rearrange letters to fill the blank\nUse _______ to wash your hands.",
+        Answer = "soap"
+    },
+    new WordShuffleQuestionEntry
+    {
+        Question = "Rearrange letters to fill the blank\nWear a _______ over your nose and mouth.",
+        Answer = "mask"
+    },
+    new WordShuffleQuestionEntry
+    {
+        Question = "Rearrange letters to fill the blank\nDoctors may wear _______ on their hands.",
+        Answer = "gloves"
+    },
+    new WordShuffleQuestionEntry
+    {
+        Question = "Rearrange letters to fill the blank\nClean the cut with a piece of _______.",
+        Answer = "gauze"
+    },
+    new WordShuffleQuestionEntry
+    {
+        Question = "Rearrange letters to fill the blank\nThe team came to _______ the injured boy.",
+        Answer = "rescue"
+    }
+        };
+
         [MenuItem("Tools/Word Shuffle Drag Swap/Create Complete Scene")]
         [MenuItem("Tools/Word Shuffle Drag Swap/Create Complete Scene - V6.2 Professional Overlays")]
         [MenuItem("Tools/Word Shuffle Drag Swap/Create Complete Scene - V7 UI Layout Progress")]
@@ -1111,6 +1298,47 @@ namespace WordShuffleDragSwap.EditorTools
             Debug.Log(
                 "Created or updated Grade 3 Vacation Cancellation General Question database: "
                 + Grade3VacationCancellationGenralQuestionDatabasePath);
+        }
+
+        [MenuItem(
+    "Tools/Word Shuffle Drag Swap/Create Grade 4 Never Lose Hope Questions")]
+        public static void CreateGrade4NeverLoseHopeQuestionDatabase()
+        {
+            EnsureFolders();
+
+            WordShuffleQuestionDatabase database =
+                AssetDatabase.LoadAssetAtPath<WordShuffleQuestionDatabase>(
+                    Grade4NeverLoseHopeQuestionDatabasePath);
+
+            if (database == null)
+            {
+                database =
+                    ScriptableObject.CreateInstance<WordShuffleQuestionDatabase>();
+
+                database.EditorSetQuestions(
+                    Grade4NeverLoseHopeQuestions);
+
+                AssetDatabase.CreateAsset(
+                    database,
+                    Grade4NeverLoseHopeQuestionDatabasePath);
+            }
+            else
+            {
+                database.EditorSetQuestions(
+                    Grade4NeverLoseHopeQuestions);
+
+                EditorUtility.SetDirty(database);
+            }
+
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+
+            Selection.activeObject = database;
+            EditorGUIUtility.PingObject(database);
+
+            Debug.Log(
+                "Created or updated Grade 4 Never Lose Hope question database: "
+                + Grade4NeverLoseHopeQuestionDatabasePath);
         }
     }
 }
