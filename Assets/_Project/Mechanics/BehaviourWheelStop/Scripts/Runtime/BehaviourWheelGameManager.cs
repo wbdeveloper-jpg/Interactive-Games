@@ -402,6 +402,15 @@ namespace BehaviourWheelStop
             if (audioController != null)
                 audioController.StopBackgroundMusic();
 
+            if (RewardManager.Instance != null)
+                RewardManager.Instance.HideAll();
+
+            if (UnityAndroidMediator.Instance != null)
+                UnityAndroidMediator.Instance.PassDataToAndroid("Game Done");
+
+            //if (GameLoader.Instance != null)
+            //    GameLoader.Instance.SendEventToJS("Game Done", "Behaviour Wheel");
+
             SceneManager.LoadScene(homeSceneName);
         }
     }

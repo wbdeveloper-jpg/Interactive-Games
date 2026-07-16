@@ -11221,7 +11221,7 @@ MonoBehaviour:
   mixedMode:
     includeDirect: 1
     includeAddition: 1
-    includeSubtraction: 1
+    includeSubtraction: 0
     directWeight: 4
     additionWeight: 3
     subtractionWeight: 3

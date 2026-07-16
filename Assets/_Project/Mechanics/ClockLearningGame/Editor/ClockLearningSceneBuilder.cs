@@ -36,12 +36,12 @@ namespace ClockLearningGameEditor
             RectTransform gameplayRoot = CreateRect("Gameplay Root", safeRoot, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
 
             RectTransform header = CreatePanel("Top Header", gameplayRoot, new Vector2(0f, 0.9f), new Vector2(1f, 1f), HeaderColor);
-            Button homeButton = CreateButton(header, "Home Button", "Home", new Vector2(0.015f, 0.17f), new Vector2(0.105f, 0.83f), SecondaryButtonColor, 28);
+            Button homeButton = CreateIconButton(header, "Home Button", new Vector2(0.018f, 0.18f), new Vector2(0.058f, 0.82f), SecondaryButtonColor);
             TextMeshProUGUI titleText = CreateText(header, "Title Text", "Clock Game", new Vector2(0.32f, 0f), new Vector2(0.68f, 1f), 42, FontStyles.Bold, TextAlignmentOptions.Center);
-            TextMeshProUGUI questionText = CreateText(header, "Question Text", "Question 1/10", new Vector2(0.67f, 0f), new Vector2(0.79f, 1f), 25, FontStyles.Bold, TextAlignmentOptions.Center);
-            TextMeshProUGUI scoreText = CreateText(header, "Score Text", "Score 0", new Vector2(0.78f, 0f), new Vector2(0.88f, 1f), 25, FontStyles.Bold, TextAlignmentOptions.Center);
-            Button pauseButton = CreateButton(header, "Pause Button", "II", new Vector2(0.89f, 0.17f), new Vector2(0.935f, 0.83f), SecondaryButtonColor, 30);
-            Button helpButton = CreateButton(header, "Help Button", "?", new Vector2(0.945f, 0.17f), new Vector2(0.99f, 0.83f), SecondaryButtonColor, 32);
+            TextMeshProUGUI questionText = CreateTextCard(header, "Question Card", "Question Text", "Question 1/10", new Vector2(0.65f, 0.18f), new Vector2(0.77f, 0.82f), 25);
+            TextMeshProUGUI scoreText = CreateTextCard(header, "Score Card", "Score Text", "Score 0", new Vector2(0.775f, 0.18f), new Vector2(0.875f, 0.82f), 25);
+            Button pauseButton = CreateIconButton(header, "Pause Button", new Vector2(0.89f, 0.18f), new Vector2(0.935f, 0.82f), SecondaryButtonColor);
+            Button helpButton = CreateIconButton(header, "Help Button", new Vector2(0.945f, 0.18f), new Vector2(0.99f, 0.82f), SecondaryButtonColor);
 
             RectTransform timerBar = CreatePanel("Timer Fill", header, new Vector2(0.18f, 0.12f), new Vector2(0.30f, 0.32f), new Color(1f, 0.73f, 0.25f, 1f));
             Image timerFill = timerBar.GetComponent<Image>();
@@ -52,16 +52,16 @@ namespace ClockLearningGameEditor
             RectTransform singleRoot = CreateRect("Single Clock Mode Root", gameplayRoot, new Vector2(0f, 0f), new Vector2(1f, 0.89f), Vector2.zero, Vector2.zero);
             ClockLearningClockView singleClock = CreateClock(singleRoot, "Single Draggable Clock", new Vector2(0.06f, 0.09f), new Vector2(0.56f, 0.91f));
             RectTransform singlePanel = CreatePanel("Single Instruction Panel", singleRoot, new Vector2(0.61f, 0.12f), new Vector2(0.96f, 0.88f), PanelColor);
-            TextMeshProUGUI singlePrompt = CreateText(singlePanel, "Single Prompt", "Set the clock to", new Vector2(0.08f, 0.73f), new Vector2(0.92f, 0.91f), 36, FontStyles.Bold, TextAlignmentOptions.Center);
-            TextMeshProUGUI singleTarget = CreateText(singlePanel, "Single Target", "3:45 PM", new Vector2(0.08f, 0.53f), new Vector2(0.92f, 0.75f), 56, FontStyles.Bold, TextAlignmentOptions.Center);
-            TextMeshProUGUI singleLegend = CreateText(singlePanel, "Single Legend", "Hour Hand = short hand\nMinute Hand = long hand", new Vector2(0.08f, 0.32f), new Vector2(0.92f, 0.50f), 26, FontStyles.Normal, TextAlignmentOptions.Center);
+            TextMeshProUGUI singlePrompt = CreateTextCard(singlePanel, "Single Prompt BG", "Single Prompt", "Set the clock to", new Vector2(0.08f, 0.75f), new Vector2(0.92f, 0.91f), 34);
+            TextMeshProUGUI singleTarget = CreateTextCard(singlePanel, "Single Target BG", "Single Target", "3:45 PM", new Vector2(0.08f, 0.53f), new Vector2(0.92f, 0.73f), 54);
+            TextMeshProUGUI singleLegend = CreateTextCard(singlePanel, "Single Legend BG", "Single Legend", "Hour Hand = short hand\nMinute Hand = long hand", new Vector2(0.08f, 0.31f), new Vector2(0.92f, 0.49f), 25);
             Button singleSubmit = CreateButton(singlePanel, "Single Submit Button", "Submit", new Vector2(0.12f, 0.13f), new Vector2(0.88f, 0.28f), ButtonColor, 34);
             Button singleReset = CreateButton(singlePanel, "Single Reset Button", "Reset", new Vector2(0.25f, 0.035f), new Vector2(0.75f, 0.115f), SecondaryButtonColor, 25);
 
             RectTransform doubleRoot = CreateRect("Double Clock Mode Root", gameplayRoot, new Vector2(0f, 0f), new Vector2(1f, 0.89f), Vector2.zero, Vector2.zero);
             RectTransform diffPanel = CreatePanel("Difference Instruction Card", doubleRoot, new Vector2(0.27f, 0.76f), new Vector2(0.73f, 0.91f), PanelColor);
             TextMeshProUGUI diffPrompt = CreateText(diffPanel, "Difference Prompt", "Make a time difference of", new Vector2(0.05f, 0.52f), new Vector2(0.95f, 0.93f), 28, FontStyles.Bold, TextAlignmentOptions.Center);
-            TextMeshProUGUI diffTarget = CreateText(diffPanel, "Difference Target", "2h 30m", new Vector2(0.05f, 0.05f), new Vector2(0.95f, 0.55f), 42, FontStyles.Bold, TextAlignmentOptions.Center);
+            TextMeshProUGUI diffTarget = CreateTextCard(diffPanel, "Difference Target BG", "Difference Target", "2h 30m", new Vector2(0.18f, 0.06f), new Vector2(0.82f, 0.52f), 40);
 
             ClockLearningClockView clockA = CreateClock(doubleRoot, "Clock A", new Vector2(0.07f, 0.25f), new Vector2(0.42f, 0.75f));
             ClockLearningClockView clockB = CreateClock(doubleRoot, "Clock B", new Vector2(0.58f, 0.25f), new Vector2(0.93f, 0.75f));
@@ -87,7 +87,7 @@ namespace ClockLearningGameEditor
             CanvasGroup pauseGroup = CreatePausePanel(safeRoot, "Pause Panel", "Paused", out Button resumeButton, out Button restartButton, out Button howToButton, out Button pauseHomeButton);
             CanvasGroup howToGroup = CreateHowToPanel(safeRoot, out TextMeshProUGUI howToText, out Image howToImage, out TextMeshProUGUI pageCounterText, out Button previousHowToButton, out Button nextHowToButton, out Button closeHowToButton);
             CanvasGroup resultGroup = CreateResultPanel(safeRoot, out TextMeshProUGUI resultTitle, out TextMeshProUGUI resultScore, out Button resultRestart, out Button resultHome);
-            CanvasGroup tutorialGroup = CreateInteractiveTutorialOverlay(safeRoot, out RectTransform tutorialPointer, out Image tutorialPointerImage, out RectTransform tutorialPromptCard, out TextMeshProUGUI tutorialPrompt);
+            CanvasGroup tutorialGroup = CreateInteractiveTutorialOverlay(safeRoot, out Image tutorialBackgroundImage, out Button tutorialClickAnywhereButton, out RectTransform tutorialPointer, out Image tutorialPointerImage, out RectTransform tutorialGhostHand, out Image tutorialGhostHandImage, out RectTransform tutorialPromptCard, out TextMeshProUGUI tutorialPrompt);
 
             GameObject managerObject = new GameObject("ClockLearningGameManager");
             Undo.RegisterCreatedObjectUndo(managerObject, "Create Clock Learning Manager");
@@ -95,6 +95,7 @@ namespace ClockLearningGameEditor
             managerObject.AddComponent<AudioSource>();
             managerObject.AddComponent<AudioSource>();
             ClockLearningGameManager manager = managerObject.AddComponent<ClockLearningGameManager>();
+            ClockLearningTutorialController tutorialController = managerObject.AddComponent<ClockLearningTutorialController>();
 
             SerializedObject so = new SerializedObject(manager);
             SetObj(so, "gameplayRoot", gameplayRoot.gameObject);
@@ -148,22 +149,44 @@ namespace ClockLearningGameEditor
             SetObj(so, "resultScoreText", resultScore);
             SetObj(so, "resultRestartButton", resultRestart);
             SetObj(so, "resultHomeButton", resultHome);
-            SetObj(so, "tutorialOverlayGroup", tutorialGroup);
-            SetObj(so, "tutorialPointer", tutorialPointer);
-            SetObj(so, "tutorialPointerImage", tutorialPointerImage);
-            SetObj(so, "tutorialPromptCard", tutorialPromptCard);
-            SetObj(so, "tutorialPromptText", tutorialPrompt);
-            SetObj(so, "tutorialSingleClockTarget", singleClock.GetComponent<RectTransform>());
-            SetObj(so, "tutorialDoubleClockATarget", clockA.GetComponent<RectTransform>());
-            SetObj(so, "tutorialDoubleClockBTarget", clockB.GetComponent<RectTransform>());
-            SetObj(so, "tutorialSingleSubmitButtonTarget", singleSubmit.GetComponent<RectTransform>());
-            SetObj(so, "tutorialDoubleSubmitButtonTarget", doubleSubmit.GetComponent<RectTransform>());
+            SetObj(so, "tutorialController", tutorialController);
             SetObj(so, "audioManager", audioManager);
             so.ApplyModifiedPropertiesWithoutUndo();
 
+            SerializedObject tutorialSo = new SerializedObject(tutorialController);
+            SetObj(tutorialSo, "singleClock", singleClock);
+            SetObj(tutorialSo, "doubleClockA", clockA);
+            SetObj(tutorialSo, "doubleClockB", clockB);
+            SetObj(tutorialSo, "homeButton", homeButton);
+            SetObj(tutorialSo, "pauseButton", pauseButton);
+            SetObj(tutorialSo, "helpButton", helpButton);
+            SetObj(tutorialSo, "singleSubmitButton", singleSubmit);
+            SetObj(tutorialSo, "singleResetButton", singleReset);
+            SetObj(tutorialSo, "doubleSubmitButton", doubleSubmit);
+            SetObj(tutorialSo, "doubleResetButton", doubleReset);
+            SetObj(tutorialSo, "clockAPmToggle", clockAToggle);
+            SetObj(tutorialSo, "clockBPmToggle", clockBToggle);
+            SetObj(tutorialSo, "overlayGroup", tutorialGroup);
+            SetObj(tutorialSo, "backgroundImage", tutorialBackgroundImage);
+            SetObj(tutorialSo, "clickAnywhereButton", tutorialClickAnywhereButton);
+            SetObj(tutorialSo, "pointer", tutorialPointer);
+            SetObj(tutorialSo, "pointerImage", tutorialPointerImage);
+            SetObj(tutorialSo, "ghostHand", tutorialGhostHand);
+            SetObj(tutorialSo, "ghostHandImage", tutorialGhostHandImage);
+            SetObj(tutorialSo, "promptCard", tutorialPromptCard);
+            SetObj(tutorialSo, "promptText", tutorialPrompt);
+            SetFloat(tutorialSo, "promptBackgroundOpacity", 0.86f);
+            SetBool(tutorialSo, "copyActualHandSpriteForGhost", true);
+            SetObj(tutorialSo, "singleQuestionTarget", singleTarget.GetComponent<RectTransform>());
+            SetObj(tutorialSo, "doubleQuestionTarget", diffTarget.GetComponent<RectTransform>());
+            SetObj(tutorialSo, "singleClockTarget", singleClock.GetComponent<RectTransform>());
+            SetObj(tutorialSo, "doubleClockATarget", clockA.GetComponent<RectTransform>());
+            SetObj(tutorialSo, "doubleClockBTarget", clockB.GetComponent<RectTransform>());
+            tutorialSo.ApplyModifiedPropertiesWithoutUndo();
+
             Selection.activeGameObject = manager.gameObject;
             EditorSceneManager.MarkSceneDirty(EditorSceneManager.GetActiveScene());
-            Debug.Log("Clock Learning Game v9 rough UI created. Assign How To images and tutorial pointer sprite in the manager, then press Play.");
+            Debug.Log("Clock Learning Game v15 rough UI created. Assign How To images and tutorial pointer sprite in the Tutorial Controller, then press Play.");
         }
 
         private static Canvas CreateCanvas()
@@ -239,6 +262,30 @@ namespace ClockLearningGameEditor
             TextMeshProUGUI text = CreateText(rect, "Label", label, Vector2.zero, Vector2.one, fontSize, FontStyles.Bold, TextAlignmentOptions.Center);
             text.raycastTarget = false;
             return button;
+        }
+
+        private static Button CreateIconButton(RectTransform parent, string name, Vector2 anchorMin, Vector2 anchorMax, Color color)
+        {
+            RectTransform rect = CreatePanel(name, parent, anchorMin, anchorMax, color);
+            Button button = rect.gameObject.AddComponent<Button>();
+            button.targetGraphic = rect.GetComponent<Image>();
+
+            RectTransform icon = CreateRect("Icon", rect, new Vector2(0.25f, 0.25f), new Vector2(0.75f, 0.75f), Vector2.zero, Vector2.zero);
+            Image iconImage = icon.gameObject.AddComponent<Image>();
+            iconImage.color = new Color(0.23f, 0.17f, 0.08f, 0.75f);
+            iconImage.preserveAspect = true;
+            iconImage.raycastTarget = false;
+            return button;
+        }
+
+        private static TextMeshProUGUI CreateTextCard(RectTransform parent, string cardName, string textName, string value, Vector2 anchorMin, Vector2 anchorMax, int fontSize)
+        {
+            RectTransform card = CreatePanel(cardName, parent, anchorMin, anchorMax, new Color(1f, 0.91f, 0.56f, 1f));
+            Image cardImage = card.GetComponent<Image>();
+            if (cardImage != null) cardImage.raycastTarget = false;
+            TextMeshProUGUI text = CreateText(card, textName, value, new Vector2(0.04f, 0.08f), new Vector2(0.96f, 0.92f), fontSize, FontStyles.Bold, TextAlignmentOptions.Center);
+            text.raycastTarget = false;
+            return text;
         }
 
         private static Button CreateLayoutButton(RectTransform parent, string name, string label, Color color, int fontSize)
@@ -331,7 +378,7 @@ namespace ClockLearningGameEditor
             return group;
         }
 
-        private static CanvasGroup CreateInteractiveTutorialOverlay(RectTransform parent, out RectTransform pointer, out Image pointerImage, out RectTransform promptCard, out TextMeshProUGUI promptText)
+        private static CanvasGroup CreateInteractiveTutorialOverlay(RectTransform parent, out Image backgroundImage, out Button clickAnywhereButton, out RectTransform pointer, out Image pointerImage, out RectTransform ghostHand, out Image ghostHandImage, out RectTransform promptCard, out TextMeshProUGUI promptText)
         {
             RectTransform overlay = CreateRect("Interactive Tutorial Overlay", parent, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
             CanvasGroup group = overlay.gameObject.AddComponent<CanvasGroup>();
@@ -339,11 +386,25 @@ namespace ClockLearningGameEditor
             group.interactable = false;
             group.blocksRaycasts = false;
 
-            promptCard = CreatePanel("Tutorial Prompt Card", overlay, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Color(1f, 0.89f, 0.42f, 0.96f));
-            promptCard.sizeDelta = new Vector2(760f, 120f);
+            RectTransform background = CreateRect("Tutorial Optional Background Image", overlay, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+            backgroundImage = background.gameObject.AddComponent<Image>();
+            backgroundImage.color = new Color(1f, 1f, 1f, 0f);
+            backgroundImage.raycastTarget = false;
+
+            promptCard = CreatePanel("Tutorial Instruction Line", overlay, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Color(1f, 0.89f, 0.42f, 0.86f));
+            promptCard.sizeDelta = new Vector2(920f, 92f);
             promptCard.GetComponent<Image>().raycastTarget = false;
-            promptText = CreateText(promptCard, "Prompt Text", "Drag the clock hands to set the time.", new Vector2(0.05f, 0.12f), new Vector2(0.95f, 0.88f), 32, FontStyles.Bold, TextAlignmentOptions.Center);
+            promptText = CreateText(promptCard, "Prompt Text", "Read the time. Click anywhere to continue.", new Vector2(0.03f, 0.08f), new Vector2(0.97f, 0.92f), 34, FontStyles.Bold, TextAlignmentOptions.Center);
             promptText.raycastTarget = false;
+
+            ghostHand = CreateRect("Tutorial Fake Clock Hand", overlay, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero);
+            ghostHand.pivot = new Vector2(0.5f, 0f);
+            ghostHand.sizeDelta = new Vector2(16f, 165f);
+            ghostHandImage = ghostHand.gameObject.AddComponent<Image>();
+            ghostHandImage.color = new Color(1f, 1f, 1f, 0.35f);
+            ghostHandImage.preserveAspect = true;
+            ghostHandImage.raycastTarget = false;
+            ghostHand.gameObject.SetActive(false);
 
             pointer = CreateRect("Tutorial Pointer Image", overlay, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero);
             pointer.sizeDelta = new Vector2(110f, 110f);
@@ -351,6 +412,15 @@ namespace ClockLearningGameEditor
             pointerImage.color = new Color(1f, 1f, 1f, 0.85f);
             pointerImage.preserveAspect = true;
             pointerImage.raycastTarget = false;
+
+            RectTransform clickRect = CreateRect("Tutorial Click Anywhere Button", overlay, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+            Image clickImage = clickRect.gameObject.AddComponent<Image>();
+            clickImage.color = new Color(1f, 1f, 1f, 0f);
+            clickImage.raycastTarget = true;
+            clickAnywhereButton = clickRect.gameObject.AddComponent<Button>();
+            clickAnywhereButton.transition = Selectable.Transition.None;
+            clickAnywhereButton.targetGraphic = clickImage;
+            clickRect.gameObject.SetActive(false);
 
             overlay.gameObject.SetActive(false);
             return group;
@@ -390,6 +460,20 @@ namespace ClockLearningGameEditor
         {
             SerializedProperty property = so.FindProperty(fieldName);
             if (property != null) property.objectReferenceValue = value;
+            else Debug.LogWarning($"Missing serialized field: {fieldName}");
+        }
+
+        private static void SetFloat(SerializedObject so, string fieldName, float value)
+        {
+            SerializedProperty property = so.FindProperty(fieldName);
+            if (property != null) property.floatValue = value;
+            else Debug.LogWarning($"Missing serialized field: {fieldName}");
+        }
+
+        private static void SetBool(SerializedObject so, string fieldName, bool value)
+        {
+            SerializedProperty property = so.FindProperty(fieldName);
+            if (property != null) property.boolValue = value;
             else Debug.LogWarning($"Missing serialized field: {fieldName}");
         }
     }

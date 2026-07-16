@@ -38,16 +38,6 @@ namespace ClockLearningGame
         Mixed
     }
 
-    internal enum ClockLearningTutorialStep
-    {
-        None,
-        SingleClockDrag,
-        SingleClockSubmit,
-        DoubleClockADrag,
-        DoubleClockBDrag,
-        DoubleClockSubmit
-    }
-
     [Serializable]
     public sealed class SingleClockQuestion
     {
@@ -243,40 +233,8 @@ namespace ClockLearningGame
         [SerializeField] private bool pauseBackgroundMusicDuringPauseMenu = true;
         [SerializeField] private bool pauseBackgroundMusicDuringHowTo = false;
 
-        [Header("Interactive First-Time Tutorial Overlay")]
-        [SerializeField] private bool enableInteractiveTutorialOverlay = true;
-        [Tooltip("When enabled, the guided overlay is shown only once per mode during this scene run. Turn off for repeated testing.")]
-        [SerializeField] private bool showInteractiveTutorialOnlyOnce = true;
-        [Tooltip("Optional. Enable only when you want the tutorial to stay hidden across app restarts after the player has seen it.")]
-        [SerializeField] private bool rememberTutorialSeenInPlayerPrefs = false;
-        [SerializeField] private string tutorialSeenPlayerPrefsKey = "ClockLearningGame_TutorialSeen";
-        [SerializeField] private CanvasGroup tutorialOverlayGroup;
-        [SerializeField] private RectTransform tutorialPointer;
-        [SerializeField] private Image tutorialPointerImage;
-        [SerializeField] private Sprite tutorialPointerSprite;
-        [SerializeField] private RectTransform tutorialPromptCard;
-        [SerializeField] private TextMeshProUGUI tutorialPromptText;
-        [SerializeField] private RectTransform tutorialSingleClockTarget;
-        [SerializeField] private RectTransform tutorialDoubleClockATarget;
-        [SerializeField] private RectTransform tutorialDoubleClockBTarget;
-        [SerializeField] private RectTransform tutorialSingleSubmitButtonTarget;
-        [SerializeField] private RectTransform tutorialDoubleSubmitButtonTarget;
-        [SerializeField] private Vector2 tutorialPointerOffset = new Vector2(70f, -55f);
-        [SerializeField] private bool autoPositionTutorialPrompt = true;
-        [SerializeField] private Vector2 tutorialPromptCardSize = new Vector2(760f, 120f);
-        [SerializeField] private Vector2 singleClockDragPromptOffset = new Vector2(0f, -220f);
-        [SerializeField] private Vector2 singleClockSubmitPromptOffset = new Vector2(0f, 140f);
-        [SerializeField] private Vector2 doubleClockADragPromptOffset = new Vector2(0f, -170f);
-        [SerializeField] private Vector2 doubleClockBDragPromptOffset = new Vector2(0f, -170f);
-        [SerializeField] private Vector2 doubleClockSubmitPromptOffset = new Vector2(0f, 145f);
-        [SerializeField] private Vector2 tutorialPromptClampMargin = new Vector2(60f, 45f);
-        [SerializeField, Range(0.15f, 1.2f)] private float tutorialPointerMoveDuration = 0.35f;
-        [SerializeField, Range(4f, 40f)] private float tutorialPointerHoverPixels = 14f;
-        [SerializeField] private string singleClockDragPrompt = "Drag the clock hands to set the time.";
-        [SerializeField] private string singleClockSubmitPrompt = "Tap Submit to check your answer.";
-        [SerializeField] private string doubleClockADragPrompt = "Set the first clock.";
-        [SerializeField] private string doubleClockBDragPrompt = "Now set the second clock.";
-        [SerializeField] private string doubleClockSubmitPrompt = "Tap Submit to check the time difference.";
+        [Header("Tutorial")]
+        [SerializeField] private ClockLearningTutorialController tutorialController;
 
         [Header("Runtime Question Generation")]
         [SerializeField] private bool generateQuestionsAtRuntime = true;
@@ -400,11 +358,8 @@ namespace ClockLearningGame
         private float _lastButtonPressRealtime = -999f;
         private bool _timerWasRunningBeforePause;
         private bool _timerWasRunningBeforeHowTo;
-        private ClockLearningTutorialStep _tutorialStep = ClockLearningTutorialStep.None;
-        private bool _interactiveTutorialActive;
-        private bool _singleTutorialSeenThisSession;
-        private bool _doubleTutorialSeenThisSession;
-        private Sequence _tutorialPointerSequence;
+
+        private bool IsTutorialRunning => tutorialController != null && tutorialController.IsRunning;
 
         private void EnsureSafeInspectorValues()
         {
@@ -413,14 +368,6 @@ namespace ClockLearningGame
             expectedMaxTimeSeconds = Mathf.Max(1f, expectedMaxTimeSeconds);
             buttonDebounceSeconds = Mathf.Clamp(buttonDebounceSeconds, 0.05f, 0.75f);
             drivenHandSmoothDuration = Mathf.Clamp(drivenHandSmoothDuration, 0.02f, 0.35f);
-            tutorialPointerMoveDuration = Mathf.Clamp(tutorialPointerMoveDuration, 0.15f, 1.2f);
-            tutorialPointerHoverPixels = Mathf.Clamp(tutorialPointerHoverPixels, 4f, 40f);
-            if (string.IsNullOrWhiteSpace(tutorialSeenPlayerPrefsKey)) tutorialSeenPlayerPrefsKey = "ClockLearningGame_TutorialSeen";
-            tutorialPromptCardSize.x = Mathf.Max(220f, tutorialPromptCardSize.x);
-            tutorialPromptCardSize.y = Mathf.Max(70f, tutorialPromptCardSize.y);
-            tutorialPromptClampMargin.x = Mathf.Max(0f, tutorialPromptClampMargin.x);
-            tutorialPromptClampMargin.y = Mathf.Max(0f, tutorialPromptClampMargin.y);
-
             sharedNumberInsetFromClockEdge = Mathf.Clamp(sharedNumberInsetFromClockEdge, 0.05f, 0.35f);
             sharedTickInsetFromClockEdge = Mathf.Clamp(sharedTickInsetFromClockEdge, 0.03f, 0.25f);
             sharedExtraMarkInsetPixels = Mathf.Max(0f, sharedExtraMarkInsetPixels);
@@ -561,9 +508,7 @@ namespace ClockLearningGame
             KillGroupTween(howToPlayPanelGroup);
             KillGroupTween(resultPanelGroup);
             KillGroupTween(modeMenuPanelGroup);
-            KillGroupTween(tutorialOverlayGroup);
-            _tutorialPointerSequence?.Kill();
-            if (tutorialPointer != null) tutorialPointer.DOKill();
+            if (tutorialController != null) tutorialController.KillTweens();
         }
 
         private static void KillGroupTween(CanvasGroup group)
@@ -631,8 +576,6 @@ namespace ClockLearningGame
             _attemptCount = 0;
             _roundStartTime = Time.time;
             _bloomPostGameShown = false;
-            _interactiveTutorialActive = false;
-            _tutorialStep = ClockLearningTutorialStep.None;
             BuildRuntimeQuestionsIfNeeded();
             BuildQuestionOrder();
             ConfigureClocksForDifficulty();
@@ -641,9 +584,10 @@ namespace ClockLearningGame
             if (gameplayRoot != null) gameplayRoot.SetActive(true);
             LoadCurrentQuestion();
 
-            if (ShouldRunInteractiveTutorialForCurrentMode())
+            if (tutorialController != null && tutorialController.ShouldRun(gameMode))
             {
-                StartInteractiveTutorialForCurrentMode();
+                BeginTutorialInputLock();
+                tutorialController.Run(gameMode, OnTutorialComplete);
             }
             else
             {
@@ -661,11 +605,7 @@ namespace ClockLearningGame
         {
             if (!_acceptInput || !TryConsumeButtonPress()) return;
 
-            if (_interactiveTutorialActive)
-            {
-                if (!IsTutorialSubmitStep()) return;
-                CompleteInteractiveTutorial(true);
-            }
+            if (IsTutorialRunning) return;
 
             audioManager?.PlayClick();
             _attemptCount++;
@@ -683,7 +623,7 @@ namespace ClockLearningGame
 
         public void ResetCurrentQuestion()
         {
-            if (_interactiveTutorialActive) return;
+            if (IsTutorialRunning) return;
             if (!_acceptInput || !TryConsumeButtonPress()) return;
 
             audioManager?.PlayClick();
@@ -697,7 +637,7 @@ namespace ClockLearningGame
 
         public void OpenPausePanel()
         {
-            if (_interactiveTutorialActive) return;
+            if (IsTutorialRunning) return;
             if (!TryConsumeButtonPress()) return;
 
             audioManager?.PlayClick();
@@ -723,7 +663,7 @@ namespace ClockLearningGame
 
         public void OpenHowToPlay()
         {
-            if (_interactiveTutorialActive) return;
+            if (IsTutorialRunning) return;
             if (!TryConsumeButtonPress()) return;
 
             audioManager?.PlayClick();
@@ -783,7 +723,7 @@ namespace ClockLearningGame
             Time.timeScale = 1f;
             _acceptInput = false;
             _timerRunning = false;
-            HideInteractiveTutorialInstant();
+            if (tutorialController != null) tutorialController.HideInstant();
             SetClockInputEnabled(false);
             if (modeMenuPanelGroup != null)
             {
@@ -1116,375 +1056,20 @@ namespace ClockLearningGame
             SetButtonLabel(resultHomeButton, "Continue");
         }
 
-        private bool ShouldRunInteractiveTutorialForCurrentMode()
+        private void BeginTutorialInputLock()
         {
-            if (!enableInteractiveTutorialOverlay) return false;
-            if (tutorialOverlayGroup == null || tutorialPointer == null || tutorialPromptText == null) return false;
-            if (!showInteractiveTutorialOnlyOnce) return true;
-            return !HasSeenInteractiveTutorial(gameMode);
-        }
-
-        private bool HasSeenInteractiveTutorial(ClockLearningMode mode)
-        {
-            bool seenThisSession = mode == ClockLearningMode.SingleClockSetTime ? _singleTutorialSeenThisSession : _doubleTutorialSeenThisSession;
-            if (seenThisSession) return true;
-
-            if (rememberTutorialSeenInPlayerPrefs)
-            {
-                return PlayerPrefs.GetInt(GetTutorialPlayerPrefsKey(mode), 0) == 1;
-            }
-
-            return false;
-        }
-
-        private void MarkInteractiveTutorialSeen(ClockLearningMode mode)
-        {
-            if (mode == ClockLearningMode.SingleClockSetTime) _singleTutorialSeenThisSession = true;
-            else _doubleTutorialSeenThisSession = true;
-
-            if (rememberTutorialSeenInPlayerPrefs)
-            {
-                PlayerPrefs.SetInt(GetTutorialPlayerPrefsKey(mode), 1);
-                PlayerPrefs.Save();
-            }
-        }
-
-        private string GetTutorialPlayerPrefsKey(ClockLearningMode mode)
-        {
-            return $"{tutorialSeenPlayerPrefsKey}_{mode}";
-        }
-
-        private void StartInteractiveTutorialForCurrentMode()
-        {
-            _interactiveTutorialActive = true;
+            _acceptInput = false;
             _timerRunning = false;
-            _acceptInput = true;
-            _tutorialStep = gameMode == ClockLearningMode.SingleClockSetTime
-                ? ClockLearningTutorialStep.SingleClockDrag
-                : ClockLearningTutorialStep.DoubleClockADrag;
-
-            ShowGroup(tutorialOverlayGroup, true, false);
-            RefreshInteractiveTutorialStep();
-        }
-
-        private void HandleTutorialClockDragged(ClockLearningClockView sourceClock, ClockLearningHandType handType)
-        {
-            if (!_interactiveTutorialActive || sourceClock == null) return;
-
-            switch (_tutorialStep)
-            {
-                case ClockLearningTutorialStep.SingleClockDrag:
-                    if (sourceClock == singleClock) MoveToTutorialStep(ClockLearningTutorialStep.SingleClockSubmit);
-                    break;
-
-                case ClockLearningTutorialStep.DoubleClockADrag:
-                    if (sourceClock == doubleClockA) MoveToTutorialStep(ClockLearningTutorialStep.DoubleClockBDrag);
-                    break;
-
-                case ClockLearningTutorialStep.DoubleClockBDrag:
-                    if (sourceClock == doubleClockB) MoveToTutorialStep(ClockLearningTutorialStep.DoubleClockSubmit);
-                    break;
-            }
-        }
-
-        private void MoveToTutorialStep(ClockLearningTutorialStep nextStep)
-        {
-            if (!_interactiveTutorialActive) return;
-            _tutorialStep = nextStep;
-            RefreshInteractiveTutorialStep();
-        }
-
-        private void RefreshInteractiveTutorialStep()
-        {
-            if (!_interactiveTutorialActive) return;
-
-            if (tutorialPromptText != null)
-            {
-                tutorialPromptText.text = GetTutorialPrompt(_tutorialStep);
-            }
-
-            ApplyTutorialPointerVisual();
-            ApplyTutorialStepInputRules();
-            RectTransform target = GetTutorialTarget(_tutorialStep);
-            MoveTutorialPointerToTarget(target);
-            MoveTutorialPromptToTarget(target, _tutorialStep);
-        }
-
-        private string GetTutorialPrompt(ClockLearningTutorialStep step)
-        {
-            switch (step)
-            {
-                case ClockLearningTutorialStep.SingleClockDrag:
-                    return string.IsNullOrWhiteSpace(singleClockDragPrompt) ? "Drag the clock hands to set the time." : singleClockDragPrompt;
-                case ClockLearningTutorialStep.SingleClockSubmit:
-                    return string.IsNullOrWhiteSpace(singleClockSubmitPrompt) ? "Tap Submit to check your answer." : singleClockSubmitPrompt;
-                case ClockLearningTutorialStep.DoubleClockADrag:
-                    return string.IsNullOrWhiteSpace(doubleClockADragPrompt) ? "Set the first clock." : doubleClockADragPrompt;
-                case ClockLearningTutorialStep.DoubleClockBDrag:
-                    return string.IsNullOrWhiteSpace(doubleClockBDragPrompt) ? "Now set the second clock." : doubleClockBDragPrompt;
-                case ClockLearningTutorialStep.DoubleClockSubmit:
-                    return string.IsNullOrWhiteSpace(doubleClockSubmitPrompt) ? "Tap Submit to check the time difference." : doubleClockSubmitPrompt;
-                default:
-                    return string.Empty;
-            }
-        }
-
-        private RectTransform GetTutorialTarget(ClockLearningTutorialStep step)
-        {
-            switch (step)
-            {
-                case ClockLearningTutorialStep.SingleClockDrag:
-                    return tutorialSingleClockTarget != null ? tutorialSingleClockTarget : GetRect(singleClock);
-                case ClockLearningTutorialStep.SingleClockSubmit:
-                    return tutorialSingleSubmitButtonTarget != null ? tutorialSingleSubmitButtonTarget : GetButtonRect(singleSubmitButton);
-                case ClockLearningTutorialStep.DoubleClockADrag:
-                    return tutorialDoubleClockATarget != null ? tutorialDoubleClockATarget : GetRect(doubleClockA);
-                case ClockLearningTutorialStep.DoubleClockBDrag:
-                    return tutorialDoubleClockBTarget != null ? tutorialDoubleClockBTarget : GetRect(doubleClockB);
-                case ClockLearningTutorialStep.DoubleClockSubmit:
-                    return tutorialDoubleSubmitButtonTarget != null ? tutorialDoubleSubmitButtonTarget : GetButtonRect(doubleSubmitButton);
-                default:
-                    return null;
-            }
-        }
-
-        private static RectTransform GetRect(Component component)
-        {
-            return component == null ? null : component.transform as RectTransform;
-        }
-
-        private static RectTransform GetButtonRect(Button button)
-        {
-            return button == null ? null : button.transform as RectTransform;
-        }
-
-        private bool IsTutorialSubmitStep()
-        {
-            return _tutorialStep == ClockLearningTutorialStep.SingleClockSubmit || _tutorialStep == ClockLearningTutorialStep.DoubleClockSubmit;
-        }
-
-        private void ApplyTutorialStepInputRules()
-        {
-            bool singleDrag = _tutorialStep == ClockLearningTutorialStep.SingleClockDrag || _tutorialStep == ClockLearningTutorialStep.SingleClockSubmit;
-            bool doubleADrag = _tutorialStep == ClockLearningTutorialStep.DoubleClockADrag;
-            bool doubleBDrag = _tutorialStep == ClockLearningTutorialStep.DoubleClockBDrag || _tutorialStep == ClockLearningTutorialStep.DoubleClockSubmit;
-            bool singleSubmit = _tutorialStep == ClockLearningTutorialStep.SingleClockSubmit;
-            bool doubleSubmit = _tutorialStep == ClockLearningTutorialStep.DoubleClockSubmit;
-
-            if (singleClock != null) singleClock.SetDraggable(singleDrag);
-            if (doubleClockA != null) doubleClockA.SetDraggable(doubleADrag);
-            if (doubleClockB != null) doubleClockB.SetDraggable(doubleBDrag);
-
-            if (singleSubmitButton != null) singleSubmitButton.interactable = singleSubmit;
-            if (doubleSubmitButton != null) doubleSubmitButton.interactable = doubleSubmit;
+            SetSubmitButtons(false);
             SetResetButtons(false);
-
-            if (pauseButton != null) pauseButton.interactable = false;
-            if (helpButton != null) helpButton.interactable = false;
-            if (homeButton != null) homeButton.interactable = false;
-            if (clockAPmToggle != null) clockAPmToggle.interactable = gameMode == ClockLearningMode.DoubleClockTimeDifference;
-            if (clockBPmToggle != null) clockBPmToggle.interactable = gameMode == ClockLearningMode.DoubleClockTimeDifference;
+            SetClockInputEnabled(false);
         }
 
-        private void RestoreNormalGameplayInputAfterTutorial()
+        private void OnTutorialComplete()
         {
-            if (pauseButton != null) pauseButton.interactable = true;
-            if (helpButton != null) helpButton.interactable = true;
-            if (homeButton != null) homeButton.interactable = true;
-            if (clockAPmToggle != null) clockAPmToggle.interactable = true;
-            if (clockBPmToggle != null) clockBPmToggle.interactable = true;
-            SetResetButtons(true);
-            SetClockInputEnabled(_acceptInput);
-            SetSubmitButtons(_acceptInput);
-        }
-
-        private void ApplyTutorialPointerVisual()
-        {
-            if (tutorialPointer == null) return;
-
-            TextMeshProUGUI legacyPointerText = tutorialPointer.GetComponent<TextMeshProUGUI>();
-            if (legacyPointerText != null)
-            {
-                legacyPointerText.text = string.Empty;
-                legacyPointerText.raycastTarget = false;
-            }
-
-            if (tutorialPointerImage == null)
-            {
-                tutorialPointerImage = tutorialPointer.GetComponent<Image>();
-                if (tutorialPointerImage == null)
-                {
-                    tutorialPointerImage = tutorialPointer.gameObject.AddComponent<Image>();
-                }
-            }
-
-            tutorialPointerImage.raycastTarget = false;
-            tutorialPointerImage.preserveAspect = true;
-            if (tutorialPointerSprite != null)
-            {
-                tutorialPointerImage.sprite = tutorialPointerSprite;
-                tutorialPointerImage.color = Color.white;
-            }
-            else if (tutorialPointerImage.sprite == null)
-            {
-                tutorialPointerImage.color = new Color(1f, 1f, 1f, 0.85f);
-            }
-        }
-
-        private void MoveTutorialPromptToTarget(RectTransform target, ClockLearningTutorialStep step)
-        {
-            if (!autoPositionTutorialPrompt) return;
-
-            RectTransform promptCard = tutorialPromptCard;
-            if (promptCard == null && tutorialPromptText != null)
-            {
-                promptCard = tutorialPromptText.transform.parent as RectTransform;
-                tutorialPromptCard = promptCard;
-            }
-
-            if (promptCard == null) return;
-
-            RectTransform overlayRect = tutorialOverlayGroup != null ? tutorialOverlayGroup.transform as RectTransform : promptCard.parent as RectTransform;
-            if (overlayRect == null) return;
-
-            promptCard.DOKill();
-            DisableRaycastsForGraphicTree(promptCard);
-            promptCard.anchorMin = new Vector2(0.5f, 0.5f);
-            promptCard.anchorMax = new Vector2(0.5f, 0.5f);
-            promptCard.pivot = new Vector2(0.5f, 0.5f);
-            promptCard.sizeDelta = tutorialPromptCardSize;
-
-            Vector2 targetAnchoredPosition = Vector2.zero;
-            if (target != null)
-            {
-                targetAnchoredPosition = GetAnchoredPositionInOverlay(target, overlayRect);
-            }
-
-            Vector2 finalPosition = targetAnchoredPosition + GetTutorialPromptOffset(step);
-            finalPosition = ClampInsideOverlay(finalPosition, overlayRect, promptCard, tutorialPromptClampMargin);
-
-            promptCard.DOAnchorPos(finalPosition, tutorialPointerMoveDuration)
-                .SetEase(Ease.OutQuad)
-                .SetUpdate(true);
-        }
-
-        private Vector2 GetTutorialPromptOffset(ClockLearningTutorialStep step)
-        {
-            switch (step)
-            {
-                case ClockLearningTutorialStep.SingleClockDrag:
-                    return singleClockDragPromptOffset;
-                case ClockLearningTutorialStep.SingleClockSubmit:
-                    return singleClockSubmitPromptOffset;
-                case ClockLearningTutorialStep.DoubleClockADrag:
-                    return doubleClockADragPromptOffset;
-                case ClockLearningTutorialStep.DoubleClockBDrag:
-                    return doubleClockBDragPromptOffset;
-                case ClockLearningTutorialStep.DoubleClockSubmit:
-                    return doubleClockSubmitPromptOffset;
-                default:
-                    return Vector2.zero;
-            }
-        }
-
-        private static void DisableRaycastsForGraphicTree(RectTransform root)
-        {
-            if (root == null) return;
-            Graphic[] graphics = root.GetComponentsInChildren<Graphic>(true);
-            for (int i = 0; i < graphics.Length; i++)
-            {
-                if (graphics[i] != null) graphics[i].raycastTarget = false;
-            }
-        }
-
-        private static Vector2 GetAnchoredPositionInOverlay(RectTransform target, RectTransform overlayRect)
-        {
-            Camera camera = null;
-            Canvas canvas = overlayRect.GetComponentInParent<Canvas>();
-            if (canvas != null && canvas.renderMode != RenderMode.ScreenSpaceOverlay) camera = canvas.worldCamera;
-
-            Vector2 screenPoint = RectTransformUtility.WorldToScreenPoint(camera, target.position);
-            RectTransformUtility.ScreenPointToLocalPointInRectangle(overlayRect, screenPoint, camera, out Vector2 anchoredPosition);
-            return anchoredPosition;
-        }
-
-        private static Vector2 ClampInsideOverlay(Vector2 position, RectTransform overlayRect, RectTransform itemRect, Vector2 margin)
-        {
-            Rect overlay = overlayRect.rect;
-            Vector2 itemSize = itemRect.rect.size;
-            if (itemSize.x <= 0f || itemSize.y <= 0f) itemSize = itemRect.sizeDelta;
-
-            float halfWidth = Mathf.Max(0f, itemSize.x * 0.5f);
-            float halfHeight = Mathf.Max(0f, itemSize.y * 0.5f);
-
-            float minX = overlay.xMin + halfWidth + margin.x;
-            float maxX = overlay.xMax - halfWidth - margin.x;
-            float minY = overlay.yMin + halfHeight + margin.y;
-            float maxY = overlay.yMax - halfHeight - margin.y;
-
-            if (minX <= maxX) position.x = Mathf.Clamp(position.x, minX, maxX);
-            if (minY <= maxY) position.y = Mathf.Clamp(position.y, minY, maxY);
-            return position;
-        }
-
-        private void MoveTutorialPointerToTarget(RectTransform target)
-        {
-            if (tutorialPointer == null) return;
-
-            _tutorialPointerSequence?.Kill();
-            tutorialPointer.DOKill();
-
-            RectTransform overlayRect = tutorialOverlayGroup != null ? tutorialOverlayGroup.transform as RectTransform : tutorialPointer.parent as RectTransform;
-            Vector2 targetAnchoredPosition = Vector2.zero;
-
-            if (target != null && overlayRect != null)
-            {
-                targetAnchoredPosition = GetAnchoredPositionInOverlay(target, overlayRect);
-            }
-
-            targetAnchoredPosition += tutorialPointerOffset;
-            if (overlayRect != null)
-            {
-                targetAnchoredPosition = ClampInsideOverlay(targetAnchoredPosition, overlayRect, tutorialPointer, Vector2.zero);
-            }
-            tutorialPointer.DOAnchorPos(targetAnchoredPosition, tutorialPointerMoveDuration).SetEase(Ease.OutQuad).SetUpdate(true)
-                .OnComplete(() =>
-                {
-                    if (tutorialPointer == null) return;
-                    _tutorialPointerSequence?.Kill();
-                    _tutorialPointerSequence = DOTween.Sequence().SetUpdate(true)
-                        .Append(tutorialPointer.DOAnchorPosY(targetAnchoredPosition.y + tutorialPointerHoverPixels, 0.42f).SetEase(Ease.InOutSine))
-                        .Append(tutorialPointer.DOAnchorPosY(targetAnchoredPosition.y, 0.42f).SetEase(Ease.InOutSine))
-                        .SetLoops(-1);
-                });
-        }
-
-        private void CompleteInteractiveTutorial(bool restoreInput)
-        {
-            if (!_interactiveTutorialActive) return;
-
-            MarkInteractiveTutorialSeen(gameMode);
-            _interactiveTutorialActive = false;
-            _tutorialStep = ClockLearningTutorialStep.None;
-            _tutorialPointerSequence?.Kill();
-            if (tutorialPointer != null) tutorialPointer.DOKill();
-            ShowGroup(tutorialOverlayGroup, false, false);
+            _acceptInput = true;
+            LoadCurrentQuestion();
             _roundStartTime = Time.time;
-            _timerRunning = restoreInput && useTimer && _acceptInput;
-
-            if (restoreInput)
-            {
-                RestoreNormalGameplayInputAfterTutorial();
-            }
-        }
-
-        private void HideInteractiveTutorialInstant()
-        {
-            _interactiveTutorialActive = false;
-            _tutorialStep = ClockLearningTutorialStep.None;
-            _tutorialPointerSequence?.Kill();
-            if (tutorialPointer != null) tutorialPointer.DOKill();
-            ShowGroup(tutorialOverlayGroup, false, true);
         }
 
         private void ResetClockPositions(bool animate)
@@ -1588,8 +1173,8 @@ namespace ClockLearningGame
             if (group == null) return;
 
             group.gameObject.SetActive(true);
-            group.interactable = group == tutorialOverlayGroup ? false : visible;
-            group.blocksRaycasts = group == tutorialOverlayGroup ? false : visible;
+            group.interactable = visible;
+            group.blocksRaycasts = visible;
             group.DOKill();
             group.transform.DOKill();
 
@@ -1614,7 +1199,7 @@ namespace ClockLearningGame
             ShowGroup(pausePanelGroup, false, true);
             ShowGroup(howToPlayPanelGroup, false, true);
             ShowGroup(resultPanelGroup, false, true);
-            ShowGroup(tutorialOverlayGroup, false, true);
+            if (tutorialController != null) tutorialController.HideInstant();
         }
 
         private void ConfigureClocksForDifficulty()
@@ -1670,7 +1255,7 @@ namespace ClockLearningGame
             ApplySecondaryFont(howToPlayText);
             ApplySecondaryFont(howToPageCounterText);
             ApplySecondaryFont(resultScoreText);
-            ApplySecondaryFont(tutorialPromptText);
+            if (tutorialController != null) tutorialController.ApplyFont(secondaryFont);
 
             ApplyButtonFont(singleModeButton, primaryFont);
             ApplyButtonFont(doubleModeButton, primaryFont);
@@ -1753,12 +1338,6 @@ namespace ClockLearningGame
 
         private void SetClockInputEnabled(bool enabled)
         {
-            if (_interactiveTutorialActive)
-            {
-                ApplyTutorialStepInputRules();
-                return;
-            }
-
             if (!lockClockInputWhenPanelsOpen) enabled = _acceptInput;
 
             bool singleActive = enabled && gameMode == ClockLearningMode.SingleClockSetTime;
@@ -2077,9 +1656,6 @@ namespace ClockLearningGame
 
         private void AddListeners()
         {
-            if (singleClock != null) singleClock.UserChangedTimeByDrag += HandleTutorialClockDragged;
-            if (doubleClockA != null) doubleClockA.UserChangedTimeByDrag += HandleTutorialClockDragged;
-            if (doubleClockB != null) doubleClockB.UserChangedTimeByDrag += HandleTutorialClockDragged;
             if (singleModeButton != null) singleModeButton.onClick.AddListener(SelectSingleMode);
             if (doubleModeButton != null) doubleModeButton.onClick.AddListener(SelectDoubleMode);
             if (singleSubmitButton != null) singleSubmitButton.onClick.AddListener(SubmitAnswer);
@@ -2106,9 +1682,6 @@ namespace ClockLearningGame
 
         private void RemoveListeners()
         {
-            if (singleClock != null) singleClock.UserChangedTimeByDrag -= HandleTutorialClockDragged;
-            if (doubleClockA != null) doubleClockA.UserChangedTimeByDrag -= HandleTutorialClockDragged;
-            if (doubleClockB != null) doubleClockB.UserChangedTimeByDrag -= HandleTutorialClockDragged;
             if (singleModeButton != null) singleModeButton.onClick.RemoveListener(SelectSingleMode);
             if (doubleModeButton != null) doubleModeButton.onClick.RemoveListener(SelectDoubleMode);
             if (singleSubmitButton != null) singleSubmitButton.onClick.RemoveListener(SubmitAnswer);

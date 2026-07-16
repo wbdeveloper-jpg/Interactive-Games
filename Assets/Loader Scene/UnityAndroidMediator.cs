@@ -5,7 +5,7 @@ using UnityEngine.SceneManagement;
 
 public class UnityAndroidMediator : MonoBehaviour
 {
-    public static UnityAndroidMediator Instance;    
+    public static UnityAndroidMediator Instance;
     void Awake()
     {
         // Singleton
@@ -16,6 +16,11 @@ public class UnityAndroidMediator : MonoBehaviour
         }
         else
         {
+            // If this loading scene contains a fresh UI reference, give it to
+            // the persistent mediator before destroying the duplicate object.
+            if (receivedData != null)
+                Instance.receivedData = receivedData;
+
             Destroy(gameObject);
         }
     }
@@ -52,7 +57,7 @@ public class UnityAndroidMediator : MonoBehaviour
 
         if (!string.IsNullOrEmpty(data))
         {
-            receivedData.text = data;
+            ShowReceivedData(data);
             StartCoroutine(LoadSceneAsync(data)); // async, not sync!
         }
     }
@@ -71,11 +76,28 @@ public class UnityAndroidMediator : MonoBehaviour
     public void ReceiveDataFromAndroid(string jsonData)
     {
         Debug.Log("Data received from Android (Push): " + jsonData);
-        receivedData.text = jsonData;
-        SceneManager.LoadScene(jsonData);
+
+        if (string.IsNullOrWhiteSpace(jsonData))
+        {
+            Debug.LogWarning("Android sent an empty Unity scene name.");
+            return;
+        }
+
+        // The original TMP object can be destroyed after the first scene
+        // loads. Never allow a missing UI reference to block scene loading.
+        ShowReceivedData(jsonData);
+        StartCoroutine(LoadSceneAsync(jsonData));
 
         // You can parse JSON here if needed
         // Example: JsonUtility.FromJson<YourClass>(jsonData);
+    }
+
+    private void ShowReceivedData(string value)
+    {
+        if (receivedData != null)
+            receivedData.text = value;
+        else
+            Debug.Log("No active receivedData text field; continuing to load: " + value);
     }
 
     // Send data to Android (Unity → Android)

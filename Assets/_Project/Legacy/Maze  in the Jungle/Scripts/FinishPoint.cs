@@ -162,6 +162,15 @@ public class FinishPoint : MonoBehaviour, IGameSceneCallbacks, IGameAudioCallbac
     public void MainMenu()
     {
         DOTween.KillAll(false);
+        if (RewardManager.Instance != null)
+            RewardManager.Instance.HideAll();
+
+        if (UnityAndroidMediator.Instance != null)
+            UnityAndroidMediator.Instance.PassDataToAndroid("Game Done");
+
+        //if (GameLoader.Instance != null)
+        //    GameLoader.Instance.SendEventToJS("Game Done", "Maze in the Jungle");
+
         SceneManager.LoadScene("Loader Scene");
     }
 

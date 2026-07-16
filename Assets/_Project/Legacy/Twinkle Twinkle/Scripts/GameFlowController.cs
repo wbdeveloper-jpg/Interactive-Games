@@ -427,6 +427,15 @@ public class GameFlowController : MonoBehaviour, IGameSceneCallbacks, IGameAudio
     public void MainMenu()
     {
         DOTween.KillAll(false);
+        if (RewardManager.Instance != null)
+            RewardManager.Instance.HideAll();
+
+        if (UnityAndroidMediator.Instance != null)
+            UnityAndroidMediator.Instance.PassDataToAndroid("Game Done");
+
+        //if (GameLoader.Instance != null)
+        //    GameLoader.Instance.SendEventToJS("Game Done", "Twinke Twinkle");
+
         SceneManager.LoadScene("Loader Scene");
     }
     public void OnPlayAgain()

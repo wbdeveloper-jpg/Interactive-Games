@@ -473,6 +473,15 @@ namespace GuessWhoIAm
         public void OnHome()
         {
             Time.timeScale = 1f;
+
+            if (RewardManager.Instance != null)
+                RewardManager.Instance.HideAll();
+
+            if (UnityAndroidMediator.Instance != null)
+                UnityAndroidMediator.Instance.PassDataToAndroid("Game Done");
+
+            //if (GameLoader.Instance != null)
+            //    GameLoader.Instance.SendEventToJS("Game Done", "Girls are wiser than man");
             SceneManager.LoadScene(homeSceneName);
         }
 

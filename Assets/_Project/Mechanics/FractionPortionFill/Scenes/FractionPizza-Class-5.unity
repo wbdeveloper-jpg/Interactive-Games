@@ -11208,8 +11208,8 @@ MonoBehaviour:
   questionMode: 3
   directDifficulty: 0
   additionDifficulty: 0
-  subtractionDifficulty: 0
-  hardMixedNumberChance: 0.05
+  subtractionDifficulty: 2
+  hardMixedNumberChance: 0.1
   rounds: 10
   minPortionCount: 4
   maxPortionCount: 12

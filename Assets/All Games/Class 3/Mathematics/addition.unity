@@ -5942,7 +5942,7 @@ MonoBehaviour:
   maxDigitCount: 2
   allowThreeNumberEquations: 0
   threeNumberEquationChance: 0.25
-  correctItemChance: 0.55
+  correctItemChance: 0.5
   equationChanceInNumberModes: 0.35
   maxGenerateAttempts: 80
   divisionUsesCleanAnswers: 1

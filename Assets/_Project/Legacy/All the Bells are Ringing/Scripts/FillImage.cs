@@ -503,13 +503,15 @@ public class FillImage : MonoBehaviour, IGameSceneCallbacks, IGameAudioCallbacks
         if (RewardManager.Instance != null)
             RewardManager.Instance.HideAll();
 
-        SceneManager.LoadScene("Loader Scene");
-
         if (UnityAndroidMediator.Instance != null)
             UnityAndroidMediator.Instance.PassDataToAndroid("Game Done");
 
-        if (GameLoader.Instance != null)
-            GameLoader.Instance.SendEventToJS("Game Done", "Girls are wiser than man");
+        //if (GameLoader.Instance != null)
+        //    GameLoader.Instance.SendEventToJS("Game Done", "Girls are wiser than man");
+
+        SceneManager.LoadScene("Loader Scene");
+
+
     }
 
     public void OnRewardScreenOpen()

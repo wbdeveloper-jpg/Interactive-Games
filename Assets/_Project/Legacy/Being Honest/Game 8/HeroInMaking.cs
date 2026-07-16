@@ -925,6 +925,15 @@ public class HeroInMaking : MonoBehaviour, IGameSceneCallbacks, IGameAudioCallba
 
     public void MainMenu()
     {
+        if (RewardManager.Instance != null)
+            RewardManager.Instance.HideAll();
+
+        if (UnityAndroidMediator.Instance != null)
+            UnityAndroidMediator.Instance.PassDataToAndroid("Game Done");
+
+        //if (GameLoader.Instance != null)
+        //    GameLoader.Instance.SendEventToJS("Game Done", "Being Honest");
+
         SceneManager.LoadScene("Loader Scene");
     }
 

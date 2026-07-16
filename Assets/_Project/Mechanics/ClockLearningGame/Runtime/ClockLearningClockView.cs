@@ -84,17 +84,42 @@ namespace ClockLearningGame
 
         private RectTransform _rectTransform;
         private ClockLearningHandType _activeHand = ClockLearningHandType.None;
+        private bool _timeChangedDuringCurrentDrag;
         private int _hour0To11;
         private int _minute;
 
         public event Action<int, int> TimeChanged;
+        public event Action<ClockLearningClockView, ClockLearningHandType> UserStartedDrag;
         public event Action<ClockLearningClockView, ClockLearningHandType> UserChangedTimeByDrag;
+        public event Action<ClockLearningClockView, ClockLearningHandType> UserFinishedDrag;
 
         public int Hour1To12 => _hour0To11 == 0 ? 12 : _hour0To11;
         public int Minute => _minute;
         public int TotalMinutes12 => (_hour0To11 * 60) + _minute;
         public ClockLearningHandRelationMode HandRelationMode => handRelationMode;
         public bool CarryHourWhenMinuteCrosses12 => carryHourWhenMinuteCrosses12;
+        public RectTransform ClockFaceRect => clockFace != null ? clockFace : _rectTransform;
+
+        public RectTransform GetHandRect(ClockLearningHandType handType)
+        {
+            if (handType == ClockLearningHandType.Hour) return hourHand;
+            if (handType == ClockLearningHandType.Minute) return minuteHand;
+            return null;
+        }
+
+        public float GetHandClockwiseAngle(ClockLearningHandType handType)
+        {
+            if (handType == ClockLearningHandType.Hour) return GetHourHandAngle();
+            if (handType == ClockLearningHandType.Minute) return _minute * 6f;
+            return 0f;
+        }
+
+        public float GetRenderedHandClockwiseAngle(ClockLearningHandType handType)
+        {
+            RectTransform hand = GetHandRect(handType);
+            if (hand == null) return GetHandClockwiseAngle(handType);
+            return NormalizeClockwiseAngle(-hand.localEulerAngles.z);
+        }
 
         private void Awake()
         {
@@ -105,6 +130,7 @@ namespace ClockLearningGame
                 BuildPlaceholderClock();
             }
 
+            ApplyHandRenderOrder();
             UpdateStaticMarks();
             UpdateHands(false, ClockLearningHandType.None);
         }
@@ -123,6 +149,7 @@ namespace ClockLearningGame
 
             if (clockFace != null && hourHand != null && minuteHand != null)
             {
+                ApplyHandRenderOrder();
                 UpdateStaticMarks();
                 UpdateHands(false, ClockLearningHandType.None);
             }
@@ -145,6 +172,21 @@ namespace ClockLearningGame
         public void SetDraggable(bool value)
         {
             draggable = value;
+            if (!draggable)
+            {
+                _activeHand = ClockLearningHandType.None;
+                _timeChangedDuringCurrentDrag = false;
+            }
+        }
+
+        public void SetAllowedHands(bool allowHour, bool allowMinute)
+        {
+            allowHourHandDrag = allowHour;
+            allowMinuteHandDrag = allowMinute;
+            if (!allowHourHandDrag && !allowMinuteHandDrag)
+            {
+                _activeHand = ClockLearningHandType.None;
+            }
         }
 
         public void SetHandRelationMode(ClockLearningHandRelationMode mode)
@@ -231,6 +273,11 @@ namespace ClockLearningGame
         {
             if (!draggable) return;
             _activeHand = PickNearestHand(eventData);
+            _timeChangedDuringCurrentDrag = false;
+            if (_activeHand != ClockLearningHandType.None)
+            {
+                UserStartedDrag?.Invoke(this, _activeHand);
+            }
             PunchSelectedHand();
         }
 
@@ -242,7 +289,16 @@ namespace ClockLearningGame
 
         public void OnPointerUp(PointerEventData eventData)
         {
+            ClockLearningHandType finishedHand = _activeHand;
+            bool changed = _timeChangedDuringCurrentDrag;
+
             _activeHand = ClockLearningHandType.None;
+            _timeChangedDuringCurrentDrag = false;
+
+            if (changed && finishedHand != ClockLearningHandType.None)
+            {
+                UserFinishedDrag?.Invoke(this, finishedHand);
+            }
         }
 
         private ClockLearningHandType PickNearestHand(PointerEventData eventData)
@@ -264,10 +320,11 @@ namespace ClockLearningGame
         private void UpdateFromPointer(PointerEventData eventData)
         {
             float angle = GetClockwiseAngle(eventData);
+            int previousHour = _hour0To11;
+            int previousMinute = _minute;
 
             if (_activeHand == ClockLearningHandType.Minute)
             {
-                int previousMinute = _minute;
                 int newMinute = Mathf.RoundToInt(angle / 6f) % 60;
                 int snappedMinute = SnapValue(newMinute, minuteSnapInterval, 60);
 
@@ -294,6 +351,10 @@ namespace ClockLearningGame
                 }
             }
 
+            bool changed = previousHour != _hour0To11 || previousMinute != _minute;
+            if (!changed) return;
+
+            _timeChangedDuringCurrentDrag = true;
             UpdateHands(false, _activeHand);
             TimeChanged?.Invoke(Hour1To12, _minute);
             UserChangedTimeByDrag?.Invoke(this, _activeHand);
@@ -440,8 +501,9 @@ namespace ClockLearningGame
                 tickMarks.Add(tick);
             }
 
-            hourHand = CreateHand("Hour Hand", _rectTransform, hourHandColor, hourHandWidth, hourHandHeight, 26f);
             minuteHand = CreateHand("Minute Hand", _rectTransform, minuteHandColor, minuteHandWidth, minuteHandHeight, 28f);
+            hourHand = CreateHand("Hour Hand", _rectTransform, hourHandColor, hourHandWidth, hourHandHeight, 26f);
+            ApplyHandRenderOrder();
 
             RectTransform centerDot = CreateRect("Center Dot", _rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero);
             centerDot.sizeDelta = new Vector2(34f, 34f);
@@ -459,6 +521,16 @@ namespace ClockLearningGame
 
             UpdateStaticMarks();
             UpdateHands(false, ClockLearningHandType.None);
+        }
+
+        private void ApplyHandRenderOrder()
+        {
+            if (hourHand == null || minuteHand == null) return;
+            if (hourHand.parent != minuteHand.parent) return;
+
+            // UI renders later siblings on top. Keep the short hour hand above the long minute hand
+            // so it remains visible during tutorial and normal play.
+            hourHand.SetAsLastSibling();
         }
 
         private RectTransform CreateHand(string objectName, RectTransform parent, Color color, float width, float length, float arrowFontSize)
@@ -549,6 +621,13 @@ namespace ClockLearningGame
         {
             float radians = clockwiseAngle * Mathf.Deg2Rad;
             return new Vector2(Mathf.Sin(radians), Mathf.Cos(radians)) * radius;
+        }
+
+        private static float NormalizeClockwiseAngle(float angle)
+        {
+            angle %= 360f;
+            if (angle < 0f) angle += 360f;
+            return angle;
         }
 
         private static RectTransform CreateRect(string objectName, RectTransform parent, Vector2 anchorMin, Vector2 anchorMax, Vector2 offsetMin, Vector2 offsetMax)
