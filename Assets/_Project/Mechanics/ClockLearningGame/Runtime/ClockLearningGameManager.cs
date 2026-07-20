@@ -5,6 +5,8 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
+using System.Reflection;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 using DG.Tweening;
 using RewardSystem;
@@ -203,6 +205,7 @@ namespace ClockLearningGame
         [SerializeField] private TextMeshProUGUI modeMenuTitleText;
         [SerializeField] private Button singleModeButton;
         [SerializeField] private Button doubleModeButton;
+        [SerializeField] private Button menuHomeButton;
 
         [Header("Mode-wise How To Images")]
         [SerializeField] private List<Sprite> singleModeHowToImages = new List<Sprite>();
@@ -273,7 +276,24 @@ namespace ClockLearningGame
         [SerializeField] private Image timerFillImage;
         [SerializeField] private Button homeButton;
         [SerializeField] private Button pauseButton;
-        [SerializeField] private Button helpButton;
+        [FormerlySerializedAs("helpButton")]
+        [SerializeField] private Button hintButton;
+
+        [Header("Hint System")]
+        [SerializeField] private bool enableHintButton = true;
+        [SerializeField, Range(0.25f, 2.5f)] private float hintHourHandMoveDuration = 0.9f;
+        [SerializeField, Range(0.25f, 2.5f)] private float hintMinuteHandMoveDuration = 1.05f;
+        [SerializeField, Range(0f, 0.8f)] private float hintBetweenHandsDelay = 0.18f;
+        [SerializeField, Range(0.05f, 0.6f)] private float hintBetweenClocksDelay = 0.22f;
+        [SerializeField] private int doubleHintClockAStartMinutes24 = 180;
+        [SerializeField, Range(0.35f, 1.5f)] private float hintStepPromptDuration = 0.85f;
+        [SerializeField, TextArea] private string hintHourPlacedPrompt = "Good! The short hand is in place.";
+        [SerializeField, TextArea] private string hintMinutePlacedPrompt = "Good! The long hand is in place.";
+        [SerializeField, TextArea] private string singleHintLearningPrompt = "The short hand shows the hour. The long hand shows the minutes. All set! Press Submit.";
+        [SerializeField, TextArea] private string doubleHintLearningPrompt = "Both clocks are set to show the target difference. All set! Press Submit.";
+        [SerializeField] private bool pulseHintButtonOnWrongAnswer = true;
+        [SerializeField, Range(0.05f, 0.4f)] private float hintAttentionPunchScale = 0.14f;
+        [SerializeField, Range(0.15f, 1.2f)] private float hintAttentionDuration = 0.55f;
 
         [Header("Single Clock UI")]
         [SerializeField] private GameObject singleModeRoot;
@@ -332,6 +352,13 @@ namespace ClockLearningGame
         [SerializeField] private string homeSceneName = "Loader Scene";
         [SerializeField] private bool stopBackgroundMusicWhenRewardScreenOpens = true;
 
+        [Header("Host Exit Integration")]
+        [SerializeField] private string hostGameName = "Clock Game";
+        [SerializeField] private string finishedMessage = "Game Done";
+        [SerializeField] private string unfinishedMessage = "Game Unfinished";
+        [SerializeField] private bool sendAndroidMediatorMessage = true;
+        [SerializeField] private bool sendGameLoaderJsEvent = true;
+
         [Header("Events")]
         [SerializeField] private UnityEvent onHomePressed;
 
@@ -358,6 +385,11 @@ namespace ClockLearningGame
         private float _lastButtonPressRealtime = -999f;
         private bool _timerWasRunningBeforePause;
         private bool _timerWasRunningBeforeHowTo;
+        private bool _hintUsedThisQuestion;
+        private int _hintUsedCount;
+        private bool _hintAnimating;
+        private Sequence _hintAttentionSequence;
+        private Coroutine _hintRoutine;
 
         private bool IsTutorialRunning => tutorialController != null && tutorialController.IsRunning;
 
@@ -375,6 +407,13 @@ namespace ClockLearningGame
             sharedHourHandHeight = Mathf.Max(1f, sharedHourHandHeight);
             sharedMinuteHandWidth = Mathf.Max(1f, sharedMinuteHandWidth);
             sharedMinuteHandHeight = Mathf.Max(1f, sharedMinuteHandHeight);
+            hintHourHandMoveDuration = Mathf.Clamp(hintHourHandMoveDuration, 0.25f, 2.5f);
+            hintMinuteHandMoveDuration = Mathf.Clamp(hintMinuteHandMoveDuration, 0.25f, 2.5f);
+            hintBetweenHandsDelay = Mathf.Clamp(hintBetweenHandsDelay, 0f, 0.8f);
+            hintBetweenClocksDelay = Mathf.Clamp(hintBetweenClocksDelay, 0.05f, 0.6f);
+            hintAttentionPunchScale = Mathf.Clamp(hintAttentionPunchScale, 0.05f, 0.4f);
+            hintAttentionDuration = Mathf.Clamp(hintAttentionDuration, 0.15f, 1.2f);
+            hintStepPromptDuration = Mathf.Clamp(hintStepPromptDuration, 0.35f, 1.5f);
 
             if (!singleModeAvailable && !doubleModeAvailable)
             {
@@ -491,12 +530,19 @@ namespace ClockLearningGame
         {
             RemoveListeners();
             _feedbackSequence?.Kill();
+            _hintAttentionSequence?.Kill();
+            if (_hintRoutine != null)
+            {
+                StopCoroutine(_hintRoutine);
+                _hintRoutine = null;
+            }
             KillPanelTweens();
         }
 
         private void OnDestroy()
         {
             _feedbackSequence?.Kill();
+            _hintAttentionSequence?.Kill();
             KillPanelTweens();
             Time.timeScale = 1f;
         }
@@ -574,8 +620,17 @@ namespace ClockLearningGame
             _correctCount = 0;
             _mistakeCount = 0;
             _attemptCount = 0;
+            _hintUsedCount = 0;
+            _hintUsedThisQuestion = false;
+            _hintAnimating = false;
             _roundStartTime = Time.time;
             _bloomPostGameShown = false;
+            StopHintAttention();
+            if (_hintRoutine != null)
+            {
+                StopCoroutine(_hintRoutine);
+                _hintRoutine = null;
+            }
             BuildRuntimeQuestionsIfNeeded();
             BuildQuestionOrder();
             ConfigureClocksForDifficulty();
@@ -613,6 +668,7 @@ namespace ClockLearningGame
             SetClockInputEnabled(false);
             _timerRunning = false;
             SetSubmitButtons(false);
+            SetHintButtonInteractable(false);
 
             ClockLearningAnswerState state = gameMode == ClockLearningMode.SingleClockSetTime
                 ? EvaluateSingleClock()
@@ -644,6 +700,7 @@ namespace ClockLearningGame
             _timerWasRunningBeforePause = _timerRunning;
             _timerRunning = false;
             SetClockInputEnabled(false);
+            SetHintButtonInteractable(false);
             if (pauseBackgroundMusicDuringPauseMenu) audioManager?.PauseBackgroundMusic();
             Time.timeScale = 0f;
             ShowGroup(pausePanelGroup, true, false);
@@ -657,6 +714,7 @@ namespace ClockLearningGame
             Time.timeScale = 1f;
             _timerRunning = _timerWasRunningBeforePause && useTimer && _acceptInput;
             SetClockInputEnabled(_acceptInput);
+            SetHintButtonInteractable(_acceptInput);
             if (pauseBackgroundMusicDuringPauseMenu) audioManager?.ResumeBackgroundMusic();
             ShowGroup(pausePanelGroup, false, false);
         }
@@ -670,6 +728,7 @@ namespace ClockLearningGame
             _timerWasRunningBeforeHowTo = _timerRunning;
             _timerRunning = false;
             SetClockInputEnabled(false);
+            SetHintButtonInteractable(false);
             if (pauseBackgroundMusicDuringHowTo) audioManager?.PauseBackgroundMusic();
             OpenModeHowTo(gameMode, false);
         }
@@ -693,6 +752,7 @@ namespace ClockLearningGame
             {
                 _timerRunning = _timerWasRunningBeforeHowTo && useTimer && _acceptInput;
                 SetClockInputEnabled(_acceptInput);
+                SetHintButtonInteractable(_acceptInput);
             }
         }
 
@@ -725,11 +785,26 @@ namespace ClockLearningGame
             _timerRunning = false;
             if (tutorialController != null) tutorialController.HideInstant();
             SetClockInputEnabled(false);
+            SetHintButtonInteractable(false);
+            StopHintAttention();
             if (modeMenuPanelGroup != null)
             {
                 ShowMainMenu();
             }
             onHomePressed?.Invoke();
+        }
+
+        public void ExitGameUnfinished()
+        {
+            if (!TryConsumeButtonPress()) return;
+
+            audioManager?.PlayClick();
+            ExitToHome(unfinishedMessage);
+        }
+
+        public void ExitGameUnfinishedNoDebounce()
+        {
+            ExitToHome(unfinishedMessage);
         }
 
         private void OpenModeHowTo(ClockLearningMode mode, bool preGame)
@@ -742,6 +817,7 @@ namespace ClockLearningGame
                 _timerRunning = false;
             }
             SetClockInputEnabled(false);
+            SetHintButtonInteractable(false);
             _howToPageIndex = 0;
             RefreshHowToPage();
             SetButtonLabel(closeHowToPlayButton, preGame ? "Start Game" : "Close");
@@ -825,11 +901,15 @@ namespace ClockLearningGame
             else LoadTimeDifferenceQuestion();
 
             ResetClockPositions(false);
+            _hintUsedThisQuestion = false;
+            _hintAnimating = false;
+            StopHintAttention();
             _timerRemaining = questionTimeSeconds;
             _timerRunning = useTimer;
             _acceptInput = true;
             SetClockInputEnabled(true);
             SetSubmitButtons(true);
+            SetHintButtonInteractable(true);
             RefreshTopBar();
         }
 
@@ -888,27 +968,191 @@ namespace ClockLearningGame
             {
                 case ClockLearningAnswerState.Correct:
                     _correctCount++;
-                    int bonus = addTimerBonus && useTimer ? Mathf.CeilToInt(_timerRemaining) : 0;
-                    _score += correctScore + bonus;
+                    int bonus = addTimerBonus && useTimer && !_hintUsedThisQuestion ? Mathf.CeilToInt(_timerRemaining) : 0;
+                    if (!_hintUsedThisQuestion)
+                    {
+                        _score += correctScore + bonus;
+                    }
                     audioManager?.PlayCorrect();
-                    ShowFeedback("Great job!", true, AdvanceToNextQuestion);
+                    ShowFeedback(_hintUsedThisQuestion ? "Correct! Hint was used, so no points for this question." : "Great work!", true, AdvanceToNextQuestion);
                     break;
 
                 case ClockLearningAnswerState.Close:
                     _mistakeCount++;
-                    _score += closeScore;
+                    if (!_hintUsedThisQuestion)
+                    {
+                        _score += closeScore;
+                    }
                     audioManager?.PlayClose();
-                    ShowFeedback("Almost there! Check the hands and try again.", false, EnableRetry);
+                    ShowFeedback(_hintUsedThisQuestion ? "Almost there! Hint was used, so no points for this question." : "Nearly there! Check the hands and try again.", false, EnableRetry);
+                    if (!_hintUsedThisQuestion) PulseHintButtonForAttention();
                     break;
 
                 default:
                     _mistakeCount++;
                     audioManager?.PlayWrong();
-                    ShowFeedback("Try again!", false, EnableRetry);
+                    ShowFeedback(_hintUsedThisQuestion ? "Try again! Hint was used, so no points for this question." : "Try again! Use Hint if you need help.", false, EnableRetry);
+                    if (!_hintUsedThisQuestion) PulseHintButtonForAttention();
                     break;
             }
 
             RefreshTopBar();
+        }
+
+        public void UseHint()
+        {
+            if (!enableHintButton || IsTutorialRunning || _hintAnimating || !_acceptInput) return;
+            if (!TryConsumeButtonPress()) return;
+
+            audioManager?.PlayHint();
+            StopHintAttention();
+            _hintUsedThisQuestion = true;
+            _hintUsedCount++;
+            _hintAnimating = true;
+            _acceptInput = false;
+            _timerRunning = false;
+            SetClockInputEnabled(false);
+            SetSubmitButtons(false);
+            SetResetButtons(false);
+            SetHintButtonInteractable(false);
+
+            if (_hintRoutine != null)
+            {
+                StopCoroutine(_hintRoutine);
+            }
+
+            _hintRoutine = StartCoroutine(RunHintRoutine());
+        }
+
+        private IEnumerator RunHintRoutine()
+        {
+            if (gameMode == ClockLearningMode.SingleClockSetTime)
+            {
+                SingleClockQuestion question = GetCurrentSingleQuestion();
+                if (singleClock != null)
+                {
+                    Tween hourTween = singleClock.AnimateHandToTimeForHint(ClockLearningHandType.Hour, question.hour, question.minute, hintHourHandMoveDuration, false);
+                    if (hourTween != null) yield return hourTween.WaitForCompletion();
+                    yield return ShowTimedHintPrompt(hintHourPlacedPrompt);
+
+                    if (hintBetweenHandsDelay > 0f) yield return new WaitForSeconds(hintBetweenHandsDelay);
+
+                    Tween minuteTween = singleClock.AnimateHandToTimeForHint(ClockLearningHandType.Minute, question.hour, question.minute, hintMinuteHandMoveDuration, true);
+                    if (minuteTween != null) yield return minuteTween.WaitForCompletion();
+                    yield return ShowTimedHintPrompt(hintMinutePlacedPrompt);
+                }
+
+                yield return ShowHintLearningPrompt(singleHintLearningPrompt);
+            }
+            else
+            {
+                TimeDifferenceQuestion question = GetCurrentDifferenceQuestion();
+                int startMinutes24 = NormalizeMinutes24(doubleHintClockAStartMinutes24);
+                int endMinutes24 = NormalizeMinutes24(startMinutes24 + question.TargetDifferenceMinutes);
+
+                SetClockAmPm(clockAPmToggle, startMinutes24 >= 720);
+                SetClockAmPm(clockBPmToggle, endMinutes24 >= 720);
+                UpdateAmPmLabels();
+
+                if (doubleClockA != null)
+                {
+                    Tween clockAHour = doubleClockA.AnimateHandToTimeForHint(ClockLearningHandType.Hour, Hour12FromMinutes24(startMinutes24), startMinutes24 % 60, hintHourHandMoveDuration, false);
+                    if (clockAHour != null) yield return clockAHour.WaitForCompletion();
+                    yield return ShowTimedHintPrompt("Clock A: short hand is in place.");
+
+                    if (hintBetweenHandsDelay > 0f) yield return new WaitForSeconds(hintBetweenHandsDelay);
+
+                    Tween clockAMinute = doubleClockA.AnimateHandToTimeForHint(ClockLearningHandType.Minute, Hour12FromMinutes24(startMinutes24), startMinutes24 % 60, hintMinuteHandMoveDuration, true);
+                    if (clockAMinute != null) yield return clockAMinute.WaitForCompletion();
+                    yield return ShowTimedHintPrompt("Clock A: long hand is in place.");
+                }
+
+                if (hintBetweenClocksDelay > 0f) yield return new WaitForSeconds(hintBetweenClocksDelay);
+
+                if (doubleClockB != null)
+                {
+                    Tween clockBHour = doubleClockB.AnimateHandToTimeForHint(ClockLearningHandType.Hour, Hour12FromMinutes24(endMinutes24), endMinutes24 % 60, hintHourHandMoveDuration, false);
+                    if (clockBHour != null) yield return clockBHour.WaitForCompletion();
+                    yield return ShowTimedHintPrompt("Clock B: short hand is in place.");
+
+                    if (hintBetweenHandsDelay > 0f) yield return new WaitForSeconds(hintBetweenHandsDelay);
+
+                    Tween clockBMinute = doubleClockB.AnimateHandToTimeForHint(ClockLearningHandType.Minute, Hour12FromMinutes24(endMinutes24), endMinutes24 % 60, hintMinuteHandMoveDuration, true);
+                    if (clockBMinute != null) yield return clockBMinute.WaitForCompletion();
+                    yield return ShowTimedHintPrompt("Clock B: long hand is in place.");
+                }
+
+                yield return ShowHintLearningPrompt(doubleHintLearningPrompt);
+            }
+
+            _hintAnimating = false;
+            _acceptInput = true;
+            SetClockInputEnabled(true);
+            SetSubmitButtons(true);
+            SetResetButtons(true);
+            SetHintButtonInteractable(false);
+            _timerRunning = useTimer;
+            RefreshTopBar();
+            _hintRoutine = null;
+        }
+
+        private IEnumerator ShowTimedHintPrompt(string message)
+        {
+            bool finished = false;
+            ShowFeedback(string.IsNullOrWhiteSpace(message) ? "Good! The hand is in place." : message, false, () => finished = true, hintStepPromptDuration);
+            yield return new WaitUntil(() => finished);
+        }
+
+        private IEnumerator ShowHintLearningPrompt(string message)
+        {
+            bool finished = false;
+            ShowFeedback(string.IsNullOrWhiteSpace(message) ? "All set! Press Submit." : message, false, () => finished = true, 1.25f);
+            yield return new WaitUntil(() => finished);
+        }
+
+        private void PulseHintButtonForAttention()
+        {
+            if (!pulseHintButtonOnWrongAnswer || hintButton == null || !enableHintButton || _hintUsedThisQuestion || _hintAnimating) return;
+
+            audioManager?.PlayHintAttention();
+            StopHintAttention();
+
+            Transform hintTransform = hintButton.transform;
+            _hintAttentionSequence = DOTween.Sequence().SetUpdate(true);
+            _hintAttentionSequence
+                .Append(hintTransform.DOPunchScale(Vector3.one * hintAttentionPunchScale, hintAttentionDuration, 8, 0.65f))
+                .AppendInterval(0.08f)
+                .Append(hintTransform.DOPunchScale(Vector3.one * (hintAttentionPunchScale * 0.75f), hintAttentionDuration, 8, 0.65f))
+                .OnComplete(() =>
+                {
+                    if (hintTransform != null) hintTransform.localScale = Vector3.one;
+                });
+        }
+
+        private void StopHintAttention()
+        {
+            _hintAttentionSequence?.Kill();
+            _hintAttentionSequence = null;
+            if (hintButton != null) hintButton.transform.localScale = Vector3.one;
+        }
+
+        private static void SetClockAmPm(Toggle toggle, bool isPm)
+        {
+            if (toggle != null) toggle.isOn = isPm;
+        }
+
+        private static int NormalizeMinutes24(int minutes)
+        {
+            minutes %= 1440;
+            if (minutes < 0) minutes += 1440;
+            return minutes;
+        }
+
+        private static int Hour12FromMinutes24(int minutes24)
+        {
+            int hour24 = NormalizeMinutes24(minutes24) / 60;
+            int hour12 = hour24 % 12;
+            return hour12 == 0 ? 12 : hour12;
         }
 
         private void EnableRetry()
@@ -916,6 +1160,7 @@ namespace ClockLearningGame
             _acceptInput = true;
             SetClockInputEnabled(true);
             SetSubmitButtons(true);
+            SetHintButtonInteractable(true);
             _timerRunning = useTimer;
         }
 
@@ -942,7 +1187,8 @@ namespace ClockLearningGame
             if (resultTitleText != null) resultTitleText.text = "Well done!";
             if (resultScoreText != null)
             {
-                resultScoreText.text = $"Final Score: {_score}\nCorrect: {_correctCount}/{questionCount}\nMistakes: {_mistakeCount}";
+                string hintLine = _hintUsedCount > 0 ? $"\nHints Used: {_hintUsedCount}" : string.Empty;
+                resultScoreText.text = $"Final Score: {_score}\nCorrect: {_correctCount}/{questionCount}\nMistakes: {_mistakeCount}{hintLine}";
             }
             ShowGroup(resultPanelGroup, true, false);
         }
@@ -998,7 +1244,21 @@ namespace ClockLearningGame
 
         public void OnHome()
         {
+            ExitToHome(finishedMessage);
+        }
+
+        private void ExitToHome(string statusMessage)
+        {
             Time.timeScale = 1f;
+            _acceptInput = false;
+            _timerRunning = false;
+            if (tutorialController != null) tutorialController.HideInstant();
+            SetClockInputEnabled(false);
+            SetHintButtonInteractable(false);
+            StopHintAttention();
+            audioManager?.StopBackgroundMusic();
+            NotifyHostGameStatus(statusMessage);
+
             if (string.IsNullOrWhiteSpace(homeSceneName))
             {
                 Debug.LogWarning("Clock Learning Game: Home Scene Name is empty.");
@@ -1008,13 +1268,84 @@ namespace ClockLearningGame
             SceneManager.LoadScene(homeSceneName);
         }
 
+        private void NotifyHostGameStatus(string statusMessage)
+        {
+            if (string.IsNullOrWhiteSpace(statusMessage)) return;
+
+            if (sendAndroidMediatorMessage)
+            {
+                TrySendAndroidMediatorMessage(statusMessage);
+            }
+
+            if (sendGameLoaderJsEvent)
+            {
+                TrySendGameLoaderJsEvent(statusMessage, hostGameName);
+            }
+        }
+
+        private static void TrySendAndroidMediatorMessage(string statusMessage)
+        {
+            object mediator = GetSingletonInstance("UnityAndroidMediator");
+            if (mediator == null) return;
+
+            MethodInfo method = mediator.GetType().GetMethod("PassDataToAndroid", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+            if (method == null) return;
+
+            try
+            {
+                method.Invoke(mediator, new object[] { statusMessage });
+            }
+            catch (Exception ex)
+            {
+                Debug.LogWarning($"Clock Learning Game: UnityAndroidMediator message failed. {ex.Message}");
+            }
+        }
+
+        private static void TrySendGameLoaderJsEvent(string statusMessage, string gameName)
+        {
+            object loader = GetSingletonInstance("GameLoader");
+            if (loader == null) return;
+
+            MethodInfo method = loader.GetType().GetMethod("SendEventToJS", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+            if (method == null) return;
+
+            try
+            {
+                method.Invoke(loader, new object[] { statusMessage, string.IsNullOrWhiteSpace(gameName) ? "Clock Game" : gameName });
+            }
+            catch (Exception ex)
+            {
+                Debug.LogWarning($"Clock Learning Game: GameLoader SendEventToJS failed. {ex.Message}");
+            }
+        }
+
+        private static object GetSingletonInstance(string typeName)
+        {
+            Type type = null;
+            Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
+            for (int i = 0; i < assemblies.Length; i++)
+            {
+                type = assemblies[i].GetType(typeName);
+                if (type != null) break;
+            }
+
+            if (type == null) return null;
+
+            PropertyInfo property = type.GetProperty("Instance", BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
+            if (property != null) return property.GetValue(null, null);
+
+            FieldInfo field = type.GetField("Instance", BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
+            return field != null ? field.GetValue(null) : null;
+        }
+
         private GameEvaluationData BuildBloomEvaluationData()
         {
             float timeTaken = Mathf.Max(0f, Time.time - _roundStartTime);
             float maxTime = expectedMaxTimeSeconds > 0f ? expectedMaxTimeSeconds : Mathf.Max(1f, questionCount * questionTimeSeconds);
             float timeScore = Mathf.Clamp01(1f - (timeTaken / maxTime));
-            float completionAccuracy = questionCount > 0 ? Mathf.Clamp01((float)_correctCount / questionCount) : 0f;
-            float attemptAccuracy = _attemptCount > 0 ? Mathf.Clamp01((float)_correctCount / _attemptCount) : completionAccuracy;
+            int unassistedCorrectCount = Mathf.Max(0, _correctCount - _hintUsedCount);
+            float completionAccuracy = questionCount > 0 ? Mathf.Clamp01((float)unassistedCorrectCount / questionCount) : 0f;
+            float attemptAccuracy = _attemptCount > 0 ? Mathf.Clamp01((float)unassistedCorrectCount / _attemptCount) : completionAccuracy;
             float accuracyScore = Mathf.Clamp01((completionAccuracy * 0.75f) + (attemptAccuracy * 0.25f));
 
             return new GameEvaluationData
@@ -1062,6 +1393,7 @@ namespace ClockLearningGame
             _timerRunning = false;
             SetSubmitButtons(false);
             SetResetButtons(false);
+            SetHintButtonInteractable(false);
             SetClockInputEnabled(false);
         }
 
@@ -1102,6 +1434,7 @@ namespace ClockLearningGame
                 SetClockInputEnabled(false);
                 SetSubmitButtons(false);
                 audioManager?.PlayWrong();
+                if (!_hintUsedThisQuestion) PulseHintButtonForAttention();
                 ShowFeedback("Time's up! Try again.", false, () =>
                 {
                     ResetClockPositions(true);
@@ -1136,7 +1469,7 @@ namespace ClockLearningGame
             }
         }
 
-        private void ShowFeedback(string message, bool advance, Action onComplete)
+        private void ShowFeedback(string message, bool advance, Action onComplete, float customHoldTime = -1f)
         {
             if (feedbackPanelGroup == null)
             {
@@ -1154,7 +1487,7 @@ namespace ClockLearningGame
             feedbackPanelGroup.blocksRaycasts = true;
             panelObject.transform.localScale = Vector3.one * 0.92f;
 
-            float holdTime = advance ? 0.7f : 1.0f;
+            float holdTime = customHoldTime >= 0f ? customHoldTime : (advance ? 0.7f : 1.0f);
             _feedbackSequence = DOTween.Sequence()
                 .SetUpdate(true)
                 .Append(feedbackPanelGroup.DOFade(1f, 0.16f))
@@ -1259,9 +1592,10 @@ namespace ClockLearningGame
 
             ApplyButtonFont(singleModeButton, primaryFont);
             ApplyButtonFont(doubleModeButton, primaryFont);
+            ApplyButtonFont(menuHomeButton, secondaryFont);
             ApplyButtonFont(homeButton, secondaryFont);
             ApplyButtonFont(pauseButton, secondaryFont);
-            ApplyButtonFont(helpButton, secondaryFont);
+            ApplyButtonFont(hintButton, secondaryFont);
             ApplyButtonFont(singleSubmitButton, primaryFont);
             ApplyButtonFont(singleResetButton, secondaryFont);
             ApplyButtonFont(doubleSubmitButton, primaryFont);
@@ -1352,6 +1686,13 @@ namespace ClockLearningGame
         {
             if (singleSubmitButton != null) singleSubmitButton.interactable = interactable;
             if (doubleSubmitButton != null) doubleSubmitButton.interactable = interactable;
+        }
+
+        private void SetHintButtonInteractable(bool interactable)
+        {
+            if (hintButton == null) return;
+            hintButton.gameObject.SetActive(enableHintButton);
+            hintButton.interactable = enableHintButton && interactable && !_hintUsedThisQuestion && !_hintAnimating;
         }
 
         private void SetResetButtons(bool interactable)
@@ -1658,17 +1999,18 @@ namespace ClockLearningGame
         {
             if (singleModeButton != null) singleModeButton.onClick.AddListener(SelectSingleMode);
             if (doubleModeButton != null) doubleModeButton.onClick.AddListener(SelectDoubleMode);
+            if (menuHomeButton != null) menuHomeButton.onClick.AddListener(ExitGameUnfinished);
             if (singleSubmitButton != null) singleSubmitButton.onClick.AddListener(SubmitAnswer);
             if (singleResetButton != null) singleResetButton.onClick.AddListener(ResetCurrentQuestion);
             if (doubleSubmitButton != null) doubleSubmitButton.onClick.AddListener(SubmitAnswer);
             if (doubleResetButton != null) doubleResetButton.onClick.AddListener(ResetCurrentQuestion);
             if (pauseButton != null) pauseButton.onClick.AddListener(OpenPausePanel);
-            if (helpButton != null) helpButton.onClick.AddListener(OpenHowToPlay);
+            if (hintButton != null) hintButton.onClick.AddListener(UseHint);
             if (homeButton != null) homeButton.onClick.AddListener(PressHome);
             if (resumeButton != null) resumeButton.onClick.AddListener(ResumeGame);
             if (pauseRestartButton != null) pauseRestartButton.onClick.AddListener(RestartGameFromButton);
             if (pauseHowToPlayButton != null) pauseHowToPlayButton.onClick.AddListener(OpenHowToPlay);
-            if (pauseHomeButton != null) pauseHomeButton.onClick.AddListener(PressHome);
+            if (pauseHomeButton != null) pauseHomeButton.onClick.AddListener(ExitGameUnfinished);
             if (howToPreviousButton != null) howToPreviousButton.onClick.AddListener(ShowPreviousHowToPage);
             if (howToNextButton != null) howToNextButton.onClick.AddListener(ShowNextHowToPage);
             if (closeHowToPlayButton != null) closeHowToPlayButton.onClick.AddListener(CloseHowToPlay);
@@ -1684,17 +2026,18 @@ namespace ClockLearningGame
         {
             if (singleModeButton != null) singleModeButton.onClick.RemoveListener(SelectSingleMode);
             if (doubleModeButton != null) doubleModeButton.onClick.RemoveListener(SelectDoubleMode);
+            if (menuHomeButton != null) menuHomeButton.onClick.RemoveListener(ExitGameUnfinished);
             if (singleSubmitButton != null) singleSubmitButton.onClick.RemoveListener(SubmitAnswer);
             if (singleResetButton != null) singleResetButton.onClick.RemoveListener(ResetCurrentQuestion);
             if (doubleSubmitButton != null) doubleSubmitButton.onClick.RemoveListener(SubmitAnswer);
             if (doubleResetButton != null) doubleResetButton.onClick.RemoveListener(ResetCurrentQuestion);
             if (pauseButton != null) pauseButton.onClick.RemoveListener(OpenPausePanel);
-            if (helpButton != null) helpButton.onClick.RemoveListener(OpenHowToPlay);
+            if (hintButton != null) hintButton.onClick.RemoveListener(UseHint);
             if (homeButton != null) homeButton.onClick.RemoveListener(PressHome);
             if (resumeButton != null) resumeButton.onClick.RemoveListener(ResumeGame);
             if (pauseRestartButton != null) pauseRestartButton.onClick.RemoveListener(RestartGameFromButton);
             if (pauseHowToPlayButton != null) pauseHowToPlayButton.onClick.RemoveListener(OpenHowToPlay);
-            if (pauseHomeButton != null) pauseHomeButton.onClick.RemoveListener(PressHome);
+            if (pauseHomeButton != null) pauseHomeButton.onClick.RemoveListener(ExitGameUnfinished);
             if (howToPreviousButton != null) howToPreviousButton.onClick.RemoveListener(ShowPreviousHowToPage);
             if (howToNextButton != null) howToNextButton.onClick.RemoveListener(ShowNextHowToPage);
             if (closeHowToPlayButton != null) closeHowToPlayButton.onClick.RemoveListener(CloseHowToPlay);

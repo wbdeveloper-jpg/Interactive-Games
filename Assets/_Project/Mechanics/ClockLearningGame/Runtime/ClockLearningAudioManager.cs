@@ -12,6 +12,8 @@ namespace ClockLearningGame
         [SerializeField] private AudioClip correctClip;
         [SerializeField] private AudioClip closeClip;
         [SerializeField] private AudioClip wrongClip;
+        [SerializeField] private AudioClip hintClip;
+        [SerializeField] private AudioClip hintAttentionClip;
         [SerializeField, Range(0f, 1f)] private float volume = 1f;
 
         [Header("Background Music")]
@@ -73,6 +75,8 @@ namespace ClockLearningGame
         public void PlayCorrect() => Play(correctClip);
         public void PlayClose() => Play(closeClip);
         public void PlayWrong() => Play(wrongClip);
+        public void PlayHint() => Play(hintClip != null ? hintClip : clickClip);
+        public void PlayHintAttention() => Play(hintAttentionClip != null ? hintAttentionClip : wrongClip);
 
         public void PlayBackgroundMusic()
         {

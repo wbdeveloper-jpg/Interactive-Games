@@ -250,6 +250,95 @@ namespace ClockLearningGame
             TimeChanged?.Invoke(Hour1To12, _minute);
         }
 
+        public Tween AnimateToTimeForHint(int hour1To12, int minute, float hourDuration, float minuteDuration, float gapDuration)
+        {
+            int safeHour = Mathf.Clamp(hour1To12, 1, 12);
+            int targetHour0To11 = safeHour == 12 ? 0 : safeHour;
+            int targetMinute = SnapValue(Mathf.Clamp(minute, 0, 59), minuteSnapInterval, 60);
+
+            _hour0To11 = targetHour0To11;
+            _minute = targetMinute;
+
+            float targetHourAngle = GetTargetHourAngle(targetHour0To11, targetMinute);
+            float targetMinuteAngle = targetMinute * 6f;
+
+            KillHandTweens(hourHand);
+            KillHandTweens(minuteHand);
+
+            Sequence sequence = DOTween.Sequence();
+
+            if (hourHand != null)
+            {
+                sequence.Append(hourHand.DORotateQuaternion(Quaternion.Euler(0f, 0f, -targetHourAngle), Mathf.Max(0.05f, hourDuration)).SetEase(Ease.InOutSine));
+            }
+
+            if (gapDuration > 0f)
+            {
+                sequence.AppendInterval(gapDuration);
+            }
+
+            if (minuteHand != null)
+            {
+                sequence.Append(minuteHand.DORotateQuaternion(Quaternion.Euler(0f, 0f, -targetMinuteAngle), Mathf.Max(0.05f, minuteDuration)).SetEase(Ease.InOutSine));
+            }
+
+            sequence.OnComplete(() =>
+            {
+                UpdateHands(false, ClockLearningHandType.None);
+                TimeChanged?.Invoke(Hour1To12, _minute);
+            });
+
+            return sequence;
+        }
+
+
+        public Tween AnimateHandToTimeForHint(ClockLearningHandType handType, int hour1To12, int minute, float duration, bool refreshAllOnComplete)
+        {
+            int safeHour = Mathf.Clamp(hour1To12, 1, 12);
+            int targetHour0To11 = safeHour == 12 ? 0 : safeHour;
+            int targetMinute = SnapValue(Mathf.Clamp(minute, 0, 59), minuteSnapInterval, 60);
+
+            _hour0To11 = targetHour0To11;
+            _minute = targetMinute;
+
+            RectTransform hand = GetHandRect(handType);
+            if (hand == null)
+            {
+                if (refreshAllOnComplete)
+                {
+                    UpdateHands(false, ClockLearningHandType.None);
+                    TimeChanged?.Invoke(Hour1To12, _minute);
+                }
+                return null;
+            }
+
+            float targetAngle = handType == ClockLearningHandType.Hour
+                ? GetTargetHourAngle(targetHour0To11, targetMinute)
+                : targetMinute * 6f;
+
+            KillHandTweens(hand);
+            Tween tween = hand.DORotateQuaternion(Quaternion.Euler(0f, 0f, -targetAngle), Mathf.Max(0.05f, duration))
+                .SetEase(Ease.InOutSine);
+
+            if (refreshAllOnComplete)
+            {
+                tween.OnComplete(() =>
+                {
+                    UpdateHands(false, ClockLearningHandType.None);
+                    TimeChanged?.Invoke(Hour1To12, _minute);
+                });
+            }
+
+            return tween;
+        }
+
+        private float GetTargetHourAngle(int hour0To11, int minute)
+        {
+            return handRelationMode == ClockLearningHandRelationMode.IndependentHands
+                ? hour0To11 * 30f
+                : ((hour0To11 * 60f) + minute) * 0.5f;
+        }
+
         public void SetRandomTime(bool animate = false)
         {
             int randomHour = UnityEngine.Random.Range(1, 13);

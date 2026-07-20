@@ -3,6 +3,7 @@ using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Serialization;
 using DG.Tweening;
 
 namespace ClockLearningGame
@@ -29,8 +30,8 @@ namespace ClockLearningGame
         [SerializeField] private bool enableTutorialOverlay = true;
         [Tooltip("When enabled, this tutorial is shown only once per mode during this scene run. Turn off for repeated testing.")]
         [SerializeField] private bool showOnlyOncePerMode = true;
-        [Tooltip("Optional. Enable only when you want the tutorial to stay hidden across app restarts after the player has seen it.")]
-        [SerializeField] private bool rememberSeenInPlayerPrefs = false;
+        [Tooltip("Recommended ON for final builds. Once a player completes this tutorial for a mode, it will not show again after app restarts.")]
+        [SerializeField] private bool rememberSeenInPlayerPrefs = true;
         [SerializeField] private string seenPlayerPrefsKey = "ClockLearningGame_TutorialSeen";
 
         [Header("Clocks")]
@@ -41,7 +42,8 @@ namespace ClockLearningGame
         [Header("Controls Disabled During Tutorial")]
         [SerializeField] private Button homeButton;
         [SerializeField] private Button pauseButton;
-        [SerializeField] private Button helpButton;
+        [FormerlySerializedAs("helpButton")]
+        [SerializeField] private Button hintButton;
         [SerializeField] private Button singleSubmitButton;
         [SerializeField] private Button singleResetButton;
         [SerializeField] private Button doubleSubmitButton;
@@ -105,14 +107,16 @@ namespace ClockLearningGame
 
         [Header("Text")]
         [SerializeField] private string singleQuestionFocusPrompt = "Read the time. Click anywhere to continue.";
-        [SerializeField] private string singleHourHandPrompt = "Watch the short hour hand. Now try dragging it.";
-        [SerializeField] private string singleMinuteHandPrompt = "Good! Now try dragging the long minute hand.";
+        [SerializeField] private string singleHourHandPrompt = "Watch the short hour hand. Then drag it yourself.";
+        [SerializeField] private string singleMinuteHandPrompt = "Good! Now drag the long minute hand.";
         [SerializeField] private string singleReadyPrompt = "You are ready! Click anywhere to start.";
+        [SerializeField] private string gameStartingPrompt = "The game is starting!";
+        [SerializeField, Range(0.25f, 1.5f)] private float gameStartingMessageDelay = 0.75f;
         [SerializeField] private string doubleQuestionFocusPrompt = "Read the time difference. Click anywhere to continue.";
-        [SerializeField] private string doubleClockAHourPrompt = "Clock A: try moving the short hour hand.";
-        [SerializeField] private string doubleClockAMinutePrompt = "Clock A: now move the long minute hand.";
-        [SerializeField] private string doubleClockBHourPrompt = "Clock B: try moving the short hour hand.";
-        [SerializeField] private string doubleClockBMinutePrompt = "Clock B: now move the long minute hand.";
+        [SerializeField] private string doubleClockAHourPrompt = "Clock A: drag the short hour hand.";
+        [SerializeField] private string doubleClockAMinutePrompt = "Clock A: now drag the long minute hand.";
+        [SerializeField] private string doubleClockBHourPrompt = "Clock B: drag the short hour hand.";
+        [SerializeField] private string doubleClockBMinutePrompt = "Clock B: now drag the long minute hand.";
         [SerializeField] private string doubleReadyPrompt = "You are ready! Click anywhere to start.";
 
         private ClockLearningMode _mode;
@@ -177,6 +181,7 @@ namespace ClockLearningGame
             promptCardSize.y = Mathf.Max(50f, promptCardSize.y);
             promptClampMargin.x = Mathf.Max(0f, promptClampMargin.x);
             promptClampMargin.y = Mathf.Max(0f, promptClampMargin.y);
+            gameStartingMessageDelay = Mathf.Clamp(gameStartingMessageDelay, 0.25f, 1.5f);
         }
 
         public bool ShouldRun(ClockLearningMode mode)
@@ -465,8 +470,26 @@ namespace ClockLearningGame
             StopFakeHandDemo(true);
             SetPointerVisible(false);
 
-            if (stepTransitionDelay > 0f)
+            if (completeTutorial)
+            {
+                if (promptText != null)
+                {
+                    promptText.text = string.IsNullOrWhiteSpace(gameStartingPrompt) ? "The game is starting!" : gameStartingPrompt;
+                }
+
+                if (promptCard != null)
+                {
+                    promptCard.DOKill();
+                    promptCard.localScale = Vector3.one * 0.96f;
+                    promptCard.DOScale(1f, 0.2f).SetEase(Ease.OutBack).SetUpdate(true);
+                }
+
+                yield return new WaitForSecondsRealtime(Mathf.Max(0.25f, gameStartingMessageDelay));
+            }
+            else if (stepTransitionDelay > 0f)
+            {
                 yield return new WaitForSecondsRealtime(stepTransitionDelay);
+            }
 
             _waitingForDelay = false;
             _stepDelayRoutine = null;
@@ -660,7 +683,7 @@ namespace ClockLearningGame
         {
             if (homeButton != null) homeButton.interactable = enabled;
             if (pauseButton != null) pauseButton.interactable = enabled;
-            if (helpButton != null) helpButton.interactable = enabled;
+            if (hintButton != null) hintButton.interactable = enabled;
             if (singleSubmitButton != null) singleSubmitButton.interactable = enabled;
             if (singleResetButton != null) singleResetButton.interactable = enabled;
             if (doubleSubmitButton != null) doubleSubmitButton.interactable = enabled;
@@ -989,7 +1012,7 @@ namespace ClockLearningGame
             bool seenSession = mode == ClockLearningMode.SingleClockSetTime ? _singleSeenThisSession : _doubleSeenThisSession;
             if (seenSession) return true;
 
-            if (rememberSeenInPlayerPrefs)
+            if (showOnlyOncePerMode || rememberSeenInPlayerPrefs)
             {
                 return PlayerPrefs.GetInt(GetPrefsKey(mode), 0) == 1;
             }
@@ -1002,7 +1025,7 @@ namespace ClockLearningGame
             if (mode == ClockLearningMode.SingleClockSetTime) _singleSeenThisSession = true;
             else _doubleSeenThisSession = true;
 
-            if (rememberSeenInPlayerPrefs)
+            if (showOnlyOncePerMode || rememberSeenInPlayerPrefs)
             {
                 PlayerPrefs.SetInt(GetPrefsKey(mode), 1);
                 PlayerPrefs.Save();
