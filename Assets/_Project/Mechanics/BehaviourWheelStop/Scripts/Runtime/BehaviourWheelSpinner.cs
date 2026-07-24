@@ -219,6 +219,38 @@ namespace BehaviourWheelStop
             isSpinning = true;
         }
 
+        /// <summary>
+        /// Stops the wheel without selecting a slice or raising StoppedOnSlice.
+        /// This is used while preparing isolated tutorial practice.
+        /// </summary>
+        public void StopSilently()
+        {
+            isStoppingSmoothly = false;
+            isSpinning = false;
+            smoothStopTimer = 0f;
+        }
+
+        public void SetRotation(float zDegrees)
+        {
+            if (wheelRoot == null)
+                return;
+
+            Vector3 euler = wheelRoot.localEulerAngles;
+            euler.z = zDegrees;
+            wheelRoot.localEulerAngles = euler;
+        }
+
+        public RectTransform GetOptionTarget(int index)
+        {
+            if (index < 0 || index >= slices.Count || slices[index] == null)
+                return null;
+
+            if (slices[index].labelText != null)
+                return slices[index].labelText.rectTransform;
+
+            return slices[index].contentRoot;
+        }
+
         public void StopNow()
         {
             if (!isSpinning)

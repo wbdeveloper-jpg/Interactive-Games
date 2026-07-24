@@ -6,6 +6,13 @@ using RewardSystem;
 
 namespace BehaviourWheelStop
 {
+    public enum BehaviourWheelHowToPlayDisplayMode
+    {
+        FirstTimeAutomatically,
+        EveryGameStartAutomatically,
+        ManualButtonOnly
+    }
+
     public class BehaviourWheelGameManager : MonoBehaviour, IGameSceneCallbacks, IGameAudioCallbacks
     {
         [Header("References")]
@@ -16,6 +23,7 @@ namespace BehaviourWheelStop
         public BehaviourWheelResultPanel resultPanel;
         public BehaviourWheelFontTheme fontTheme;
         public BehaviourWheelAudioController audioController;
+        public BehaviourWheelFirstTimeTutorial firstTimeTutorial;
 
         [Header("Quiz Mode")]
         public BehaviourWheelQuizMode quizMode = BehaviourWheelQuizMode.Behaviour;
@@ -30,7 +38,10 @@ namespace BehaviourWheelStop
         public float feedbackDuration = 1.8f;
         [Tooltip("Guarantees feedback stays visible long enough even if an older scene still has a smaller serialized Feedback Duration.")]
         public float minimumFeedbackDuration = 1.8f;
-        public bool showHowToPlayAtStart = true;
+        [Header("How To Play Behaviour")]
+        public BehaviourWheelHowToPlayDisplayMode howToPlayDisplayMode = BehaviourWheelHowToPlayDisplayMode.FirstTimeAutomatically;
+        [Tooltip("Kept only so existing scene serialization is not broken. The dropdown above now controls automatic display.")]
+        [HideInInspector] public bool showHowToPlayAtStart = true;
 
         [Header("Bloom Reward Integration")]
         public bool useBloomReward = true;
@@ -57,6 +68,10 @@ namespace BehaviourWheelStop
         private bool howToPlayOpenedFromPause;
         private bool localResultShown;
         private bool bloomPostShown;
+        private bool howToPlayOpenedAtStartup;
+
+        private string HowToPlaySeenKey =>
+            $"BehaviourWheelStop.HowToPlay.Seen.{SceneManager.GetActiveScene().name}";
 
         private void Awake()
         {
@@ -90,6 +105,9 @@ namespace BehaviourWheelStop
 
         private void Start()
         {
+            if (firstTimeTutorial != null)
+                firstTimeTutorial.PrepareSavedStateForTesting();
+
             if (fontTheme != null)
                 fontTheme.ApplyFontsToScene();
 
@@ -139,10 +157,13 @@ namespace BehaviourWheelStop
             if (audioController != null)
                 audioController.PlayPanelOpen();
 
-            if (showHowToPlayAtStart && ui != null)
+            if (ShouldShowHowToPlayAutomatically() && ui != null)
+            {
+                howToPlayOpenedAtStartup = true;
                 ui.ShowHowToPlay();
+            }
             else
-                StartRound();
+                BeginTutorialOrRound();
         }
 
         public void StartRoundFromHowToPlay()
@@ -153,9 +174,44 @@ namespace BehaviourWheelStop
             if (howToPlayOpenedFromPause)
             {
                 howToPlayOpenedFromPause = false;
+                PlayerPrefs.SetInt(HowToPlaySeenKey, 1);
+                PlayerPrefs.Save();
                 ResumeGame();
                 if (ui != null)
                     ui.ShowGameplay();
+                return;
+            }
+
+            if (howToPlayOpenedAtStartup)
+            {
+                howToPlayOpenedAtStartup = false;
+                PlayerPrefs.SetInt(HowToPlaySeenKey, 1);
+                PlayerPrefs.Save();
+            }
+
+            BeginTutorialOrRound();
+        }
+
+        private bool ShouldShowHowToPlayAutomatically()
+        {
+            switch (howToPlayDisplayMode)
+            {
+                case BehaviourWheelHowToPlayDisplayMode.EveryGameStartAutomatically:
+                    return true;
+
+                case BehaviourWheelHowToPlayDisplayMode.ManualButtonOnly:
+                    return false;
+
+                default:
+                    return PlayerPrefs.GetInt(HowToPlaySeenKey, 0) == 0;
+            }
+        }
+
+        private void BeginTutorialOrRound()
+        {
+            if (firstTimeTutorial != null && firstTimeTutorial.ShouldPlayTutorial())
+            {
+                firstTimeTutorial.BeginTutorial(StartRound);
                 return;
             }
 
@@ -164,6 +220,9 @@ namespace BehaviourWheelStop
 
         public void StartRound()
         {
+            if (firstTimeTutorial != null && firstTimeTutorial.IsRunning)
+                return;
+
             isPaused = false;
             waitingForNextQuestion = false;
             localResultShown = false;
@@ -190,6 +249,9 @@ namespace BehaviourWheelStop
 
         public void RestartRound()
         {
+            if (firstTimeTutorial != null && firstTimeTutorial.IsRunning)
+                return;
+
             if (audioController != null)
                 audioController.PlayButtonClick();
 
@@ -203,7 +265,7 @@ namespace BehaviourWheelStop
 
         public void OpenPause()
         {
-            if (waitingForNextQuestion || localResultShown)
+            if ((firstTimeTutorial != null && firstTimeTutorial.IsRunning) || waitingForNextQuestion || localResultShown)
                 return;
 
             if (audioController != null)
@@ -243,6 +305,27 @@ namespace BehaviourWheelStop
         {
             if (isPaused || waitingForNextQuestion || spinner == null || localResultShown)
                 return;
+
+            if (firstTimeTutorial != null && firstTimeTutorial.IsRunning)
+            {
+                if (!firstTimeTutorial.CanAcceptPlayerStop)
+                    return;
+
+                if (audioController != null)
+                {
+                    audioController.PlayButtonClick();
+                    audioController.PlayStopWheel();
+                }
+
+                if (ui != null)
+                {
+                    ui.SetStopButtonInteractable(false);
+                    ui.PlayStopButtonTapAnimation();
+                }
+
+                firstTimeTutorial.HandlePlayerStop();
+                return;
+            }
 
             if (audioController != null)
             {
@@ -285,6 +368,9 @@ namespace BehaviourWheelStop
 
         private void OnWheelStopped(int sliceIndex, string selectedAnswer)
         {
+            if (firstTimeTutorial != null && firstTimeTutorial.IsRunning)
+                return;
+
             if (waitingForNextQuestion || currentQuestion == null || localResultShown)
                 return;
 
@@ -412,6 +498,19 @@ namespace BehaviourWheelStop
             //    GameLoader.Instance.SendEventToJS("Game Done", "Behaviour Wheel");
 
             SceneManager.LoadScene(homeSceneName);
+        }
+
+        [ContextMenu("Reset How To Play Seen State For This Scene")]
+        public void ResetHowToPlaySeenStateForThisScene()
+        {
+            PlayerPrefs.DeleteKey(HowToPlaySeenKey);
+            PlayerPrefs.Save();
+        }
+
+        private void OnDestroy()
+        {
+            if (spinner != null)
+                spinner.StoppedOnSlice -= OnWheelStopped;
         }
     }
 }

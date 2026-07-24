@@ -95,6 +95,8 @@ namespace EmotionTimerQuiz
         public Button restartButton;
         public Button resultRestartButton;
         public Button pauseHowToPlayButton;
+        [Tooltip("Optional always-available How To Play button in the gameplay UI.")]
+        public Button howToPlayButton;
 
         [Header("Loading Panel References")]
         public GameObject loadingPanel;
@@ -111,8 +113,15 @@ namespace EmotionTimerQuiz
         public Button guidePrevButton;
         public Button guideNextButton;
         public Button guideStartButton;
-        public bool showHowToPlayOnStart = true;
-        public bool autoStartIfHowToPlayDisabled = true;
+        [Tooltip("Master switch. Turn this off to prevent How To Play from opening when the game starts. The manual How To Play button will still work.")]
+        public bool openHowToPlayAutomaticallyOnGameStart = true;
+        public HowToPlayDisplayMode howToPlayDisplayMode = HowToPlayDisplayMode.EveryGameStartAutomatically;
+        public string howToPlayViewedPrefsKey = "EmotionTimerQuiz_HowToPlayViewed";
+        [HideInInspector] public bool showHowToPlayOnStart = true;
+        [HideInInspector] public bool autoStartIfHowToPlayDisabled = true;
+
+        [Header("First-Time Interactive Tutorial")]
+        public EmotionFirstTimeTutorialController firstTimeTutorialController;
 
         [Header("Card Colors")]
         public Color cardAColor = new Color(0.82f, 0.95f, 0.84f, 1f);
@@ -353,13 +362,71 @@ namespace EmotionTimerQuiz
         {
             SetPanel(loadingPanel, false);
 
-            if (showHowToPlayOnStart && howToPlayPanel != null)
+            if (ShouldShowHowToPlayAutomatically() && howToPlayPanel != null)
             {
                 ShowHowToPlay(false);
             }
-            else if (autoStartIfHowToPlayDisabled)
+            else
             {
-                StartGame();
+                ContinueToTutorialOrGame();
+            }
+        }
+
+        private bool ShouldShowHowToPlayAutomatically()
+        {
+            if (!openHowToPlayAutomaticallyOnGameStart)
+            {
+                return false;
+            }
+
+            switch (howToPlayDisplayMode)
+            {
+                case HowToPlayDisplayMode.FirstTimeAutomatically:
+                    return !HasViewedHowToPlay();
+
+                case HowToPlayDisplayMode.EveryGameStartAutomatically:
+                    return true;
+
+                case HowToPlayDisplayMode.ManualButtonOnly:
+                default:
+                    return false;
+            }
+        }
+
+        private bool HasViewedHowToPlay()
+        {
+            return !string.IsNullOrEmpty(howToPlayViewedPrefsKey) && PlayerPrefs.GetInt(howToPlayViewedPrefsKey, 0) == 1;
+        }
+
+        private void MarkHowToPlayViewed()
+        {
+            if (string.IsNullOrEmpty(howToPlayViewedPrefsKey))
+            {
+                return;
+            }
+
+            PlayerPrefs.SetInt(howToPlayViewedPrefsKey, 1);
+            PlayerPrefs.Save();
+        }
+
+        private void ContinueToTutorialOrGame()
+        {
+            if (firstTimeTutorialController != null && firstTimeTutorialController.ShouldPlayTutorial())
+            {
+                firstTimeTutorialController.BeginTutorial();
+                return;
+            }
+
+            StartGame();
+        }
+
+        [ContextMenu("Reset How To Play First-Time Status")]
+        public void ResetHowToPlayFirstTimeStatus()
+        {
+            if (!string.IsNullOrEmpty(howToPlayViewedPrefsKey))
+            {
+                PlayerPrefs.DeleteKey(howToPlayViewedPrefsKey);
+                PlayerPrefs.Save();
             }
         }
 
@@ -560,6 +627,11 @@ namespace EmotionTimerQuiz
             ShowHowToPlay(true);
         }
 
+        public void OpenHowToPlayManual()
+        {
+            ShowHowToPlay(hasGameStarted);
+        }
+
         public void ShowHowToPlay(bool openedFromPause)
         {
             StopTimer();
@@ -594,10 +666,12 @@ namespace EmotionTimerQuiz
         public void GuideStartOrContinue()
         {
             PlayButtonSound();
+            MarkHowToPlayViewed();
 
             if (!hasGameStarted)
             {
-                StartGame();
+                SetPanel(howToPlayPanel, false, false);
+                ContinueToTutorialOrGame();
                 return;
             }
 
@@ -704,6 +778,12 @@ namespace EmotionTimerQuiz
             {
                 pauseHowToPlayButton.onClick.RemoveListener(ShowHowToPlayFromPause);
                 pauseHowToPlayButton.onClick.AddListener(ShowHowToPlayFromPause);
+            }
+
+            if (howToPlayButton != null)
+            {
+                howToPlayButton.onClick.RemoveListener(OpenHowToPlayManual);
+                howToPlayButton.onClick.AddListener(OpenHowToPlayManual);
             }
 
             if (guidePrevButton != null)
@@ -862,11 +942,126 @@ namespace EmotionTimerQuiz
             PlayerPrefs.Save();
         }
 
+        public bool PrepareTutorialPracticeRound(
+            int preferredQuestionIndex,
+            System.Action<EmotionOptionCard> selectedCallback,
+            out EmotionOptionCard correctCard)
+        {
+            correctCard = null;
+            StopTimer();
+            StopAutoContinue();
+            BuildSpriteLookup();
+
+            SituationQuestion practiceQuestion = GetTutorialPracticeQuestion(preferredQuestionIndex);
+            if (practiceQuestion == null)
+            {
+                Debug.LogWarning("EmotionTimerQuizManager: No valid question is available for tutorial practice.");
+                return false;
+            }
+
+            currentState = EmotionQuizState.Tutorial;
+            hasGameStarted = false;
+            SetPanel(loadingPanel, false);
+            SetPanel(howToPlayPanel, false);
+            SetPanel(pausePanel, false);
+            SetPanel(resultPanel, false);
+            SetPanel(timeoutBanner, false);
+
+            if (roundText != null)
+            {
+                roundText.text = "PRACTICE";
+            }
+
+            if (scoreText != null)
+            {
+                scoreText.text = "SCORE: 0";
+            }
+
+            if (timerText != null)
+            {
+                timerText.text = "TAKE YOUR TIME";
+            }
+
+            if (timerSlider != null)
+            {
+                timerSlider.DOKill();
+                timerSlider.value = 1f;
+            }
+
+            if (timerFillImage != null)
+            {
+                timerFillImage.DOKill();
+                timerFillImage.fillAmount = 1f;
+            }
+
+            if (situationText != null)
+            {
+                situationText.text = practiceQuestion.situationText;
+            }
+
+            if (feedbackText != null)
+            {
+                feedbackText.text = string.Empty;
+            }
+
+            if (nextRoundButton != null)
+            {
+                nextRoundButton.interactable = false;
+            }
+
+            ResetNextRoundButton();
+            correctCard = SetupOptionsForQuestion(practiceQuestion, selectedCallback);
+            SetOptionCardsInteractable(false);
+            AnimateNewRound();
+            return correctCard != null;
+        }
+
+        public void SetTutorialOptionCardsInteractable(bool interactable)
+        {
+            if (currentState == EmotionQuizState.Tutorial)
+            {
+                SetOptionCardsInteractable(interactable);
+            }
+        }
+
+        private SituationQuestion GetTutorialPracticeQuestion(int preferredQuestionIndex)
+        {
+            if (questionSet != null && questionSet.questions != null && questionSet.questions.Count > 0)
+            {
+                int startIndex = Mathf.Clamp(preferredQuestionIndex, 0, questionSet.questions.Count - 1);
+                for (int offset = 0; offset < questionSet.questions.Count; offset++)
+                {
+                    SituationQuestion candidate = questionSet.questions[(startIndex + offset) % questionSet.questions.Count];
+                    if (candidate != null && !string.IsNullOrWhiteSpace(candidate.situationText))
+                    {
+                        return candidate;
+                    }
+                }
+            }
+
+            if (useSampleQuestionsIfQuestionSetMissing)
+            {
+                List<SituationQuestion> samples = CreateRuntimeSampleQuestions();
+                if (samples.Count > 0)
+                {
+                    return samples[Mathf.Clamp(preferredQuestionIndex, 0, samples.Count - 1)];
+                }
+            }
+
+            return null;
+        }
+
         private void SetupOptionsForQuestion(SituationQuestion question)
+        {
+            SetupOptionsForQuestion(question, HandleCardSelected);
+        }
+
+        private EmotionOptionCard SetupOptionsForQuestion(SituationQuestion question, System.Action<EmotionOptionCard> selectedCallback)
         {
             List<EmotionOptionData> options = GenerateOptions(question);
             Color[] cardColors = { cardAColor, cardBColor, cardCColor };
             char[] letters = { 'A', 'B', 'C' };
+            EmotionOptionCard correctCard = null;
 
             for (int i = 0; i < optionCards.Length; i++)
             {
@@ -878,13 +1073,19 @@ namespace EmotionTimerQuiz
                 if (i < options.Count)
                 {
                     optionCards[i].gameObject.SetActive(true);
-                    optionCards[i].Setup(letters[i], options[i], cardColors[Mathf.Clamp(i, 0, cardColors.Length - 1)], HandleCardSelected);
+                    optionCards[i].Setup(letters[i], options[i], cardColors[Mathf.Clamp(i, 0, cardColors.Length - 1)], selectedCallback);
+                    if (options[i].isCorrect)
+                    {
+                        correctCard = optionCards[i];
+                    }
                 }
                 else
                 {
                     optionCards[i].gameObject.SetActive(false);
                 }
             }
+
+            return correctCard;
         }
 
         private List<EmotionOptionData> GenerateOptions(SituationQuestion question)

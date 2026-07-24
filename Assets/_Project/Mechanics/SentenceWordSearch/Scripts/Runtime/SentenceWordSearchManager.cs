@@ -42,6 +42,7 @@ public class SentenceWordSearchManager : MonoBehaviour, IGameSceneCallbacks, IGa
     public SentenceWordSearchInputController inputController;
     public SentenceWordSearchUI ui;
     public SentenceWordSearchAudio audioController;
+    public SentenceWordSearchFirstTimeTutorial tutorialController;
 
     public bool CanAcceptInput
     {
@@ -102,11 +103,18 @@ public class SentenceWordSearchManager : MonoBehaviour, IGameSceneCallbacks, IGa
         if (audioController == null)
             audioController = FindObjectOfType<SentenceWordSearchAudio>();
 
+        if (tutorialController == null)
+            tutorialController = FindObjectOfType<SentenceWordSearchFirstTimeTutorial>();
+
         if (inputController != null)
         {
             inputController.manager = this;
             inputController.board = board;
+            inputController.tutorialController = tutorialController;
         }
+
+        if (tutorialController != null)
+            tutorialController.AssignGameplayReferences(this, board, inputController, ui);
 
         PullBoardSettingsIntoManagerIfNeeded();
         HookButtons();
@@ -141,6 +149,9 @@ public class SentenceWordSearchManager : MonoBehaviour, IGameSceneCallbacks, IGa
 
     public void StartGame()
     {
+        if (tutorialController != null)
+            tutorialController.AbortTutorial();
+
         StopAllCoroutines();
         StartCoroutine(StartGameRoutine());
     }
@@ -196,6 +207,34 @@ public class SentenceWordSearchManager : MonoBehaviour, IGameSceneCallbacks, IGa
         yield return ShowBloomPreGameRoutine();
         yield return ShowHowToPlayBeforeGameplayRoutine();
 
+        bool tutorialPlayed = false;
+
+        if (tutorialController != null && tutorialController.ShouldPlayTutorial())
+        {
+            tutorialPlayed = true;
+            yield return tutorialController.RunTutorial();
+
+            if (!gameRunning)
+                yield break;
+
+            if (!tutorialController.CompletedSuccessfully)
+                Debug.LogWarning("First-time tutorial ended without saving completion. Starting the real game safely.");
+        }
+
+        if (tutorialPlayed)
+        {
+            ApplyManagerBoardSettingsToBoard();
+
+            if (board != null)
+                board.BuildBoard(activeQuestions, ui != null ? ui.primaryFont : null);
+
+            currentQuestionIndex = 0;
+            LoadCurrentQuestion();
+
+            if (inputController != null)
+                inputController.SetInputEnabled(false);
+        }
+
         BeginGameplayAfterPreScreens();
     }
 
@@ -210,7 +249,7 @@ public class SentenceWordSearchManager : MonoBehaviour, IGameSceneCallbacks, IGa
 
     private IEnumerator ShowHowToPlayBeforeGameplayRoutine()
     {
-        if (ui == null || ui.howToPlayPanel == null)
+        if (ui == null || ui.howToPlayPanel == null || !ui.ShouldShowHowToPlayAutomatically())
             yield break;
 
         waitingForHowToPlayClose = true;
@@ -318,7 +357,10 @@ public class SentenceWordSearchManager : MonoBehaviour, IGameSceneCallbacks, IGa
     public void OnHowToPlayClosePressed()
     {
         if (ui != null)
+        {
             ui.HideHowToPlay();
+            ui.MarkHowToPlaySeen();
+        }
 
         if (waitingForHowToPlayClose)
         {

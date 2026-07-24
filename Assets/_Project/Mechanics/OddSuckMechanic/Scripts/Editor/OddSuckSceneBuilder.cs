@@ -827,7 +827,7 @@ namespace OddSuckMechanic.EditorTools
             SetObject(so, "resultTitleText", resultTitleText);
             SetObject(so, "resultScoreText", resultScoreText);
             SetObject(so, "resultContinueButton", resultContinueButton);
-            SetBool(so, "showHowToOnStart", true);
+            SetEnum(so, "howToDisplayMode", (int)OddSuckHowToDisplayMode.FirstTimeAutomatically);
             SetBool(so, "showLoadingPanel", true);
             SetBool(so, "useBloomRewardSystem", true);
             SetBool(so, "useWaveTimer", true);

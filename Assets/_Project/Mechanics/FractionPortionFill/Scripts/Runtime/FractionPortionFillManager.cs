@@ -159,7 +159,7 @@ public class FractionPortionFillManager : MonoBehaviour, IGameSceneCallbacks, IG
     [Tooltip("Chance that a Hard subtraction request uses mixed numbers. 0.05 means 5%.")]
     [Range(0f, 1f)] public float hardMixedNumberChance = 0.05f;
     [Header("Question Quantity And Fractions")]
-    [Min(10)] public int rounds = 10;
+    [Min(5)] public int rounds = 5;
     [Range(2, 12)] public int minPortionCount = 4;
     [Range(2, 12)] public int maxPortionCount = 12;
     [Range(1, 4)] public int minRequestsPerQuestion = 1;
@@ -732,7 +732,7 @@ public class FractionPortionFillManager : MonoBehaviour, IGameSceneCallbacks, IG
         generatedQuestions.Clear();
         HashSet<string> usedSignatures = new HashSet<string>();
 
-        int targetRounds = Mathf.Max(10, rounds);
+        int targetRounds = Mathf.Max(3, rounds);
         int safety = targetRounds * Mathf.Max(50, maxGenerationAttemptsPerQuestion);
 
         while (generatedQuestions.Count < targetRounds && safety > 0)

@@ -1,10 +1,25 @@
 fileFormatVersion: 2
-guid: b2a44fa266f07c04abe2b3b2876e4c27
+guid: 7131746b2a52c744997ded5364893094
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 5732896040760811123
-    second: clock face_0
+      213: -5777657545968363414
+    second: strike_0
+  - first:
+      213: 8676947864587116058
+    second: strike_1
+  - first:
+      213: 6958531133989036851
+    second: strike_2
+  - first:
+      213: 8663843859207707135
+    second: strike_3
+  - first:
+      213: -1120534036535792455
+    second: strike_4
+  - first:
+      213: -877752440617867860
+    second: strike_5
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -72,7 +87,7 @@ TextureImporter:
   platformSettings:
   - serializedVersion: 4
     buildTarget: DefaultTexturePlatform
-    maxTextureSize: 1024
+    maxTextureSize: 512
     resizeAlgorithm: 0
     textureFormat: -1
     textureCompression: 1
@@ -139,13 +154,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: clock face_0
+      name: strike_0
       rect:
         serializedVersion: 2
-        x: 17
-        y: 6
-        width: 972
-        height: 994
+        x: 11
+        y: 164
+        width: 112
+        height: 92
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -154,8 +169,118 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 37e9acb23965f8f40800000000000000
-      internalID: 5732896040760811123
+      spriteID: a6853b2c213a1dfa0800000000000000
+      internalID: -5777657545968363414
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: strike_1
+      rect:
+        serializedVersion: 2
+        x: 131
+        y: 208
+        width: 16
+        height: 37
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a1e9c434c16ba6870800000000000000
+      internalID: 8676947864587116058
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: strike_2
+      rect:
+        serializedVersion: 2
+        x: 152
+        y: 208
+        width: 24
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 333a9efc23ba19060800000000000000
+      internalID: 6958531133989036851
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: strike_3
+      rect:
+        serializedVersion: 2
+        x: 181
+        y: 39
+        width: 75
+        height: 217
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ff9568146182c3870800000000000000
+      internalID: 8663843859207707135
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: strike_4
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 163
+        height: 181
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9bcac890b301370f0800000000000000
+      internalID: -1120534036535792455
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: strike_5
+      rect:
+        serializedVersion: 2
+        x: 65
+        y: 60
+        width: 146
+        height: 142
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ca56d384ec891d3f0800000000000000
+      internalID: -877752440617867860
       vertices: []
       indices: 
       edges: []
@@ -174,7 +299,12 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      clock face_0: 5732896040760811123
+      strike_0: -5777657545968363414
+      strike_1: 8676947864587116058
+      strike_2: 6958531133989036851
+      strike_3: 8663843859207707135
+      strike_4: -1120534036535792455
+      strike_5: -877752440617867860
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

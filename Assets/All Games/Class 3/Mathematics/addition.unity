@@ -5994,7 +5994,7 @@ MonoBehaviour:
   musicVolume: 0.45
   gameOverMode: 1
   timeLimitSeconds: 10
-  startingLives: 5
+  startingLives: 3
   loseLifeOnWrongCatch: 1
   loseLifeOnMissedCorrect: 0
   correctScore: 10

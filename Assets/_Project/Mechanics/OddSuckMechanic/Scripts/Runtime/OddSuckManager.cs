@@ -10,6 +10,13 @@ using RewardSystem;
 
 namespace OddSuckMechanic
 {
+    public enum OddSuckHowToDisplayMode
+    {
+        FirstTimeAutomatically,
+        EveryGameStartAutomatically,
+        ManualButtonOnly
+    }
+
     public class OddSuckManager : MonoBehaviour, IGameSceneCallbacks, IGameAudioCallbacks
     {
         [Header("Core References")]
@@ -117,7 +124,12 @@ namespace OddSuckMechanic
         [SerializeField] private bool noAlignedTapCostsHealth = false;
         [SerializeField, Min(1)] private int noAlignedHealthLoss = 1;
         [SerializeField] private bool autoStartOnPlay = true;
-        [SerializeField] private bool showHowToOnStart = true;
+
+        [Header("How To Play Behaviour")]
+        [SerializeField] private OddSuckHowToDisplayMode howToDisplayMode = OddSuckHowToDisplayMode.FirstTimeAutomatically;
+
+        [Header("First-Time Interactive Tutorial")]
+        [SerializeField] private OddSuckFirstTimeTutorialController firstTimeTutorial;
 
         [Header("Wave Timer")]
         [SerializeField] private bool useWaveTimer = true;
@@ -196,8 +208,13 @@ namespace OddSuckMechanic
         private bool howToOpenedFromPause;
         private bool lowTimerWarningPlaying;
         private bool bloomPostGameShown;
+        private bool tutorialHoldActive;
         private int howToImageIndex;
         private float gameplayStartTime;
+
+        public OddSuckPlayMode PlayMode => playMode;
+        public OddSuckPullVisualStyle PullVisualStyle => pullVisualStyle;
+        public bool IsTutorialHoldingGameplay => tutorialHoldActive;
 
         private void Awake()
         {
@@ -273,7 +290,7 @@ namespace OddSuckMechanic
                 yield return PlayLoadingPanelRoutine();
             }
 
-            if (showHowToOnStart)
+            if (ShouldShowHowToAutomatically())
             {
                 ShowHowToIntro();
                 yield break;
@@ -281,13 +298,13 @@ namespace OddSuckMechanic
 
             if (autoStartOnPlay)
             {
-                StartGame();
+                ContinueStartupAfterHowTo();
             }
         }
 
         private void Update()
         {
-            if (!gameRunning || paused || waveLocked || !useWaveTimer)
+            if (tutorialHoldActive || !gameRunning || paused || waveLocked || !useWaveTimer)
             {
                 return;
             }
@@ -313,6 +330,7 @@ namespace OddSuckMechanic
 
         public void StartGame()
         {
+            tutorialHoldActive = false;
             KillTweens();
             ClearActiveItems();
 
@@ -374,6 +392,11 @@ namespace OddSuckMechanic
 
         public void RestartGame()
         {
+            if (tutorialHoldActive)
+            {
+                return;
+            }
+
             audioManager?.PlayButton();
             StartGame();
         }
@@ -434,6 +457,11 @@ namespace OddSuckMechanic
 
         public void ShowHowToIntro()
         {
+            if (tutorialHoldActive)
+            {
+                return;
+            }
+
             paused = true;
             gameRunning = false;
             howToOpenedFromPause = false;
@@ -450,6 +478,11 @@ namespace OddSuckMechanic
 
         public void ShowHowToFromPause()
         {
+            if (tutorialHoldActive)
+            {
+                return;
+            }
+
             audioManager?.PlayButton();
             paused = true;
             howToOpenedFromPause = true;
@@ -466,6 +499,11 @@ namespace OddSuckMechanic
 
         public void CloseHowToPanel()
         {
+            if (tutorialHoldActive)
+            {
+                return;
+            }
+
             audioManager?.PlayButton();
 
             if (TryAdvanceHowToImage())
@@ -474,6 +512,7 @@ namespace OddSuckMechanic
             }
 
             SetPanel(howToPlayPanel, false);
+            MarkHowToViewed();
 
             if (howToOpenedFromPause && gameRunning)
             {
@@ -482,7 +521,152 @@ namespace OddSuckMechanic
                 return;
             }
 
+            ContinueStartupAfterHowTo();
+        }
+
+        public void ShowHowToManually()
+        {
+            if (tutorialHoldActive)
+            {
+                return;
+            }
+
+            if (gameRunning)
+            {
+                ShowHowToFromPause();
+                return;
+            }
+
+            ShowHowToIntro();
+        }
+
+        [ContextMenu("Reset How To Viewed Status")]
+        public void ResetHowToViewedStatus()
+        {
+            PlayerPrefs.DeleteKey(GetHowToPrefsKey());
+            PlayerPrefs.Save();
+        }
+
+        [ContextMenu("Reset First-Time Tutorial Progress")]
+        public void ResetFirstTimeTutorialProgress()
+        {
+            ResolveFirstTimeTutorial();
+            firstTimeTutorial?.ResetSavedCompletion();
+        }
+
+        [ContextMenu("Force Play First-Time Tutorial")]
+        public void ForcePlayFirstTimeTutorial()
+        {
+            if (!Application.isPlaying)
+            {
+                Debug.LogWarning("OddSuckManager: Force Play Tutorial is available while the game is running.", this);
+                return;
+            }
+
+            ResolveFirstTimeTutorial();
+            if (firstTimeTutorial == null)
+            {
+                Debug.LogWarning("OddSuckManager: No first-time tutorial controller is assigned.", this);
+                return;
+            }
+
+            BeginTutorial(true);
+        }
+
+        private void ContinueStartupAfterHowTo()
+        {
+            ResolveFirstTimeTutorial();
+
+            if (firstTimeTutorial != null && firstTimeTutorial.ShouldPlayAutomatically())
+            {
+                BeginTutorial(false);
+                return;
+            }
+
             StartGame();
+        }
+
+        private void BeginTutorial(bool forcePlay)
+        {
+            if (firstTimeTutorial == null)
+            {
+                StartGame();
+                return;
+            }
+
+            KillTweens();
+            ClearActiveItems();
+            tutorialHoldActive = true;
+            gameRunning = false;
+            paused = true;
+            waveLocked = true;
+            SetPanel(loadingPanel, false);
+            SetPanel(howToPlayPanel, false);
+            SetPanel(pausePanel, false);
+            SetPanel(resultPanel, false);
+            SetInputEnabled(false);
+            SetStartPromptVisible(false, true);
+            SetPullGuideVisible(false, true);
+            StopTimerWarning();
+            ufoMover?.SetMovementEnabled(false);
+
+            firstTimeTutorial.BeginTutorial(this, HandleInteractiveTutorialCompleted, forcePlay);
+        }
+
+        private void HandleInteractiveTutorialCompleted()
+        {
+            tutorialHoldActive = false;
+            StartGame();
+        }
+
+        private void ResolveFirstTimeTutorial()
+        {
+            if (firstTimeTutorial == null)
+            {
+                firstTimeTutorial = GetComponentInChildren<OddSuckFirstTimeTutorialController>(true);
+            }
+
+            if (firstTimeTutorial == null)
+            {
+                OddSuckFirstTimeTutorialController[] tutorials = Resources.FindObjectsOfTypeAll<OddSuckFirstTimeTutorialController>();
+                for (int i = 0; i < tutorials.Length; i++)
+                {
+                    if (tutorials[i] != null && tutorials[i].gameObject.scene == gameObject.scene)
+                    {
+                        firstTimeTutorial = tutorials[i];
+                        break;
+                    }
+                }
+            }
+        }
+
+        private bool ShouldShowHowToAutomatically()
+        {
+            if (howToPlayPanel == null)
+            {
+                return false;
+            }
+
+            switch (howToDisplayMode)
+            {
+                case OddSuckHowToDisplayMode.EveryGameStartAutomatically:
+                    return true;
+                case OddSuckHowToDisplayMode.ManualButtonOnly:
+                    return false;
+                default:
+                    return PlayerPrefs.GetInt(GetHowToPrefsKey(), 0) == 0;
+            }
+        }
+
+        private void MarkHowToViewed()
+        {
+            PlayerPrefs.SetInt(GetHowToPrefsKey(), 1);
+            PlayerPrefs.Save();
+        }
+
+        private static string GetHowToPrefsKey()
+        {
+            return $"OddSuck.HowToViewed.{SceneManager.GetActiveScene().name}";
         }
 
         private IEnumerator PlayLoadingPanelRoutine()
@@ -814,7 +998,7 @@ namespace OddSuckMechanic
 
         public void HandlePullInput()
         {
-            if (!gameRunning || paused || waveLocked)
+            if (tutorialHoldActive || !gameRunning || paused || waveLocked)
             {
                 return;
             }

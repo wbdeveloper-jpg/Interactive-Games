@@ -31,6 +31,13 @@ namespace WordShuffleDragSwap
         AmericanNoAnd
     }
 
+    public enum WordShuffleHowToPlayMode
+    {
+        FirstTimeAutomatically,
+        EveryGameStartAutomatically,
+        ManualButtonOnly
+    }
+
     public class WordShuffleDragSwapManager : MonoBehaviour, IGameSceneCallbacks, IGameAudioCallbacks
     {
         [Header("Mode Settings")]
@@ -58,7 +65,10 @@ namespace WordShuffleDragSwap
         [SerializeField, Min(1)] private int shuffleRetryCount = 20;
 
         [Header("How To Play Flow")]
-        [SerializeField] private bool showHowToPlayBeforeGameplay = true;
+        [SerializeField] private WordShuffleHowToPlayMode howToPlayMode = WordShuffleHowToPlayMode.FirstTimeAutomatically;
+
+        [Header("First-Time Interactive Tutorial")]
+        [SerializeField] private WordShuffleFirstTimeTutorialController firstTimeTutorial;
 
         [Header("Timeout Reveal Transition")]
         [SerializeField] private bool revealAnswerOnTimeout = true;
@@ -239,8 +249,10 @@ namespace WordShuffleDragSwap
         private int mistakeCount;
         private bool bloomPreGameReady;
         private bool bloomPostGameShown;
+        private bool tutorialFlowActive;
 
         public RectTransform TileLayer => tileLayer;
+        public WordShuffleRoundMode RoundMode => roundMode;
         public Camera UICamera { get; private set; }
 
         [ContextMenu("Apply Global Fonts Now")]
@@ -327,7 +339,7 @@ namespace WordShuffleDragSwap
 
         private void Update()
         {
-            if (!gameRunning || isPaused || roundSolved || !useTimer)
+            if (tutorialFlowActive || !gameRunning || isPaused || roundSolved || !useTimer)
                 return;
 
             remainingTime -= Time.deltaTime;
@@ -413,7 +425,7 @@ namespace WordShuffleDragSwap
 
         private void ContinueAfterBloomPreGame()
         {
-            if (showHowToPlayBeforeGameplay)
+            if (ShouldShowHowToPlayAutomatically())
             {
                 startGameAfterHowToPlayClose = true;
                 SetPanel(startPanel, false);
@@ -422,11 +434,24 @@ namespace WordShuffleDragSwap
                 return;
             }
 
+            ContinueAfterHowToPlayFlow();
+        }
+
+        private void ContinueAfterHowToPlayFlow()
+        {
+            if (firstTimeTutorial != null && firstTimeTutorial.ShouldPlayTutorial)
+            {
+                firstTimeTutorial.BeginTutorial(this, StartGame);
+                return;
+            }
+
             StartGame();
         }
 
         public void StartGame()
         {
+            tutorialFlowActive = false;
+
             if (!ValidateGame())
                 return;
 
@@ -471,7 +496,13 @@ namespace WordShuffleDragSwap
 
         public bool CanDragTile(WordShuffleLetterTile tile)
         {
-            return tile != null && !tile.IsLockedByHint && gameRunning && !inputLocked && !isPaused && !roundSolved;
+            return tile != null &&
+                   !tile.IsLockedByHint &&
+                   !tutorialFlowActive &&
+                   gameRunning &&
+                   !inputLocked &&
+                   !isPaused &&
+                   !roundSolved;
         }
 
         public void NotifyTileDragStarted(WordShuffleLetterTile tile)
@@ -528,6 +559,14 @@ namespace WordShuffleDragSwap
 
         public void UseHint()
         {
+            if (tutorialFlowActive)
+            {
+                if (firstTimeTutorial != null)
+                    firstTimeTutorial.HandleHintButtonPressed();
+
+                return;
+            }
+
             if (!gameRunning || isPaused || inputLocked || roundSolved)
             {
                 ShakeButton(hintButton);
@@ -586,12 +625,86 @@ namespace WordShuffleDragSwap
         public void CloseHowToPlay()
         {
             SetPanel(howToPlayPanel, false);
+            MarkHowToPlaySeenForActiveScene();
 
             if (startGameAfterHowToPlayClose)
             {
                 startGameAfterHowToPlayClose = false;
-                StartGame();
+                ContinueAfterHowToPlayFlow();
             }
+        }
+
+        public void BeginTutorialHold()
+        {
+            ClearRoundObjects();
+            tutorialFlowActive = true;
+            gameRunning = false;
+            isPaused = false;
+            inputLocked = true;
+            roundSolved = false;
+            startGameAfterHowToPlayClose = false;
+
+            SetPanel(startPanel, false);
+            SetPanel(resultPanel, false);
+            SetPanel(pausePanel, false);
+            SetPanel(howToPlayPanel, false);
+            SetPanel(gamePanel, true);
+
+            if (hintButton != null)
+                hintButton.interactable = false;
+        }
+
+        public void EndTutorialHold()
+        {
+            tutorialFlowActive = false;
+            gameRunning = false;
+            isPaused = false;
+            inputLocked = true;
+            roundSolved = false;
+
+            if (hintButton != null)
+                hintButton.interactable = false;
+        }
+
+        public void SetTutorialHintButtonInteractable(bool interactable)
+        {
+            if (hintButton != null)
+                hintButton.interactable = tutorialFlowActive && interactable;
+        }
+
+        private bool ShouldShowHowToPlayAutomatically()
+        {
+            switch (howToPlayMode)
+            {
+                case WordShuffleHowToPlayMode.EveryGameStartAutomatically:
+                    return true;
+
+                case WordShuffleHowToPlayMode.FirstTimeAutomatically:
+                    return PlayerPrefs.GetInt(GetHowToPlaySeenKey(), 0) == 0;
+
+                default:
+                    return false;
+            }
+        }
+
+        private void MarkHowToPlaySeenForActiveScene()
+        {
+            PlayerPrefs.SetInt(GetHowToPlaySeenKey(), 1);
+            PlayerPrefs.Save();
+        }
+
+        private static string GetHowToPlaySeenKey()
+        {
+            string sceneName = SceneManager.GetActiveScene().name;
+            return $"WordShuffle.HowToPlay.Seen.{sceneName}";
+        }
+
+        [ContextMenu("Reset How To Play First-Time Status For Active Scene")]
+        private void ResetHowToPlaySeenForActiveScene()
+        {
+            PlayerPrefs.DeleteKey(GetHowToPlaySeenKey());
+            PlayerPrefs.Save();
+            Debug.Log($"Reset How to Play first-time status for scene '{SceneManager.GetActiveScene().name}'.", this);
         }
 
         public void ContinueFromResult()

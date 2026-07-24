@@ -35,21 +35,9 @@ namespace ClockLearningGameEditor
             CanvasGroup modeMenuGroup = CreateModeMenuPanel(safeRoot, out TextMeshProUGUI menuTitleText, out Button singleModeButton, out Button doubleModeButton, out Button menuHomeButton);
             RectTransform gameplayRoot = CreateRect("Gameplay Root", safeRoot, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
 
-            RectTransform header = CreatePanel("Top Header", gameplayRoot, new Vector2(0f, 0.9f), new Vector2(1f, 1f), HeaderColor);
-            Button homeButton = CreateIconButton(header, "Home Button", new Vector2(0.018f, 0.18f), new Vector2(0.058f, 0.82f), SecondaryButtonColor);
-            TextMeshProUGUI titleText = CreateText(header, "Title Text", "Clock Game", new Vector2(0.32f, 0f), new Vector2(0.68f, 1f), 42, FontStyles.Bold, TextAlignmentOptions.Center);
-            TextMeshProUGUI questionText = CreateTextCard(header, "Question Card", "Question Text", "Question 1/10", new Vector2(0.65f, 0.18f), new Vector2(0.77f, 0.82f), 25);
-            TextMeshProUGUI scoreText = CreateTextCard(header, "Score Card", "Score Text", "Score 0", new Vector2(0.775f, 0.18f), new Vector2(0.875f, 0.82f), 25);
-            Button pauseButton = CreateIconButton(header, "Pause Button", new Vector2(0.89f, 0.18f), new Vector2(0.935f, 0.82f), SecondaryButtonColor);
-            Button hintButton = CreateIconButton(header, "Hint Button", new Vector2(0.945f, 0.18f), new Vector2(0.99f, 0.82f), SecondaryButtonColor);
+            RectTransform header = CreateResponsiveTopHeader(gameplayRoot, out Button homeButton, out TextMeshProUGUI titleText, out TextMeshProUGUI questionText, out TextMeshProUGUI scoreText, out Button pauseButton, out Button hintButton, out Image timerFill, out TextMeshProUGUI timerText);
 
-            RectTransform timerBar = CreatePanel("Timer Fill", header, new Vector2(0.18f, 0.12f), new Vector2(0.30f, 0.32f), new Color(1f, 0.73f, 0.25f, 1f));
-            Image timerFill = timerBar.GetComponent<Image>();
-            timerFill.type = Image.Type.Filled;
-            timerFill.fillMethod = Image.FillMethod.Horizontal;
-            TextMeshProUGUI timerText = CreateText(header, "Timer Text", "", new Vector2(0.18f, 0.35f), new Vector2(0.30f, 0.82f), 22, FontStyles.Bold, TextAlignmentOptions.Center);
-
-            RectTransform singleRoot = CreateRect("Single Clock Mode Root", gameplayRoot, new Vector2(0f, 0f), new Vector2(1f, 0.89f), Vector2.zero, Vector2.zero);
+            RectTransform singleRoot = CreateRect("Single Clock Mode Root", gameplayRoot, new Vector2(0f, 0f), new Vector2(1f, 1f), Vector2.zero, new Vector2(0f, -100f));
             ClockLearningClockView singleClock = CreateClock(singleRoot, "Single Draggable Clock", new Vector2(0.06f, 0.09f), new Vector2(0.56f, 0.91f));
             RectTransform singlePanel = CreatePanel("Single Instruction Panel", singleRoot, new Vector2(0.61f, 0.12f), new Vector2(0.96f, 0.88f), PanelColor);
             TextMeshProUGUI singlePrompt = CreateTextCard(singlePanel, "Single Prompt BG", "Single Prompt", "Set the clock to", new Vector2(0.08f, 0.75f), new Vector2(0.92f, 0.91f), 34);
@@ -58,7 +46,7 @@ namespace ClockLearningGameEditor
             Button singleSubmit = CreateButton(singlePanel, "Single Submit Button", "Submit", new Vector2(0.12f, 0.13f), new Vector2(0.88f, 0.28f), ButtonColor, 34);
             Button singleReset = CreateButton(singlePanel, "Single Reset Button", "Reset", new Vector2(0.25f, 0.035f), new Vector2(0.75f, 0.115f), SecondaryButtonColor, 25);
 
-            RectTransform doubleRoot = CreateRect("Double Clock Mode Root", gameplayRoot, new Vector2(0f, 0f), new Vector2(1f, 0.89f), Vector2.zero, Vector2.zero);
+            RectTransform doubleRoot = CreateRect("Double Clock Mode Root", gameplayRoot, new Vector2(0f, 0f), new Vector2(1f, 1f), Vector2.zero, new Vector2(0f, -100f));
             RectTransform diffPanel = CreatePanel("Difference Instruction Card", doubleRoot, new Vector2(0.27f, 0.76f), new Vector2(0.73f, 0.91f), PanelColor);
             TextMeshProUGUI diffPrompt = CreateText(diffPanel, "Difference Prompt", "Make a time difference of", new Vector2(0.05f, 0.52f), new Vector2(0.95f, 0.93f), 28, FontStyles.Bold, TextAlignmentOptions.Center);
             TextMeshProUGUI diffTarget = CreateTextCard(diffPanel, "Difference Target BG", "Difference Target", "2h 30m", new Vector2(0.18f, 0.06f), new Vector2(0.82f, 0.52f), 40);
@@ -176,12 +164,24 @@ namespace ClockLearningGameEditor
             SetObj(tutorialSo, "ghostHandImage", tutorialGhostHandImage);
             SetObj(tutorialSo, "promptCard", tutorialPromptCard);
             SetObj(tutorialSo, "promptText", tutorialPrompt);
+            SetObj(tutorialSo, "singlePromptTextTarget", singlePrompt);
+            SetObj(tutorialSo, "singleTargetTextTarget", singleTarget);
+            SetObj(tutorialSo, "doublePromptTextTarget", diffPrompt);
+            SetObj(tutorialSo, "doubleTargetTextTarget", diffTarget);
+            SetObj(tutorialSo, "doubleChipTextTarget", diffChip);
             SetFloat(tutorialSo, "promptBackgroundOpacity", 0.86f);
             SetBool(tutorialSo, "showOnlyOncePerMode", true);
             SetBool(tutorialSo, "rememberSeenInPlayerPrefs", true);
             SetBool(tutorialSo, "copyActualHandSpriteForGhost", true);
             SetObj(tutorialSo, "singleQuestionTarget", singleTarget.GetComponent<RectTransform>());
             SetObj(tutorialSo, "doubleQuestionTarget", diffTarget.GetComponent<RectTransform>());
+            SetObj(tutorialSo, "hintButtonTarget", hintButton.GetComponent<RectTransform>());
+            SetObj(tutorialSo, "doubleAmPmTarget", clockBToggle.GetComponent<RectTransform>());
+            SetVector2(tutorialSo, "questionPromptOffset", new Vector2(0f, -185f));
+            SetVector2(tutorialSo, "questionPointerOffset", new Vector2(70f, -115f));
+            SetVector2(tutorialSo, "clockPromptOffset", new Vector2(0f, -245f));
+            SetVector2(tutorialSo, "hintPromptOffset", new Vector2(0f, -120f));
+            SetVector2(tutorialSo, "amPmPromptOffset", new Vector2(0f, 190f));
             SetObj(tutorialSo, "singleClockTarget", singleClock.GetComponent<RectTransform>());
             SetObj(tutorialSo, "doubleClockATarget", clockA.GetComponent<RectTransform>());
             SetObj(tutorialSo, "doubleClockBTarget", clockB.GetComponent<RectTransform>());
@@ -189,7 +189,7 @@ namespace ClockLearningGameEditor
 
             Selection.activeGameObject = manager.gameObject;
             EditorSceneManager.MarkSceneDirty(EditorSceneManager.GetActiveScene());
-            Debug.Log("Clock Learning Game Final Mechnics rough UI created. Menu page now uses simple placeholder image areas so you can replace the art quickly. Assign How To images and tutorial pointer sprite in the Tutorial Controller, then press Play.");
+            Debug.Log("Clock Learning Game Final Mechnics UI fix created. Top bar now uses fixed-height responsive layout and clock hand hierarchy keeps centre dot on top. Assign How To images and tutorial pointer sprite in the Tutorial Controller, then press Play.");
         }
 
         private static Canvas CreateCanvas()
@@ -211,6 +211,87 @@ namespace ClockLearningGameEditor
             if (Object.FindObjectOfType<EventSystem>() != null) return;
             GameObject eventSystem = new GameObject("EventSystem", typeof(EventSystem), typeof(StandaloneInputModule));
             Undo.RegisterCreatedObjectUndo(eventSystem, "Create EventSystem");
+        }
+
+        private static RectTransform CreateResponsiveTopHeader(RectTransform parent, out Button homeButton, out TextMeshProUGUI titleText, out TextMeshProUGUI questionText, out TextMeshProUGUI scoreText, out Button pauseButton, out Button hintButton, out Image timerFill, out TextMeshProUGUI timerText)
+        {
+            const float headerHeight = 92f;
+            const float buttonSize = 64f;
+
+            RectTransform header = CreatePanel("Top Header", parent, new Vector2(0f, 1f), new Vector2(1f, 1f), HeaderColor);
+            header.offsetMin = new Vector2(0f, -headerHeight);
+            header.offsetMax = Vector2.zero;
+
+            HorizontalLayoutGroup layout = header.gameObject.AddComponent<HorizontalLayoutGroup>();
+            layout.childAlignment = TextAnchor.MiddleCenter;
+            layout.childControlWidth = true;
+            layout.childControlHeight = true;
+            layout.childForceExpandWidth = false;
+            layout.childForceExpandHeight = false;
+            layout.spacing = 12f;
+            layout.padding = new RectOffset(16, 16, 10, 10);
+
+            homeButton = CreateHeaderIconButton(header, "Home Button", buttonSize);
+
+            RectTransform titleRoot = CreateHeaderLayoutRoot(header, "Header Title Root", 260f, 64f, 1f, false, Color.clear);
+            titleText = CreateText(titleRoot, "Title Text", "Clock Game", Vector2.zero, Vector2.one, 38, FontStyles.Bold, TextAlignmentOptions.Center);
+            titleText.raycastTarget = false;
+
+            RectTransform timerRoot = CreateHeaderLayoutRoot(header, "Timer Card", 135f, 64f, 0f, true, PanelColor);
+            timerText = CreateText(timerRoot, "Timer Text", "", new Vector2(0.05f, 0.44f), new Vector2(0.95f, 0.92f), 18, FontStyles.Bold, TextAlignmentOptions.Center);
+            timerText.raycastTarget = false;
+            RectTransform timerBar = CreatePanel("Timer Fill", timerRoot, new Vector2(0.10f, 0.18f), new Vector2(0.90f, 0.36f), new Color(1f, 0.73f, 0.25f, 1f));
+            timerFill = timerBar.GetComponent<Image>();
+            timerFill.type = Image.Type.Filled;
+            timerFill.fillMethod = Image.FillMethod.Horizontal;
+            timerFill.raycastTarget = false;
+
+            questionText = CreateHeaderTextCard(header, "Question Card", "Question Text", "Question 1/10", 170f, 64f, 22);
+            scoreText = CreateHeaderTextCard(header, "Score Card", "Score Text", "Score 0", 130f, 64f, 22);
+            pauseButton = CreateHeaderIconButton(header, "Pause Button", buttonSize);
+            hintButton = CreateHeaderIconButton(header, "Hint Button", buttonSize);
+
+            return header;
+        }
+
+        private static RectTransform CreateHeaderLayoutRoot(RectTransform parent, string name, float preferredWidth, float preferredHeight, float flexibleWidth, bool addImage, Color color)
+        {
+            RectTransform rect = addImage
+                ? CreatePanel(name, parent, Vector2.zero, Vector2.one, color)
+                : CreateRect(name, parent, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+
+            LayoutElement element = rect.gameObject.AddComponent<LayoutElement>();
+            element.minHeight = preferredHeight;
+            element.preferredHeight = preferredHeight;
+            element.minWidth = preferredWidth;
+            element.preferredWidth = preferredWidth;
+            element.flexibleWidth = flexibleWidth;
+            element.flexibleHeight = 0f;
+            return rect;
+        }
+
+        private static TextMeshProUGUI CreateHeaderTextCard(RectTransform parent, string cardName, string textName, string value, float width, float height, int fontSize)
+        {
+            RectTransform card = CreateHeaderLayoutRoot(parent, cardName, width, height, 0f, true, PanelColor);
+            Image image = card.GetComponent<Image>();
+            if (image != null) image.raycastTarget = false;
+            TextMeshProUGUI text = CreateText(card, textName, value, new Vector2(0.06f, 0.08f), new Vector2(0.94f, 0.92f), fontSize, FontStyles.Bold, TextAlignmentOptions.Center);
+            text.raycastTarget = false;
+            return text;
+        }
+
+        private static Button CreateHeaderIconButton(RectTransform parent, string name, float size)
+        {
+            RectTransform rect = CreateHeaderLayoutRoot(parent, name, size, size, 0f, true, SecondaryButtonColor);
+            Button button = rect.gameObject.AddComponent<Button>();
+            button.targetGraphic = rect.GetComponent<Image>();
+
+            RectTransform icon = CreateRect("Icon", rect, new Vector2(0.22f, 0.22f), new Vector2(0.78f, 0.78f), Vector2.zero, Vector2.zero);
+            Image iconImage = icon.gameObject.AddComponent<Image>();
+            iconImage.color = new Color(1f, 1f, 1f, 0f);
+            iconImage.preserveAspect = true;
+            iconImage.raycastTarget = false;
+            return button;
         }
 
         private static CanvasGroup CreateModeMenuPanel(RectTransform parent, out TextMeshProUGUI title, out Button singleButton, out Button doubleButton, out Button homeButton)
@@ -556,6 +637,13 @@ namespace ClockLearningGameEditor
         {
             SerializedProperty property = so.FindProperty(fieldName);
             if (property != null) property.floatValue = value;
+            else Debug.LogWarning($"Missing serialized field: {fieldName}");
+        }
+
+        private static void SetVector2(SerializedObject so, string fieldName, Vector2 value)
+        {
+            SerializedProperty property = so.FindProperty(fieldName);
+            if (property != null) property.vector2Value = value;
             else Debug.LogWarning($"Missing serialized field: {fieldName}");
         }
 

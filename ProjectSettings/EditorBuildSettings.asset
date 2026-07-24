@@ -71,6 +71,24 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/All Games/Class 3/Mathematics/fraction-class-3.unity
     guid: ea085e2192948704cb64ec9c2cccedb5
+  - enabled: 1
+    path: Assets/All Games/Class 4/Mathematics/fraction-class-4.unity
+    guid: c1c5eb05d5577db4ab84ab8735fdb1fd
+  - enabled: 1
+    path: Assets/All Games/Class 5/Mathematics/fraction-class-5.unity
+    guid: eadb9e8c1c0f3ca41a7a05ac1beef7e9
+  - enabled: 1
+    path: Assets/All Games/Class 4/Mathematics/addition-and-subtraction-4.unity
+    guid: b3f8c469cd8d4f24999ab46599ff4cf3
+  - enabled: 1
+    path: Assets/All Games/Class 3/Mathematics/time-and-calendar-3.unity
+    guid: 8fca0659801951d448a0ba1c8c1d4397
+  - enabled: 1
+    path: Assets/All Games/Class 4/Mathematics/time-and-calendar-4.unity
+    guid: 72ac1354e51502c4b8a92e4503d2483c
+  - enabled: 1
+    path: Assets/All Games/Class 5/Mathematics/time-and-calendar-5.unity
+    guid: 72328f0db90e63e47b924fafc32c87c6
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0

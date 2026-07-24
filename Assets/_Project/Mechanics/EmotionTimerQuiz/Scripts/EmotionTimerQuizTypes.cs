@@ -27,11 +27,19 @@ namespace EmotionTimerQuiz
         None,
         Loading,
         ShowingHowToPlay,
+        Tutorial,
         Playing,
         AnswerLocked,
         Timeout,
         Paused,
         Result
+    }
+
+    public enum HowToPlayDisplayMode
+    {
+        FirstTimeAutomatically,
+        EveryGameStartAutomatically,
+        ManualButtonOnly
     }
 
     [Serializable]

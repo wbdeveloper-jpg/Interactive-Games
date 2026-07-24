@@ -8,6 +8,7 @@ public class SentenceWordSearchInputController : MonoBehaviour
     public SentenceWordSearchManager manager;
     public SentenceWordSearchBoard board;
     public Canvas targetCanvas;
+    public SentenceWordSearchFirstTimeTutorial tutorialController;
 
     [Header("Input")]
     public bool inputEnabled = true;
@@ -38,11 +39,17 @@ public class SentenceWordSearchInputController : MonoBehaviour
 
         if (targetCanvas == null)
             targetCanvas = FindObjectOfType<Canvas>();
+
+        if (tutorialController == null)
+            tutorialController = FindObjectOfType<SentenceWordSearchFirstTimeTutorial>();
     }
 
     private void Update()
     {
-        if (!inputEnabled || manager == null || board == null || !manager.CanAcceptInput)
+        bool normalInputAllowed = manager != null && manager.CanAcceptInput;
+        bool tutorialInputAllowed = tutorialController != null && tutorialController.CanAcceptPracticeInput;
+
+        if (!inputEnabled || board == null || (!normalInputAllowed && !tutorialInputAllowed))
         {
             if (dragging)
                 CancelDrag();
@@ -105,6 +112,9 @@ public class SentenceWordSearchInputController : MonoBehaviour
 
         currentPath = new List<SentenceWordSearchCell> { cell };
         board.SetPreviewPath(currentPath);
+
+        if (tutorialController != null && tutorialController.CanAcceptPracticeInput)
+            tutorialController.NotifyPracticeDragStarted();
     }
 
     private void UpdateDrag(Vector2 screenPosition)
@@ -125,6 +135,9 @@ public class SentenceWordSearchInputController : MonoBehaviour
         currentCell = hoverCell;
         currentPath = path;
         board.SetPreviewPath(currentPath);
+
+        if (tutorialController != null && tutorialController.CanAcceptPracticeInput)
+            tutorialController.NotifyPracticeDragMoved();
     }
 
     private void EndDrag()
@@ -140,7 +153,10 @@ public class SentenceWordSearchInputController : MonoBehaviour
         string selectedWord = board.GetWordFromPath(currentPath);
         List<SentenceWordSearchCell> submittedPath = new List<SentenceWordSearchCell>(currentPath);
 
-        manager.SubmitSelectedWord(selectedWord, submittedPath);
+        if (tutorialController != null && tutorialController.CanAcceptPracticeInput)
+            tutorialController.SubmitPracticeSelection(selectedWord, submittedPath);
+        else if (manager != null)
+            manager.SubmitSelectedWord(selectedWord, submittedPath);
     }
 
     private void CancelDrag()

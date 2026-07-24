@@ -359,6 +359,11 @@ namespace ClockLearningGame
         [SerializeField] private bool sendAndroidMediatorMessage = true;
         [SerializeField] private bool sendGameLoaderJsEvent = true;
 
+        [Header("Exit Confirmation")]
+        [SerializeField] private bool confirmUnfinishedExit = true;
+        [SerializeField] private ClockLearningConfirmationDialog confirmationDialog;
+        [SerializeField] private string unfinishedExitConfirmMessage = "Leave this game?\nYour game is not finished yet.";
+
         [Header("Events")]
         [SerializeField] private UnityEvent onHomePressed;
 
@@ -799,6 +804,18 @@ namespace ClockLearningGame
             if (!TryConsumeButtonPress()) return;
 
             audioManager?.PlayClick();
+            if (confirmUnfinishedExit && confirmationDialog != null)
+            {
+                confirmationDialog.Show(
+                    unfinishedExitConfirmMessage,
+                    ExitGameUnfinishedNoDebounce,
+                    null,
+                    "Leave game?",
+                    "Leave",
+                    "Stay");
+                return;
+            }
+
             ExitToHome(unfinishedMessage);
         }
 

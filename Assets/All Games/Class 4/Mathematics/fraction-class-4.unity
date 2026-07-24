@@ -11206,11 +11206,11 @@ MonoBehaviour:
     distractorStockMin: 1
     distractorStockMax: 4
   questionMode: 3
-  directDifficulty: 0
-  additionDifficulty: 0
-  subtractionDifficulty: 2
-  hardMixedNumberChance: 0.1
-  rounds: 10
+  directDifficulty: 1
+  additionDifficulty: 1
+  subtractionDifficulty: 1
+  hardMixedNumberChance: 0.05
+  rounds: 5
   minPortionCount: 4
   maxPortionCount: 12
   minRequestsPerQuestion: 1
@@ -11221,12 +11221,12 @@ MonoBehaviour:
   mixedMode:
     includeDirect: 1
     includeAddition: 1
-    includeSubtraction: 1
+    includeSubtraction: 0
     directWeight: 4
     additionWeight: 3
     subtractionWeight: 3
   maxGenerationAttemptsPerQuestion: 300
-  allowImpossibleOrders: 1
+  allowImpossibleOrders: 0
   impossibleOrderChance: 0.2
   solvableExtraStockMin: 0
   solvableExtraStockMax: 2

@@ -61,6 +61,86 @@ public class SentenceWordSearchBoard : MonoBehaviour
         SpawnCells(cellFont);
     }
 
+    /// <summary>
+    /// Builds a deterministic, tutorial-only board. The manager rebuilds the real
+    /// question board after practice, so none of these cells affect a real round.
+    /// </summary>
+    public bool BuildPracticeBoard(
+        int practiceRows,
+        int practiceColumns,
+        List<string> words,
+        List<Vector2Int> starts,
+        List<Vector2Int> directions,
+        TMP_FontAsset cellFont)
+    {
+        if (gridParent == null)
+            gridParent = transform as RectTransform;
+
+        if (gridLayout == null && gridParent != null)
+            gridLayout = gridParent.GetComponent<GridLayoutGroup>();
+
+        if (gridLayout == null && gridParent != null)
+            gridLayout = gridParent.gameObject.AddComponent<GridLayoutGroup>();
+
+        if (cellPrefab == null)
+        {
+            Debug.LogError("SentenceWordSearchBoard is missing Cell Prefab.");
+            return false;
+        }
+
+        int longestWord = 2;
+
+        if (words != null)
+        {
+            for (int i = 0; i < words.Count; i++)
+                longestWord = Mathf.Max(longestWord, SentenceWordSearchManager.CleanWordStatic(words[i]).Length);
+        }
+
+        rows = Mathf.Max(4, practiceRows);
+        columns = Mathf.Max(4, practiceColumns, longestWord + 2);
+
+        ClearBoard();
+        ConfigureGridLayout();
+
+        letters = new char[rows, columns];
+        placedWords.Clear();
+
+        bool allPlaced = true;
+
+        if (words != null)
+        {
+            for (int i = 0; i < words.Count; i++)
+            {
+                string word = SentenceWordSearchManager.CleanWordStatic(words[i]);
+
+                if (string.IsNullOrEmpty(word))
+                    continue;
+
+                Vector2Int start = starts != null && i < starts.Count ? starts[i] : new Vector2Int(1 + i * 2, 1);
+                Vector2Int direction = directions != null && i < directions.Count ? directions[i] : Vector2Int.right;
+
+                if (!IsStraightDirection(direction))
+                    direction = Vector2Int.right;
+
+                bool placed = TryPlaceWordAt(word, start.x, start.y, direction);
+
+                if (!placed)
+                    placed = TryPlacePracticeWordFallback(word);
+
+                if (!placed)
+                {
+                    allPlaced = false;
+                    Debug.LogError($"Tutorial practice word '{word}' could not be placed.");
+                }
+            }
+        }
+
+        FillEmptyCells();
+        SpawnCells(cellFont);
+        Canvas.ForceUpdateCanvases();
+        return allPlaced;
+    }
+
     public void ConfigureGridLayout()
     {
         if (gridParent == null || gridLayout == null)
@@ -187,6 +267,25 @@ public class SentenceWordSearchBoard : MonoBehaviour
         }
 
         return builder.ToString();
+    }
+
+    public List<SentenceWordSearchCell> GetPlacedWordPath(string cleanWord)
+    {
+        cleanWord = SentenceWordSearchManager.CleanWordStatic(cleanWord);
+        List<SentenceWordSearchCell> result = new List<SentenceWordSearchCell>();
+
+        if (cells == null || !placedWords.TryGetValue(cleanWord, out SentenceWordSearchPlacedWord placed))
+            return result;
+
+        for (int i = 0; i < placed.cells.Count; i++)
+        {
+            Vector2Int pos = placed.cells[i];
+
+            if (IsInside(pos.x, pos.y) && cells[pos.x, pos.y] != null)
+                result.Add(cells[pos.x, pos.y]);
+        }
+
+        return result;
     }
 
     public Vector2 GetPathCenterScreenPosition(List<SentenceWordSearchCell> path, Camera eventCamera)
@@ -321,6 +420,49 @@ public class SentenceWordSearchBoard : MonoBehaviour
         }
 
         return false;
+    }
+
+    private bool TryPlaceWordAt(string word, int startRow, int startCol, Vector2Int direction)
+    {
+        if (!CanPlaceWord(word, startRow, startCol, direction))
+            return false;
+
+        PlaceWord(word, startRow, startCol, direction);
+        return true;
+    }
+
+    private bool TryPlacePracticeWordFallback(string word)
+    {
+        Vector2Int[] preferredDirections =
+        {
+            Vector2Int.right,
+            Vector2Int.down,
+            new Vector2Int(1, 1)
+        };
+
+        for (int d = 0; d < preferredDirections.Length; d++)
+        {
+            for (int r = 0; r < rows; r++)
+            {
+                for (int c = 0; c < columns; c++)
+                {
+                    if (TryPlaceWordAt(word, r, c, preferredDirections[d]))
+                        return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private bool IsStraightDirection(Vector2Int direction)
+    {
+        if (direction == Vector2Int.zero)
+            return false;
+
+        int row = Mathf.Abs(direction.x);
+        int column = Mathf.Abs(direction.y);
+        return row <= 1 && column <= 1 && (row == 0 || column == 0 || row == column);
     }
 
     private bool CanPlaceWord(string word, int startRow, int startCol, Vector2Int dir)

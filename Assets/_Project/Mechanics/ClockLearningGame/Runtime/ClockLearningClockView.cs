@@ -37,6 +37,7 @@ namespace ClockLearningGame
         [SerializeField] private RectTransform ticksRoot;
         [SerializeField] private RectTransform hourHand;
         [SerializeField] private RectTransform minuteHand;
+        [SerializeField] private RectTransform centerDot;
         [SerializeField] private TextMeshProUGUI timeLabel;
 
         [Header("Clock Behavior")]
@@ -592,9 +593,8 @@ namespace ClockLearningGame
 
             minuteHand = CreateHand("Minute Hand", _rectTransform, minuteHandColor, minuteHandWidth, minuteHandHeight, 28f);
             hourHand = CreateHand("Hour Hand", _rectTransform, hourHandColor, hourHandWidth, hourHandHeight, 26f);
-            ApplyHandRenderOrder();
 
-            RectTransform centerDot = CreateRect("Center Dot", _rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero);
+            centerDot = CreateRect("Center Dot", _rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero);
             centerDot.sizeDelta = new Vector2(34f, 34f);
             Image centerImage = centerDot.gameObject.AddComponent<Image>();
             centerImage.color = numberColor;
@@ -608,6 +608,7 @@ namespace ClockLearningGame
             timeLabel.raycastTarget = false;
             timeLabel.gameObject.SetActive(showDebugTimeLabel);
 
+            ApplyHandRenderOrder();
             UpdateStaticMarks();
             UpdateHands(false, ClockLearningHandType.None);
         }
@@ -617,9 +618,15 @@ namespace ClockLearningGame
             if (hourHand == null || minuteHand == null) return;
             if (hourHand.parent != minuteHand.parent) return;
 
-            // UI renders later siblings on top. Keep the short hour hand above the long minute hand
-            // so it remains visible during tutorial and normal play.
+            // UI renders later siblings on top. Keep this order:
+            // minute hand below, short hour hand above it, centre dot on very top.
+            minuteHand.SetAsLastSibling();
             hourHand.SetAsLastSibling();
+
+            if (centerDot != null && centerDot.parent == hourHand.parent)
+            {
+                centerDot.SetAsLastSibling();
+            }
         }
 
         private RectTransform CreateHand(string objectName, RectTransform parent, Color color, float width, float length, float arrowFontSize)

@@ -3,7 +3,15 @@ using System.Collections.Generic;
 using DG.Tweening;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+
+public enum SentenceWordSearchHowToPlayMode
+{
+    FirstTimeAutomatically,
+    EveryGameStartAutomatically,
+    ManualButtonOnly
+}
 
 [DisallowMultipleComponent]
 public class SentenceWordSearchUI : MonoBehaviour
@@ -45,6 +53,10 @@ public class SentenceWordSearchUI : MonoBehaviour
     [Tooltip("Optional. Assign the Continue button in Result Panel here. It opens Bloom post-game reward screen.")]
     public Button resultContinueButton;
 
+    [Header("How To Play Behaviour")]
+    [Tooltip("The How To Play button continues to work in every mode.")]
+    public SentenceWordSearchHowToPlayMode howToPlayMode = SentenceWordSearchHowToPlayMode.FirstTimeAutomatically;
+
     [Header("Animation Targets")]
     public RectTransform overlayRoot;
     public RectTransform sentenceAnswerTarget;
@@ -66,6 +78,9 @@ public class SentenceWordSearchUI : MonoBehaviour
     public bool IsHowToPlayOpen => howToPlayPanel != null && howToPlayPanel.activeInHierarchy;
     public bool IsPauseOpen => pausePanel != null && pausePanel.activeInHierarchy;
     public bool IsGameplayBlockingPanelOpen => IsResultOpen || IsHowToPlayOpen || IsPauseOpen;
+
+    private string HowToPlaySeenKey =>
+        $"SentenceWordSearch.HowToPlay.Seen.{SceneManager.GetActiveScene().name}";
 
     private void Awake()
     {
@@ -314,6 +329,34 @@ public class SentenceWordSearchUI : MonoBehaviour
     {
         if (howToPlayPanel != null)
             howToPlayPanel.SetActive(false);
+    }
+
+    public bool ShouldShowHowToPlayAutomatically()
+    {
+        switch (howToPlayMode)
+        {
+            case SentenceWordSearchHowToPlayMode.EveryGameStartAutomatically:
+                return true;
+
+            case SentenceWordSearchHowToPlayMode.ManualButtonOnly:
+                return false;
+
+            default:
+                return PlayerPrefs.GetInt(HowToPlaySeenKey, 0) == 0;
+        }
+    }
+
+    public void MarkHowToPlaySeen()
+    {
+        PlayerPrefs.SetInt(HowToPlaySeenKey, 1);
+        PlayerPrefs.Save();
+    }
+
+    [ContextMenu("Reset How To Play Seen For This Scene")]
+    public void ResetHowToPlaySeenForThisScene()
+    {
+        PlayerPrefs.DeleteKey(HowToPlaySeenKey);
+        PlayerPrefs.Save();
     }
 
     public void ShowPause()
