@@ -875,11 +875,15 @@ MonoBehaviour:
   minItems: 3
   maxItems: 4
   challengeMode: 2
-  expressionMode: 3
+  expressionMode: 6
   minResultValue: 1
   maxResultValue: 150
   maxOperandValue: 99
   avoidDuplicateAnswers: 1
+  maximumTableNumber: 12
+  maximumTableMultiplier: 10
+  multiplicationSymbol: "\xD7"
+  divisionSymbol: "\xF7"
 --- !u!114 &38827345
 MonoBehaviour:
   m_ObjectHideFlags: 0

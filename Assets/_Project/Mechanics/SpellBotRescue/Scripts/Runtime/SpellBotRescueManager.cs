@@ -35,6 +35,13 @@ namespace NarayanaGames.SpellBotRescue
         Paused
     }
 
+    public enum SpellBotHowToPlayMode
+    {
+        FirstTimeAutomatically,
+        EveryGameStartAutomatically,
+        ManualButtonOnly
+    }
+
     public class SpellBotRescueManager : MonoBehaviour, IGameSceneCallbacks, IGameAudioCallbacks
     {
         [Header("Data")]
@@ -142,6 +149,7 @@ namespace NarayanaGames.SpellBotRescue
         public SpellBotKeyboardView keyboardView;
         public SpellBotUIFeedback feedback;
         public SpellBotRobotView robotView;
+        public SpellBotFirstTimeTutorialController firstTimeTutorial;
 
         [Header("Audio")]
         public AudioSource audioSource;
@@ -151,6 +159,11 @@ namespace NarayanaGames.SpellBotRescue
 
         [Header("Start Behaviour")]
         public bool showHomePageOnStart = true;
+        public SpellBotHowToPlayMode howToPlayMode = SpellBotHowToPlayMode.FirstTimeAutomatically;
+        [Tooltip("Separate, scene-based key used only by the How to Play panel.")]
+        public string howToPlayPlayerPrefsPrefix = "SpellBotRescue.HowToPlay.Viewed";
+
+        [Header("Legacy Start Behaviour (kept for existing Inspector data)")]
         public bool showHowToPlayOnStart = false;
         [Tooltip("When true, Home Start opens How To Play first. The HTP Start button then begins the real gameplay.")]
         public bool showHowToPlayBeforeFirstRound = true;
@@ -189,6 +202,9 @@ namespace NarayanaGames.SpellBotRescue
         private Coroutine validationRoutine;
         private bool suppressInputFieldEvent;
         private int lastCaretVisibilityRefreshFrame = -1;
+        private bool openingSequenceInProgress;
+        private bool howToPlayOpenedForStartSequence;
+        private bool tutorialInputActive;
 
         private void Awake()
         {
@@ -244,15 +260,9 @@ namespace NarayanaGames.SpellBotRescue
                 return;
             }
 
-            if (showHowToPlayOnStart && howToPlayPanel != null)
-            {
-                OpenHowToPlayPanel();
-                return;
-            }
-
             if (autoStartIfNoHomeOrHowToPlayPanel)
             {
-                BeginGame();
+                BeginOpeningSequence();
             }
         }
 
@@ -311,18 +321,13 @@ namespace NarayanaGames.SpellBotRescue
 
         public void StartGameFromHome()
         {
-            if (showHowToPlayBeforeFirstRound && howToPlayPanel != null)
-            {
-                OpenHowToPlayPanel();
-                return;
-            }
-
-            BeginGame();
+            BeginOpeningSequence();
         }
 
         public void OpenHowToPlayPanel()
         {
             stateBeforeHowToPlay = CurrentState;
+            ResetHowToPlayPagerIfNeeded();
             SetInputLocked(true);
             SetPanel(homePagePanel, false);
             SetPanel(pausePanel, false);
@@ -353,7 +358,15 @@ namespace NarayanaGames.SpellBotRescue
 
         public void CloseHowToPlayPanel()
         {
+            MarkHowToPlayViewedForCurrentScene();
             SetPanel(howToPlayPanel, false);
+
+            if (howToPlayOpenedForStartSequence)
+            {
+                howToPlayOpenedForStartSequence = false;
+                ContinueOpeningSequence();
+                return;
+            }
 
             if (!sessionStarted)
             {
@@ -377,7 +390,190 @@ namespace NarayanaGames.SpellBotRescue
 
         public void StartGameFromHowToPlay()
         {
+            MarkHowToPlayViewedForCurrentScene();
+            SetPanel(howToPlayPanel, false);
+
+            if (sessionStarted)
+            {
+                CurrentState = stateBeforeHowToPlay == SpellBotGameState.Paused ? SpellBotGameState.Paused : stateBeforeHowToPlay;
+                SetInputLocked(CurrentState != SpellBotGameState.Editing);
+
+                if (CurrentState == SpellBotGameState.Paused)
+                {
+                    SetPanel(pausePanel, true);
+                }
+                else if (CurrentState == SpellBotGameState.Editing)
+                {
+                    RefocusWordInputField();
+                }
+
+                return;
+            }
+
+            howToPlayOpenedForStartSequence = false;
+            openingSequenceInProgress = true;
+            ContinueOpeningSequence();
+        }
+
+        public void BeginOpeningSequence()
+        {
+            if (openingSequenceInProgress || tutorialInputActive)
+            {
+                return;
+            }
+
+            openingSequenceInProgress = true;
+            Time.timeScale = 1f;
+            SetPanel(homePagePanel, false);
+            SetPanel(pausePanel, false);
+            SetPanel(resultPanel, false);
+
+            if (ShouldShowHowToPlayAutomatically() && howToPlayPanel != null)
+            {
+                howToPlayOpenedForStartSequence = true;
+                OpenHowToPlayPanel();
+                return;
+            }
+
+            ContinueOpeningSequence();
+        }
+
+        private void ContinueOpeningSequence()
+        {
+            SetPanel(howToPlayPanel, false);
+
+            if (firstTimeTutorial != null && firstTimeTutorial.ShouldPlayForCurrentScene())
+            {
+                firstTimeTutorial.BeginTutorial(this, HandleFirstTimeTutorialCompleted);
+                return;
+            }
+
+            HandleFirstTimeTutorialCompleted();
+        }
+
+        private void HandleFirstTimeTutorialCompleted()
+        {
+            openingSequenceInProgress = false;
+            howToPlayOpenedForStartSequence = false;
             BeginGame();
+        }
+
+        private bool ShouldShowHowToPlayAutomatically()
+        {
+            switch (howToPlayMode)
+            {
+                case SpellBotHowToPlayMode.EveryGameStartAutomatically:
+                    return true;
+                case SpellBotHowToPlayMode.FirstTimeAutomatically:
+                    return PlayerPrefs.GetInt(GetHowToPlayPlayerPrefsKey(), 0) == 0;
+                default:
+                    return false;
+            }
+        }
+
+        private string GetHowToPlayPlayerPrefsKey()
+        {
+            string sceneName = SceneManager.GetActiveScene().name;
+            return howToPlayPlayerPrefsPrefix + "." + sceneName;
+        }
+
+        private void MarkHowToPlayViewedForCurrentScene()
+        {
+            PlayerPrefs.SetInt(GetHowToPlayPlayerPrefsKey(), 1);
+            PlayerPrefs.Save();
+        }
+
+        [ContextMenu("SpellBot/Reset How To Play For Current Scene")]
+        public void ResetHowToPlayForCurrentScene()
+        {
+            PlayerPrefs.DeleteKey(GetHowToPlayPlayerPrefsKey());
+            PlayerPrefs.Save();
+        }
+
+        public void EnterFirstTimeTutorialMode(SpellBotFirstTimeTutorialController tutorial)
+        {
+            firstTimeTutorial = tutorial;
+            tutorialInputActive = true;
+            Time.timeScale = 1f;
+            CurrentState = SpellBotGameState.Editing;
+            inputLocked = false;
+            currentEntry = null;
+
+            SetPanel(homePagePanel, false);
+            SetPanel(howToPlayPanel, false);
+            SetPanel(pausePanel, false);
+            SetPanel(resultPanel, false);
+
+            if (feedback != null)
+            {
+                feedback.HideHintInstant();
+            }
+
+            if (keyboardView != null)
+            {
+                keyboardView.SetInputLocked(false);
+                keyboardView.SetFixedReady(false);
+            }
+
+            SetInputFieldInteractable(true);
+            UpdateHintAnswerUI();
+        }
+
+        public void ExitFirstTimeTutorialMode(SpellBotFirstTimeTutorialController tutorial)
+        {
+            if (firstTimeTutorial != tutorial)
+            {
+                return;
+            }
+
+            tutorialInputActive = false;
+            CurrentState = SpellBotGameState.Boot;
+            SetInputLocked(true);
+
+            if (keyboardView != null)
+            {
+                keyboardView.SetFixedReady(false);
+            }
+        }
+
+        public void SetTutorialWordDisplay(string text, int caretPosition, bool showCaret)
+        {
+            currentText = SanitizeWord(text);
+            cursorIndex = Mathf.Clamp(caretPosition, 0, currentText.Length);
+            cursorVisible = true;
+            cursorTimer = 0f;
+            SetWordTextColor(editingWordColor);
+            PushCurrentTextToUI(showCaret);
+        }
+
+        public bool TryGetTutorialCaretWorldPosition(int targetIndex, out Vector3 worldPosition)
+        {
+            worldPosition = Vector3.zero;
+
+            if (wordText == null)
+            {
+                return false;
+            }
+
+            int previousIndex = cursorIndex;
+            cursorIndex = Mathf.Clamp(targetIndex, 0, currentText != null ? currentText.Length : 0);
+            wordText.ForceMeshUpdate();
+
+            bool found = TryGetCaretLocalPosition(out Vector2 localPosition, out _);
+            cursorIndex = previousIndex;
+
+            if (!found)
+            {
+                return false;
+            }
+
+            worldPosition = wordText.rectTransform.TransformPoint(new Vector3(localPosition.x, localPosition.y, 0f));
+            return true;
+        }
+
+        public void PlayTutorialKeyPressSound()
+        {
+            PlayClip(keyPressClip, 0.65f);
         }
 
         public void ContinueFromResult()
@@ -393,6 +589,9 @@ namespace NarayanaGames.SpellBotRescue
         public void BeginGame()
         {
             Time.timeScale = 1f;
+            tutorialInputActive = false;
+            openingSequenceInProgress = false;
+            howToPlayOpenedForStartSequence = false;
             SetPanel(homePagePanel, false);
             SetPanel(howToPlayPanel, false);
             SetPanel(pausePanel, false);
@@ -436,11 +635,19 @@ namespace NarayanaGames.SpellBotRescue
                 validationRoutine = null;
             }
 
-            BeginGame();
+            sessionStarted = false;
+            openingSequenceInProgress = false;
+            howToPlayOpenedForStartSequence = false;
+            BeginOpeningSequence();
         }
 
         public void PauseGame()
         {
+            if (tutorialInputActive)
+            {
+                return;
+            }
+
             if (CurrentState == SpellBotGameState.Paused || CurrentState == SpellBotGameState.Result)
             {
                 return;
@@ -479,12 +686,25 @@ namespace NarayanaGames.SpellBotRescue
 
         public void MoveCaretFromScreenPoint(Vector2 screenPosition, Camera eventCamera)
         {
-            if (!CanEdit() || wordText == null)
+            if (wordText == null)
             {
                 return;
             }
 
-            cursorIndex = CalculateCaretIndexFromScreenPoint(screenPosition, eventCamera);
+            int requestedIndex = CalculateCaretIndexFromScreenPoint(screenPosition, eventCamera);
+
+            if (tutorialInputActive && firstTimeTutorial != null)
+            {
+                firstTimeTutorial.HandleCaretInput(requestedIndex);
+                return;
+            }
+
+            if (!CanEdit())
+            {
+                return;
+            }
+
+            cursorIndex = requestedIndex;
             cursorVisible = true;
             cursorTimer = 0f;
             RefreshWordDisplay(true);
@@ -492,6 +712,12 @@ namespace NarayanaGames.SpellBotRescue
 
         public void OnHintButtonClicked()
         {
+            if (tutorialInputActive && firstTimeTutorial != null)
+            {
+                firstTimeTutorial.HandleHintInput();
+                return;
+            }
+
             if (!CanEdit() || currentEntry == null)
             {
                 return;
@@ -502,6 +728,11 @@ namespace NarayanaGames.SpellBotRescue
 
         public void OnShowAnswerButtonClicked()
         {
+            if (tutorialInputActive)
+            {
+                return;
+            }
+
             if (!CanEdit() || currentEntry == null || !hintUsedThisRound || !allowShowAnswerAfterHint || answerShownThisRound)
             {
                 return;
@@ -531,6 +762,12 @@ namespace NarayanaGames.SpellBotRescue
 
         public void OnKeyboardLetter(string letter)
         {
+            if (tutorialInputActive && firstTimeTutorial != null)
+            {
+                firstTimeTutorial.HandleLetterInput(letter);
+                return;
+            }
+
             if (!CanEdit() || string.IsNullOrWhiteSpace(letter))
             {
                 return;
@@ -552,6 +789,12 @@ namespace NarayanaGames.SpellBotRescue
 
         public void OnKeyboardBackspace()
         {
+            if (tutorialInputActive && firstTimeTutorial != null)
+            {
+                firstTimeTutorial.HandleBackspaceInput();
+                return;
+            }
+
             if (!CanEdit() || cursorIndex <= 0 || currentText.Length == 0)
             {
                 return;
@@ -566,6 +809,12 @@ namespace NarayanaGames.SpellBotRescue
 
         public void OnKeyboardDeleteForward()
         {
+            if (tutorialInputActive && firstTimeTutorial != null)
+            {
+                firstTimeTutorial.HandleDeleteForwardInput();
+                return;
+            }
+
             if (!CanEdit() || cursorIndex < 0 || cursorIndex >= currentText.Length)
             {
                 return;
@@ -599,6 +848,12 @@ namespace NarayanaGames.SpellBotRescue
 
         public void MoveCaretToIndex(int targetIndex)
         {
+            if (tutorialInputActive && firstTimeTutorial != null)
+            {
+                firstTimeTutorial.HandleCaretInput(targetIndex);
+                return;
+            }
+
             if (!CanEdit())
             {
                 return;
@@ -613,6 +868,12 @@ namespace NarayanaGames.SpellBotRescue
 
         public void OnKeyboardClear()
         {
+            if (tutorialInputActive && firstTimeTutorial != null)
+            {
+                firstTimeTutorial.HandleClearInput();
+                return;
+            }
+
             if (!CanEdit())
             {
                 return;
@@ -634,6 +895,12 @@ namespace NarayanaGames.SpellBotRescue
 
         public void OnKeyboardFixed()
         {
+            if (tutorialInputActive && firstTimeTutorial != null)
+            {
+                firstTimeTutorial.HandleFixedInput();
+                return;
+            }
+
             if (inputLocked || CurrentState != SpellBotGameState.Editing)
             {
                 return;
@@ -1184,6 +1451,12 @@ namespace NarayanaGames.SpellBotRescue
         {
             if (suppressInputFieldEvent || !CanEdit())
             {
+                return;
+            }
+
+            if (tutorialInputActive)
+            {
+                PushCurrentTextToUI(true);
                 return;
             }
 

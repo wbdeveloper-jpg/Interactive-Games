@@ -1143,5 +1143,6 @@ namespace ImageChoiceRevealGame
                 this.isCorrect = isCorrect;
             }
         }
+
     }
 }

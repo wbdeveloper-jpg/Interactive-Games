@@ -3451,7 +3451,7 @@ MonoBehaviour:
   roundMode: 1
   wordDatabase: {fileID: 11400000, guid: 14c347c25e2febd41b91540947ddb386, type: 2}
   questionDatabase: {fileID: 11400000, guid: 5db82466b2db4b5498adfcd2bfff59c1, type: 2}
-  backupHint: Unscramble the Word.
+  backupHint: Unscramble the Number.
   roundsPerGame: 5
   allowRepeatedWords: 0
   autoStartOnPlay: 0
@@ -8095,7 +8095,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Unscramble the word
+  m_text: Unscramble the Number
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}

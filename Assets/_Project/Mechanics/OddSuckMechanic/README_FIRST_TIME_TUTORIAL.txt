@@ -9,6 +9,9 @@ Runtime/OddSuckManager.cs
 Runtime/OddSuckFirstTimeTutorialController.cs
     New mode-aware tutorial controller.
 
+Runtime/OddSuckMathQuestionGenerator.cs
+    Updated math generator with multiplication and exact whole-number division.
+
 Editor/OddSuckFirstTimeTutorialInstaller.cs
     New additive toolbar installer.
 
@@ -126,3 +129,30 @@ The implementation uses the packages already referenced by the project:
 - Unity UI
 
 No new third-party package is added.
+
+
+MATH OPERATION SETUP
+--------------------
+Select the GameObject containing OddSuckMathQuestionGenerator.
+
+Expression Mode now provides:
+
+Direct Number
+Addition
+Subtraction
+Multiplication
+Division
+Addition And Subtraction
+Multiplication And Division
+Mixed
+
+Set Maximum Table Number to the highest table children know, such as 12, 15,
+or 20. The first multiplication number stays within that limit, while Maximum
+Table Multiplier defaults to 10. For example, a limit of 20 generates tables
+from 1×1 through 20×10, never 11×11 or 20×12.
+
+Division is generated from the same table facts. Its divisor and answer remain
+within the selected table rules: the divisor is at most Maximum Table Number
+and the answer is at most Maximum Table Multiplier. It always produces exact
+whole-number answers without remainders. The multiplication and division
+symbols are also replaceable for fonts that do not contain × or ÷.

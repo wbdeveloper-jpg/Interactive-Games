@@ -12199,7 +12199,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 0, y: 10.631574}
+  m_AnchoredPosition: {x: 0, y: 10.631561}
   m_SizeDelta: {x: 48, y: 42}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &731805582
@@ -21107,7 +21107,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 0, y: 6.847984}
+  m_AnchoredPosition: {x: 0, y: 6.8479767}
   m_SizeDelta: {x: 48, y: 42}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1214587073
@@ -22608,8 +22608,8 @@ Canvas:
   m_GameObject: {fileID: 1322755972}
   m_Enabled: 1
   serializedVersion: 3
-  m_RenderMode: 0
-  m_Camera: {fileID: 0}
+  m_RenderMode: 1
+  m_Camera: {fileID: 1339183098}
   m_PlaneDistance: 100
   m_PixelPerfect: 0
   m_ReceivesEvents: 1
@@ -32827,10 +32827,10 @@ MonoBehaviour:
   audioSource: {fileID: 0}
   clickClip: {fileID: 8300000, guid: 19cedd9d1d36b8f419d3acab22c62b0e, type: 3}
   correctClip: {fileID: 8300000, guid: d62d606a6df7cdc419911b097d5ead3f, type: 3}
-  closeClip: {fileID: 0}
+  closeClip: {fileID: 8300000, guid: 19cedd9d1d36b8f419d3acab22c62b0e, type: 3}
   wrongClip: {fileID: 8300000, guid: 0e1a22bca71ced443b5a921432a8c712, type: 3}
   hintClip: {fileID: 8300000, guid: dd646e64272cd4645b50dbcc8302013a, type: 3}
-  hintAttentionClip: {fileID: 0}
+  hintAttentionClip: {fileID: 8300000, guid: ed06b18f2c2683e40b2a35eebf8ab876, type: 3}
   volume: 1
   backgroundMusicSource: {fileID: 0}
   backgroundMusicClip: {fileID: 8300000, guid: 8b26f00eb05769547919f08de1a05436, type: 3}

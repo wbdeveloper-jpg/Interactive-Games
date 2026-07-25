@@ -857,7 +857,7 @@ MonoBehaviour:
   noAlignedTapCostsHealth: 0
   noAlignedHealthLoss: 1
   autoStartOnPlay: 1
-  howToDisplayMode: 0
+  howToDisplayMode: 2
   firstTimeTutorial: {fileID: 562393568}
   useWaveTimer: 1
   startingWaveTime: 30
@@ -947,8 +947,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::OddSuckMechanic.OddSuckMathQuestionGenerator
   generatorName: Question Generator
   selectionWeight: 1
-  minItems: 4
-  maxItems: 6
+  minItems: 3
+  maxItems: 5
   challengeMode: 2
   expressionMode: 7
   minResultValue: 15
@@ -3917,30 +3917,30 @@ MonoBehaviour:
   centerTextItemTemplate: {fileID: 955626821}
   rightTextItemTemplate: {fileID: 1705045406}
   imageItemTemplate: {fileID: 577888041}
-  contentMode: 0
+  contentMode: 1
   mixedModeFallback: 1
   guidedPractice:
-    question: Find the one that is different
+    question: Pick the Odd Number
     options:
-    - text: Apple
+    - text: "7 \xD7 2"
       image: {fileID: 0}
       isCorrect: 0
-    - text: Apple
+    - text: "48 \xF7 6"
       image: {fileID: 0}
       isCorrect: 0
-    - text: Car
+    - text: "9 \xD7 5"
       image: {fileID: 0}
       isCorrect: 1
   independentPractice:
-    question: Find the different one
+    question: Pick the Even answer
     options:
-    - text: Dog
+    - text: "3 \xD7 5"
       image: {fileID: 0}
       isCorrect: 0
-    - text: Bird
+    - text: "42 \xF7 7"
       image: {fileID: 0}
       isCorrect: 1
-    - text: Dog
+    - text: "7 \xD7 5"
       image: {fileID: 0}
       isCorrect: 0
   questionFocusInstruction: Look at the question.
@@ -4226,6 +4226,7 @@ GameObject:
   - component: {fileID: 593088857}
   - component: {fileID: 593088856}
   - component: {fileID: 593088855}
+  - component: {fileID: 593088858}
   m_Layer: 0
   m_Name: TutorialInstructionCard
   m_TagString: Untagged
@@ -4278,7 +4279,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0.5660378, g: 0.5660378, b: 0.5660378, a: 1}
+  m_Color: {r: 0.34509805, g: 0.52156866, b: 0.9921569, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -4303,6 +4304,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 593088853}
   m_CullTransparentMesh: 1
+--- !u!114 &593088858
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 593088853}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e19747de3f5aca642ab2be37e372fb86, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Outline
+  m_EffectColor: {r: 0.6650944, g: 0.7552613, b: 1, a: 1}
+  m_EffectDistance: {x: 3, y: -3}
+  m_UseGraphicAlpha: 1
 --- !u!1 &656125955
 GameObject:
   m_ObjectHideFlags: 0
@@ -10531,12 +10547,12 @@ MonoBehaviour:
   m_spriteAsset: {fileID: 0}
   m_tintAllSprites: 0
   m_StyleSheet: {fileID: 0}
-  m_TextStyleHashCode: 0
+  m_TextStyleHashCode: -1183493901
   m_overrideHtmlColors: 0
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 38
+  m_fontSize: 40
   m_fontSizeBase: 38
   m_fontWeight: 400
   m_enableAutoSizing: 1
