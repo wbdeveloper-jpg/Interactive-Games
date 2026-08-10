@@ -12,6 +12,12 @@ Runtime/OddSuckFirstTimeTutorialController.cs
 Runtime/OddSuckMathQuestionGenerator.cs
     Updated math generator with multiplication and exact whole-number division.
 
+Runtime/OddSuckGeneralQuestionGenerator.cs
+    New direct question-bank generator for limited General Question Only runs.
+
+Runtime/OddSuckQuestionGeneratorBase.cs
+    Existing generator base with the appended General Question Only play mode.
+
 Editor/OddSuckFirstTimeTutorialInstaller.cs
     New additive toolbar installer.
 
@@ -156,3 +162,47 @@ within the selected table rules: the divisor is at most Maximum Table Number
 and the answer is at most Maximum Table Multiplier. It always produces exact
 whole-number answers without remainders. The multiplication and division
 symbols are also replaceable for fonts that do not contain × or ÷.
+
+
+LIMITED GENERAL QUESTION MODE
+-----------------------------
+This mode is additive. Existing Math Only, Sprite Only, English Only, and Mixed
+Random scenes keep their original infinite behaviour.
+
+1. Add OddSuckGeneralQuestionGenerator to the manager GameObject or one of its
+   children.
+
+2. On OddSuckManager, set Play Mode to General Question Only.
+
+3. On OddSuckGeneralQuestionGenerator, set Questions Per Run to 5, 10, or any
+   required positive number.
+
+4. Add entries to Direct Question Bank. Each valid entry needs:
+
+   - Question Text
+   - Text or Sprite Display Mode
+   - At least two usable answers
+   - Exactly one answer marked Is Correct
+
+   Text answers require Answer Text. Sprite answers require Answer Image.
+
+At the beginning of every run, the generator randomly selects the requested
+number of valid questions without replacement. If fewer valid questions exist,
+it uses all available valid questions. The existing manager continues to
+shuffle answer positions before spawning them.
+
+The HUD displays Question current/total. After the prepared questions are
+resolved, the normal result panel opens with the configured completion title.
+Wrong answers and timeouts still count as resolved questions and retain the
+existing health, score, timer, feedback, and result behaviour.
+
+OddSuckManager exposes separate General Question Mode speed settings:
+
+- Increase Speed After Each General Question
+- General Speed Increase Per Question
+- General Maximum Speed Multiplier
+- General Completion Title
+
+The General Question Generator reference is optional because the manager can
+find the component automatically. No scene rebuild or toolbar installation is
+required.

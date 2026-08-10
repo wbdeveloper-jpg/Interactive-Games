@@ -73,6 +73,14 @@ public class OddClawItemView : MonoBehaviour
         IsCorrect = index == correctIndex;
         IsCaught = false;
 
+        bool hasSprite = option != null && option.sprite != null;
+        bool hasText = option != null && !string.IsNullOrWhiteSpace(option.text);
+        bool usesImages = displayMode == OddClawAnswerDisplayMode.Sprite
+            || displayMode == OddClawAnswerDisplayMode.SpriteWithOptionalText;
+        bool showText = displayMode == OddClawAnswerDisplayMode.Text
+            || !hasSprite
+            || (displayMode == OddClawAnswerDisplayMode.SpriteWithOptionalText && hasText);
+
         if (canvasGroup != null)
         {
             canvasGroup.alpha = 1f;
@@ -86,13 +94,13 @@ public class OddClawItemView : MonoBehaviour
         if (answerText != null)
         {
             answerText.font = primaryFont != null ? primaryFont : answerText.font;
-            answerText.gameObject.SetActive(displayMode == OddClawAnswerDisplayMode.Text || option.sprite == null);
+            answerText.gameObject.SetActive(showText);
             answerText.text = option != null ? option.text : string.Empty;
         }
 
         if (answerImage != null)
         {
-            answerImage.gameObject.SetActive(displayMode == OddClawAnswerDisplayMode.Sprite && option != null && option.sprite != null);
+            answerImage.gameObject.SetActive(usesImages && hasSprite);
             answerImage.sprite = option != null ? option.sprite : null;
             answerImage.preserveAspect = true;
         }
@@ -138,16 +146,7 @@ public class OddClawItemView : MonoBehaviour
 
     public void MarkCaught(Transform attachParent, Vector2 localOffset, Vector3 localRotation, float localScale)
     {
-        IsCaught = true;
-
-        if (canvasGroup != null)
-        {
-            canvasGroup.blocksRaycasts = false;
-            canvasGroup.interactable = false;
-        }
-
-        if (backgroundImage != null)
-            backgroundImage.color = caughtColor;
+        PrepareCaughtState();
 
         RectTransform rect = RectTransform;
         if (rect != null)
@@ -164,6 +163,70 @@ public class OddClawItemView : MonoBehaviour
             transform.localEulerAngles = localRotation;
             transform.localScale = Vector3.one * Mathf.Max(0.01f, localScale);
         }
+    }
+
+    public void MarkCaughtAnimated(
+        Transform attachParent,
+        Vector2 localOffset,
+        Vector3 localRotation,
+        float localScale,
+        float duration)
+    {
+        if (attachParent == null)
+            return;
+
+        PrepareCaughtState();
+        float safeDuration = Mathf.Max(0f, duration);
+        RectTransform rect = RectTransform;
+
+        if (rect != null)
+        {
+            rect.DOKill();
+            rect.SetParent(attachParent, true);
+
+            if (safeDuration <= 0f)
+            {
+                rect.anchoredPosition = localOffset;
+                rect.localEulerAngles = localRotation;
+                rect.localScale = Vector3.one * Mathf.Max(0.01f, localScale);
+                return;
+            }
+
+            rect.DOAnchorPos(localOffset, safeDuration).SetEase(Ease.OutCubic);
+            rect.DOLocalRotate(localRotation, safeDuration).SetEase(Ease.OutCubic);
+            rect.DOScale(Vector3.one * Mathf.Max(0.01f, localScale), safeDuration)
+                .SetEase(Ease.OutBack);
+            return;
+        }
+
+        transform.DOKill();
+        transform.SetParent(attachParent, true);
+        if (safeDuration <= 0f)
+        {
+            transform.localPosition = localOffset;
+            transform.localEulerAngles = localRotation;
+            transform.localScale = Vector3.one * Mathf.Max(0.01f, localScale);
+            return;
+        }
+
+        transform.DOLocalMove(localOffset, safeDuration).SetEase(Ease.OutCubic);
+        transform.DOLocalRotate(localRotation, safeDuration).SetEase(Ease.OutCubic);
+        transform.DOScale(Vector3.one * Mathf.Max(0.01f, localScale), safeDuration)
+            .SetEase(Ease.OutBack);
+    }
+
+    private void PrepareCaughtState()
+    {
+        IsCaught = true;
+
+        if (canvasGroup != null)
+        {
+            canvasGroup.blocksRaycasts = false;
+            canvasGroup.interactable = false;
+        }
+
+        if (backgroundImage != null)
+            backgroundImage.color = caughtColor;
     }
 
     public void SetFeedback(bool correct)

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Text;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -43,6 +44,8 @@ public class WordFillGameController : MonoBehaviour, IGameSceneCallbacks, IGameA
     [Tooltip("Scene template object, not prefab asset. Keep it inactive in the scene.")]
     [SerializeField] private LetterTile letterTileTemplate;
     [SerializeField] private Transform letterButtonParent;
+    [SerializeField] private WordFillLetterGridFitter letterGridFitter;
+    [SerializeField] private WordFillLetterDifficulty letterGridDifficulty = WordFillLetterDifficulty.Easy;
 
     [Header("Control Buttons")]
     [SerializeField] private Button backspaceButton;
@@ -125,12 +128,14 @@ public class WordFillGameController : MonoBehaviour, IGameSceneCallbacks, IGameA
     private bool pausedBeforeHowToPlay;
 
     private WordQuestion currentQuestion;
+    private string currentQuestionSentence = string.Empty;
     private Coroutine activeFlowRoutine;
     private Coroutine bloomPreGameRoutine;
 
     private readonly List<string> typedLetters = new List<string>();
     private readonly List<LetterTile> usedTiles = new List<LetterTile>();
     private readonly List<int> usedQuestionIndexes = new List<int>();
+    private readonly List<WordFillAnswerMatch> currentAnswerMatches = new List<WordFillAnswerMatch>();
 
     private void Start()
     {
@@ -189,6 +194,18 @@ public class WordFillGameController : MonoBehaviour, IGameSceneCallbacks, IGameA
 
         if (fontApplier == null)
             fontApplier = FindObjectOfType<WordFillFontApplier>();
+
+        if (letterGridFitter == null && letterButtonParent != null)
+        {
+            letterGridFitter = letterButtonParent.GetComponent<WordFillLetterGridFitter>();
+
+            if (letterGridFitter == null &&
+                letterButtonParent.GetComponent<GridLayoutGroup>() != null)
+            {
+                letterGridFitter =
+                    letterButtonParent.gameObject.AddComponent<WordFillLetterGridFitter>();
+            }
+        }
     }
 
     private void HookButtons()
@@ -276,6 +293,8 @@ public class WordFillGameController : MonoBehaviour, IGameSceneCallbacks, IGameA
         usedQuestionIndexes.Clear();
         typedLetters.Clear();
         usedTiles.Clear();
+        currentAnswerMatches.Clear();
+        currentQuestionSentence = string.Empty;
 
         if (pausePanel != null)
             pausePanel.SetActive(false);
@@ -431,13 +450,38 @@ public class WordFillGameController : MonoBehaviour, IGameSceneCallbacks, IGameA
             return;
         }
 
-        string cleanAnswer = currentQuestion.GetCleanAnswer();
+        List<string> answerWords = currentQuestion.GetAnswerWords();
 
-        if (string.IsNullOrEmpty(cleanAnswer) || cleanAnswer.Length < 2)
+        if (answerWords.Count == 0)
         {
-            Debug.LogError("WordFillGameController: Answer word must contain at least 2 letters.");
+            Debug.LogError("WordFillGameController: Add at least one Answer Word.");
             return;
         }
+
+        for (int i = 0; i < answerWords.Count; i++)
+        {
+            if (answerWords[i].Length < 2)
+            {
+                Debug.LogError(
+                    "WordFillGameController: Every Answer Word must contain at least 2 letters.");
+                return;
+            }
+        }
+
+        string matchedSentence;
+        List<WordFillAnswerMatch> matches;
+
+        if (!currentQuestion.TryGetAnswerMatches(out matchedSentence, out matches))
+        {
+            Debug.LogError(
+                "WordFillGameController: Completed Line Text must contain every Answer Word " +
+                "as an exact standalone word. Words may appear anywhere in the sentence.");
+            return;
+        }
+
+        currentQuestionSentence = matchedSentence;
+        currentAnswerMatches.Clear();
+        currentAnswerMatches.AddRange(matches);
 
         inputLocked = false;
         isInCorrectSequence = false;
@@ -526,10 +570,14 @@ public class WordFillGameController : MonoBehaviour, IGameSceneCallbacks, IGameA
             Destroy(letterButtonParent.GetChild(i).gameObject);
 
         List<char> letters = new List<char>();
-        string missingPart = currentQuestion.GetCleanAnswer().Substring(1);
 
-        for (int i = 0; i < missingPart.Length; i++)
-            letters.Add(missingPart[i]);
+        for (int matchIndex = 0; matchIndex < currentAnswerMatches.Count; matchIndex++)
+        {
+            string sentenceWord = currentAnswerMatches[matchIndex].SentenceWord;
+
+            for (int characterIndex = 1; characterIndex < sentenceWord.Length; characterIndex++)
+                letters.Add(char.ToLowerInvariant(sentenceWord[characterIndex]));
+        }
 
         int extraCount = Mathf.Max(0, currentQuestion.extraLetters);
 
@@ -550,6 +598,9 @@ public class WordFillGameController : MonoBehaviour, IGameSceneCallbacks, IGameA
             if (uiAnimator != null)
                 uiAnimator.AnimateLetterSpawn(tile.RectTransform, i);
         }
+
+        if (letterGridFitter != null)
+            letterGridFitter.FitGrid(letters.Count, letterGridDifficulty);
     }
 
     private void OnLetterClicked(string letter, LetterTile tile)
@@ -569,7 +620,7 @@ public class WordFillGameController : MonoBehaviour, IGameSceneCallbacks, IGameA
 
         UpdateWordText();
 
-        int requiredLetterCount = currentQuestion.GetCleanAnswer().Length - 1;
+        int requiredLetterCount = GetRequiredLetterCount();
 
         if (typedLetters.Count >= requiredLetterCount)
             CheckAnswer();
@@ -579,13 +630,7 @@ public class WordFillGameController : MonoBehaviour, IGameSceneCallbacks, IGameA
     {
         inputLocked = true;
 
-        string cleanAnswer = currentQuestion.GetCleanAnswer();
-        string playerAnswer = cleanAnswer[0].ToString();
-
-        for (int i = 0; i < typedLetters.Count; i++)
-            playerAnswer += typedLetters[i];
-
-        if (playerAnswer == cleanAnswer)
+        if (DoesTypedAnswerMatch())
         {
             if (activeFlowRoutine != null)
                 StopCoroutine(activeFlowRoutine);
@@ -937,27 +982,110 @@ public class WordFillGameController : MonoBehaviour, IGameSceneCallbacks, IGameA
         if (wordText == null || currentQuestion == null)
             return;
 
-        string answer = currentQuestion.GetCleanAnswer();
-
-        if (string.IsNullOrEmpty(answer))
+        if (string.IsNullOrEmpty(currentQuestionSentence) || currentAnswerMatches.Count == 0)
             return;
 
-        string display = "I am " + answer[0];
+        StringBuilder sentenceBuilder = new StringBuilder(
+            currentQuestionSentence.Length + GetRequiredLetterCount());
+        int sentenceReadIndex = 0;
+        int typedLetterIndex = 0;
 
-        int missingCount = answer.Length - 1;
+        for (int i = 0; i < currentAnswerMatches.Count; i++)
+        {
+            WordFillAnswerMatch match = currentAnswerMatches[i];
+
+            sentenceBuilder.Append(
+                currentQuestionSentence,
+                sentenceReadIndex,
+                match.StartIndex - sentenceReadIndex);
+            sentenceBuilder.Append(
+                BuildAnswerProgress(match.SentenceWord, ref typedLetterIndex));
+
+            sentenceReadIndex = match.EndIndex;
+        }
+
+        sentenceBuilder.Append(
+            currentQuestionSentence,
+            sentenceReadIndex,
+            currentQuestionSentence.Length - sentenceReadIndex);
+
+        wordText.text = sentenceBuilder.ToString();
+        wordText.color = normalWordColor;
+    }
+
+    private string BuildAnswerProgress(
+        string answerAsWritten,
+        ref int typedLetterIndex)
+    {
+        if (string.IsNullOrEmpty(answerAsWritten))
+            return string.Empty;
+
+        StringBuilder progressBuilder = new StringBuilder(answerAsWritten.Length * 2);
+        progressBuilder.Append(answerAsWritten[0]);
+
+        int missingCount = answerAsWritten.Length - 1;
 
         for (int i = 0; i < missingCount; i++)
         {
-            display += " ";
+            progressBuilder.Append(' ');
 
-            if (i < typedLetters.Count)
-                display += typedLetters[i];
+            if (typedLetterIndex < typedLetters.Count)
+            {
+                char typedCharacter = typedLetters[typedLetterIndex][0];
+                char sentenceCharacter = answerAsWritten[i + 1];
+
+                progressBuilder.Append(
+                    char.IsUpper(sentenceCharacter)
+                        ? char.ToUpperInvariant(typedCharacter)
+                        : char.ToLowerInvariant(typedCharacter));
+            }
             else
-                display += "_";
+            {
+                progressBuilder.Append('_');
+            }
+
+            typedLetterIndex++;
         }
 
-        wordText.text = display;
-        wordText.color = normalWordColor;
+        return progressBuilder.ToString();
+    }
+
+    private int GetRequiredLetterCount()
+    {
+        int requiredLetterCount = 0;
+
+        for (int i = 0; i < currentAnswerMatches.Count; i++)
+            requiredLetterCount += Mathf.Max(0, currentAnswerMatches[i].SentenceWord.Length - 1);
+
+        return requiredLetterCount;
+    }
+
+    private bool DoesTypedAnswerMatch()
+    {
+        int requiredLetterCount = GetRequiredLetterCount();
+
+        if (typedLetters.Count != requiredLetterCount)
+            return false;
+
+        int typedLetterIndex = 0;
+
+        for (int matchIndex = 0; matchIndex < currentAnswerMatches.Count; matchIndex++)
+        {
+            string sentenceWord = currentAnswerMatches[matchIndex].SentenceWord;
+
+            for (int characterIndex = 1; characterIndex < sentenceWord.Length; characterIndex++)
+            {
+                char expectedCharacter = char.ToLowerInvariant(sentenceWord[characterIndex]);
+                char typedCharacter = char.ToLowerInvariant(typedLetters[typedLetterIndex][0]);
+
+                if (typedCharacter != expectedCharacter)
+                    return false;
+
+                typedLetterIndex++;
+            }
+        }
+
+        return true;
     }
 
     private void HandleTimerWarning()

@@ -8,6 +8,13 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using RewardSystem;
 
+public enum GridAdventureHowToPlayStartupMode
+{
+    FirstTimeAutomatically,
+    EveryGameStartAutomatically,
+    ManualButtonOnly
+}
+
 public class GridAdventureManager : MonoBehaviour, IGameSceneCallbacks, IGameAudioCallbacks
 {
     [Header("Level")]
@@ -95,7 +102,11 @@ public class GridAdventureManager : MonoBehaviour, IGameSceneCallbacks, IGameAud
     public Button resultRestartButton;
 
     [Header("How To Play Overlay")]
-    public bool showHowToPlayOnStart = true;
+    [Tooltip("Controls only the separate How To Play image panel. The button continues to work in every mode.")]
+    public GridAdventureHowToPlayStartupMode howToPlayStartupMode = GridAdventureHowToPlayStartupMode.FirstTimeAutomatically;
+    [Tooltip("Base PlayerPrefs key for the How To Play panel. The scene name is appended automatically.")]
+    public string howToPlayViewedSaveKey = "GridAdventure.HowToPlay.Viewed";
+    [HideInInspector] public bool showHowToPlayOnStart = true;
     public GameObject howToPlayOverlayRoot;
     public RectTransform howToPlayMainCard;
     public Image guideImage;
@@ -127,9 +138,15 @@ public class GridAdventureManager : MonoBehaviour, IGameSceneCallbacks, IGameAud
     public bool playBackgroundMusicOnStart = true;
     [Range(0f, 1f)] public float backgroundMusicVolume = 0.45f;
 
+    [Header("First-Time Interactive Tutorial")]
+    [Tooltip("Installed automatically by Tools > Grid Adventure > Install or Upgrade First-Time Tutorial.")]
+    public GridAdventureFirstTimeTutorialController firstTimeTutorialController;
+
     public Canvas RootCanvas { get { return rootCanvas; } }
     public RectTransform DragLayer { get { return dragLayer; } }
     public bool CanDragCards { get { return isGameplayActive && !GameplayBlocked; } }
+    public bool CanSelectCells { get { return isGameplayActive && !GameplayBlocked; } }
+    public bool IsTutorialHeld { get { return isTutorialHold; } }
 
     private readonly List<SkillEntry> bloomSkills = new List<SkillEntry>
     {
@@ -168,6 +185,7 @@ public class GridAdventureManager : MonoBehaviour, IGameSceneCallbacks, IGameAud
     private bool isBloomPreGameOpen;
     private bool isGameplayActive;
     private bool isGameComplete;
+    private bool isTutorialHold;
     private Sequence clueSequence;
     private Sequence loadingSequence;
     private Sequence gameplayInstructionSequence;
@@ -180,7 +198,7 @@ public class GridAdventureManager : MonoBehaviour, IGameSceneCallbacks, IGameAud
 
     private bool GameplayBlocked
     {
-        get { return isBloomPreGameOpen || isPauseOpen || isGuideOpen || isLoading || isGameComplete; }
+        get { return isBloomPreGameOpen || isPauseOpen || isGuideOpen || isLoading || isGameComplete || isTutorialHold; }
     }
 
     private void Awake()
@@ -233,6 +251,8 @@ public class GridAdventureManager : MonoBehaviour, IGameSceneCallbacks, IGameAud
 
         DOTween.Kill(this);
         KillSequences();
+        if (firstTimeTutorialController != null)
+            firstTimeTutorialController.StopTutorialWithoutCompleting();
         ClearRuntimeCards();
 
         isPauseOpen = false;
@@ -242,6 +262,7 @@ public class GridAdventureManager : MonoBehaviour, IGameSceneCallbacks, IGameAud
         isBloomPreGameOpen = false;
         isGameplayActive = false;
         isGameComplete = false;
+        isTutorialHold = false;
         completedCount = 0;
         currentScore = 0;
         correctCount = 0;
@@ -371,7 +392,7 @@ public class GridAdventureManager : MonoBehaviour, IGameSceneCallbacks, IGameAud
 
     public void TogglePausePanel()
     {
-        if (isGameComplete || isGuideOpen || isLoading || isBloomPreGameOpen) return;
+        if (isGameComplete || isGuideOpen || isLoading || isBloomPreGameOpen || isTutorialHold) return;
 
         if (isPauseOpen) ClosePausePanel();
         else OpenPausePanel();
@@ -379,7 +400,7 @@ public class GridAdventureManager : MonoBehaviour, IGameSceneCallbacks, IGameAud
 
     public void OpenPausePanel()
     {
-        if (pauseOverlayRoot == null || isGameComplete || isGuideOpen || isLoading || isBloomPreGameOpen) return;
+        if (pauseOverlayRoot == null || isGameComplete || isGuideOpen || isLoading || isBloomPreGameOpen || isTutorialHold) return;
 
         isPauseOpen = true;
         if (audioManager != null) audioManager.PlaySFX("pause_open");
@@ -402,7 +423,7 @@ public class GridAdventureManager : MonoBehaviour, IGameSceneCallbacks, IGameAud
 
     public void OpenHowToPlayFromPause()
     {
-        if (howToPlayOverlayRoot == null || isGameComplete || isLoading || isBloomPreGameOpen) return;
+        if (howToPlayOverlayRoot == null || isGameComplete || isLoading || isBloomPreGameOpen || isTutorialHold) return;
 
         PlayClick();
         guideOpenedFromPause = isPauseOpen;
@@ -417,7 +438,8 @@ public class GridAdventureManager : MonoBehaviour, IGameSceneCallbacks, IGameAud
         if (howToPlayOverlayRoot == null)
         {
             isGuideOpen = false;
-            BeginGameplay();
+            if (!isPauseOpen)
+                ContinueAfterHowToPlay();
             return;
         }
 
@@ -434,13 +456,15 @@ public class GridAdventureManager : MonoBehaviour, IGameSceneCallbacks, IGameAud
         bool returnToPause = guideOpenedFromPause && isPauseOpen;
         guideOpenedFromPause = false;
         isGuideOpen = false;
+        PlayerPrefs.SetInt(GetHowToPlayViewedKey(), 1);
+        PlayerPrefs.Save();
         ShowOverlay(howToPlayOverlayRoot, howToPlayMainCard, false);
 
         DOVirtual.DelayedCall(0.15f, delegate
         {
             RefreshGameplayLayout();
             if (!returnToPause)
-                BeginGameplay();
+                ContinueAfterHowToPlay();
         }).SetUpdate(true).SetId(this);
 
         PlayClick();
@@ -624,24 +648,100 @@ public class GridAdventureManager : MonoBehaviour, IGameSceneCallbacks, IGameAud
 
     private void OpenGuideIfNeeded()
     {
-        if (showHowToPlayOnStart)
+        if (ShouldOpenHowToPlayAutomatically())
             OpenHowToPlayPanel(false);
         else
         {
             RefreshGameplayLayout();
-            BeginGameplay();
+            ContinueAfterHowToPlay();
         }
+    }
+
+    private void ContinueAfterHowToPlay()
+    {
+        CacheMissingReferences();
+
+        if (firstTimeTutorialController != null &&
+            firstTimeTutorialController.TryStartTutorial(BeginGameplay))
+            return;
+
+        SetTutorialHold(false);
+        BeginGameplay();
     }
 
     private void BeginGameplay()
     {
-        if (isGameplayActive || isGameComplete) return;
+        if (isGameplayActive || isGameComplete || isTutorialHold) return;
 
         isGameplayActive = true;
         gameplayStartTime = Time.time;
         timerRemaining = Mathf.Max(1f, roundTimeSeconds);
         UpdateTopUI(true);
         ShowGameplayInstructionIfNeeded();
+    }
+
+    public void SetTutorialHold(bool held)
+    {
+        isTutorialHold = held;
+    }
+
+    public bool TryGetTutorialPracticeQuestion(
+        out GridAdventureItemData question,
+        out GridAdventureCell targetCell,
+        out GridAdventureItemCard correctCard)
+    {
+        question = activeRoundItem != null ? activeRoundItem.data : null;
+        targetCell = activeCell;
+        correctCard = null;
+
+        if (question == null || targetCell == null || string.IsNullOrWhiteSpace(question.itemId))
+            return false;
+
+        cardsByItemId.TryGetValue(question.itemId, out correctCard);
+        return correctCard != null;
+    }
+
+    public void GetRuntimeCardsForTutorial(List<GridAdventureItemCard> destination)
+    {
+        if (destination == null) return;
+
+        destination.Clear();
+        for (int i = 0; i < runtimeCards.Count; i++)
+        {
+            GridAdventureItemCard card = runtimeCards[i];
+            if (card != null && card.gameObject.activeInHierarchy && !card.IsSolved)
+                destination.Add(card);
+        }
+    }
+
+    [ContextMenu("Reset How To Play First-Time Status")]
+    public void ResetHowToPlayViewedStatus()
+    {
+        PlayerPrefs.DeleteKey(GetHowToPlayViewedKey());
+        PlayerPrefs.Save();
+    }
+
+    private bool ShouldOpenHowToPlayAutomatically()
+    {
+        switch (howToPlayStartupMode)
+        {
+            case GridAdventureHowToPlayStartupMode.EveryGameStartAutomatically:
+                return true;
+
+            case GridAdventureHowToPlayStartupMode.ManualButtonOnly:
+                return false;
+
+            default:
+                return PlayerPrefs.GetInt(GetHowToPlayViewedKey(), 0) == 0;
+        }
+    }
+
+    private string GetHowToPlayViewedKey()
+    {
+        string baseKey = string.IsNullOrWhiteSpace(howToPlayViewedSaveKey)
+            ? "GridAdventure.HowToPlay.Viewed"
+            : howToPlayViewedSaveKey.Trim();
+        return baseKey + "." + SceneManager.GetActiveScene().name;
     }
 
     private void PlayCorrect(GridAdventureItemCard card, GridAdventureCell cell, RectTransform dragClone)
@@ -1253,6 +1353,8 @@ public class GridAdventureManager : MonoBehaviour, IGameSceneCallbacks, IGameAud
         if (rootCanvas == null) rootCanvas = GetComponentInParent<Canvas>();
         if (graphicRaycaster == null && rootCanvas != null) graphicRaycaster = rootCanvas.GetComponent<GraphicRaycaster>();
         if (audioManager == null) audioManager = GetComponent<GridAdventureAudioManager>();
+        if (firstTimeTutorialController == null && rootCanvas != null)
+            firstTimeTutorialController = rootCanvas.GetComponentInChildren<GridAdventureFirstTimeTutorialController>(true);
 
         if (dragLayer == null && rootCanvas != null)
         {

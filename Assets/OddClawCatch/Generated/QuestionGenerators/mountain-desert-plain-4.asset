@@ -1,0 +1,248 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 641713ef6584ced439903568e620018c, type: 3}
+  m_Name: mountain-desert-plain-4
+  m_EditorClassIdentifier: Assembly-CSharp::OddClawGeneralQuestionGenerator
+  minimumOptions: 2
+  maximumOptions: 6
+  questionsPerRun: 5
+  completionTitle: All Waves Completed!
+  shuffleAnswerOrder: 1
+  questionBank:
+  - questionText: Which image shows terrace farming?
+    displayMode: 1
+    answers:
+    - text: 
+      sprite: {fileID: -2897274404918875839, guid: 4929b27e15d3d594e9a42c437ce9b100, type: 3}
+      isCorrect: 0
+    - text: 
+      sprite: {fileID: 3538062232231497716, guid: 33a929c3de4543d44b3e7b65cc6246d8, type: 3}
+      isCorrect: 0
+    - text: 
+      sprite: {fileID: 956194016451430835, guid: f14768df5f7598d4d96c115dbad3e8a1, type: 3}
+      isCorrect: 1
+  - questionText: Which one is tea cultivation?
+    displayMode: 1
+    answers:
+    - text: 
+      sprite: {fileID: -5119186818633277030, guid: 30796be8d1ef4994da7c38829240d7d9, type: 3}
+      isCorrect: 1
+    - text: 
+      sprite: {fileID: -7131801144114426144, guid: 931ff51cb2074b444a86dfdec54b4e37, type: 3}
+      isCorrect: 0
+    - text: 
+      sprite: {fileID: -6629569226455723007, guid: 176afa9c514264d4dadec1253bf76c5c, type: 3}
+      isCorrect: 0
+  - questionText: Which one is the Kullu Cap?
+    displayMode: 1
+    answers:
+    - text: 
+      sprite: {fileID: -5119186818633277030, guid: 30796be8d1ef4994da7c38829240d7d9, type: 3}
+      isCorrect: 0
+    - text: 
+      sprite: {fileID: 3820389533908350190, guid: 36ab56267654edc408704b3d3fe04afd, type: 3}
+      isCorrect: 1
+    - text: 
+      sprite: {fileID: -2842342872938581498, guid: a2022adb539b23f4194e0187e953c7b0, type: 3}
+      isCorrect: 0
+  - questionText: ______________found in the Himalayas.
+    displayMode: 1
+    answers:
+    - text: 
+      sprite: {fileID: 9096988619167984021, guid: 68e32e0e9156cb64f8132c29a39119d3, type: 3}
+      isCorrect: 1
+    - text: 
+      sprite: {fileID: 5884120126629054372, guid: f5159a672816f2c4a8f466f15e722a15, type: 3}
+      isCorrect: 0
+    - text: 
+      sprite: {fileID: -8739478363548818640, guid: 514402a7a7b43754c8df57ff09f9cece, type: 3}
+      isCorrect: 0
+  - questionText: Which image shows the climate of the Himalayas?
+    displayMode: 1
+    answers:
+    - text: 
+      sprite: {fileID: 2900354392644286297, guid: 845545527253404459aec9dcde3ed711, type: 3}
+      isCorrect: 1
+    - text: 
+      sprite: {fileID: -4483535967157289019, guid: 6c8b91e3edb09324b977886719b19d41, type: 3}
+      isCorrect: 0
+    - text: 
+      sprite: {fileID: -5815061433697642733, guid: 6a115148bcae372459750f4ced4d73f1, type: 3}
+      isCorrect: 0
+  - questionText: Which is the picture of the Himalayas?
+    displayMode: 1
+    answers:
+    - text: 
+      sprite: {fileID: -1094562212877403842, guid: c517654eba45e6a449ce853947f19d34, type: 3}
+      isCorrect: 0
+    - text: 
+      sprite: {fileID: 4301472931845244587, guid: 2612aedeb34bb284b85d0e214c710483, type: 3}
+      isCorrect: 1
+    - text: 
+      sprite: {fileID: 420405328404031167, guid: 4c5f8af92a8a5c143934810542e4437e, type: 3}
+      isCorrect: 0
+  - questionText: Which is the image of a plain?
+    displayMode: 1
+    answers:
+    - text: 
+      sprite: {fileID: -1094562212877403842, guid: c517654eba45e6a449ce853947f19d34, type: 3}
+      isCorrect: 1
+    - text: 
+      sprite: {fileID: 3487707744627692293, guid: 6cdd8ae17aab60a4994a6f44f7fd44c9, type: 3}
+      isCorrect: 0
+    - text: 
+      sprite: {fileID: -4635186865549259463, guid: b0537bb71fa64f0439eac6d9aadf8627, type: 3}
+      isCorrect: 0
+  - questionText: Which is the image of a paddy field?
+    displayMode: 1
+    answers:
+    - text: 
+      sprite: {fileID: -8651496491006014491, guid: 06f868cf5f70a064193683e5a52ff472, type: 3}
+      isCorrect: 0
+    - text: 
+      sprite: {fileID: -2110271788898725438, guid: d31aa5935d681a94cb930d80853f640e, type: 3}
+      isCorrect: 0
+    - text: 
+      sprite: {fileID: -2897274404918875839, guid: 4929b27e15d3d594e9a42c437ce9b100, type: 3}
+      isCorrect: 1
+  - questionText: 'Which is the image of a flood? '
+    displayMode: 1
+    answers:
+    - text: 
+      sprite: {fileID: 4052834861289093899, guid: 17a4cd77b4c0733429880a2bca0e0193, type: 3}
+      isCorrect: 0
+    - text: 
+      sprite: {fileID: 1043601642407180492, guid: 73c49607b17ed3641affeced8dacb08f, type: 3}
+      isCorrect: 1
+    - text: 
+      sprite: {fileID: -4156043029992211892, guid: 5c044ad8a3ec9a94099f1788ce0267ce, type: 3}
+      isCorrect: 0
+  - questionText: Which is the image of a dune?
+    displayMode: 1
+    answers:
+    - text: 
+      sprite: {fileID: -4623346197129540503, guid: feb12ce191d8b4041aa8835b8370c079, type: 3}
+      isCorrect: 1
+    - text: 
+      sprite: {fileID: -2407884837919954263, guid: b27ec563c7f74324cbf8f2a84a9050d2, type: 3}
+      isCorrect: 0
+    - text: 
+      sprite: {fileID: -7953410771688248983, guid: 020397ee6e45ff7458f8922c7633b8a3, type: 3}
+      isCorrect: 0
+  - questionText: __________is common in the Thar desert.
+    displayMode: 1
+    answers:
+    - text: 
+      sprite: {fileID: -6783021527536332892, guid: 49ce3ecc6ac321b488583d5dd69555a2, type: 3}
+      isCorrect: 1
+    - text: 
+      sprite: {fileID: 1270540083910462612, guid: 0814e887d2f8bf44fa62d2c809ffbf48, type: 3}
+      isCorrect: 0
+    - text: 
+      sprite: {fileID: 5344412392975369150, guid: 98ad3cd87b3753e4780cc0997ba4d2f3, type: 3}
+      isCorrect: 0
+  - questionText: Which is an image of an oasis?
+    displayMode: 1
+    answers:
+    - text: 
+      sprite: {fileID: -7953410771688248983, guid: 020397ee6e45ff7458f8922c7633b8a3, type: 3}
+      isCorrect: 1
+    - text: 
+      sprite: {fileID: -4623346197129540503, guid: feb12ce191d8b4041aa8835b8370c079, type: 3}
+      isCorrect: 0
+    - text: 
+      sprite: {fileID: -6783021527536332892, guid: 49ce3ecc6ac321b488583d5dd69555a2, type: 3}
+      isCorrect: 0
+  - questionText: "Which animal is known as \u201C the ship of the desert\u201D?"
+    displayMode: 1
+    answers:
+    - text: 
+      sprite: {fileID: -983264434417320646, guid: 9b144ab1f001acc468e5239f2d75e80a, type: 3}
+      isCorrect: 0
+    - text: 
+      sprite: {fileID: -4387181846633716100, guid: e4362a980e7821a4f83843b23aeeb543, type: 3}
+      isCorrect: 0
+    - text: 
+      sprite: {fileID: -486714324463798377, guid: 7b687bcae20db014ca56f176b214e5eb, type: 3}
+      isCorrect: 1
+  - questionText: Which image shows rainwater harvesting in the Thar Desert?
+    displayMode: 1
+    answers:
+    - text: 
+      sprite: {fileID: -4419714471860975786, guid: dd65fa69ee3876f41ab45fb22d93352b, type: 3}
+      isCorrect: 0
+    - text: 
+      sprite: {fileID: 2986654249330334917, guid: 5cd7c1d781b0129459a58f053b2c57e9, type: 3}
+      isCorrect: 1
+    - text: 
+      sprite: {fileID: -6629569226455723007, guid: 176afa9c514264d4dadec1253bf76c5c, type: 3}
+      isCorrect: 0
+  - questionText: Which is the image of a solar panel?
+    displayMode: 1
+    answers:
+    - text: 
+      sprite: {fileID: -6088166376798165761, guid: 79fd29b2803a68d42bed7fe8ed798aed, type: 3}
+      isCorrect: 0
+    - text: 
+      sprite: {fileID: -5506850798683002808, guid: 06aa605ce5bf9a34e8f8602ee3cc876c, type: 3}
+      isCorrect: 0
+    - text: 
+      sprite: {fileID: -6666550398451182308, guid: 3b798529860961c4cbb2cc5f8a4b88c0, type: 3}
+      isCorrect: 1
+  - questionText: Which image is common in the Thar Desert?
+    displayMode: 1
+    answers:
+    - text: 
+      sprite: {fileID: -4004123036880970846, guid: 7b5c7811ceccfca4ebef28d28d4a04d9, type: 3}
+      isCorrect: 1
+    - text: 
+      sprite: {fileID: -7131801144114426144, guid: 931ff51cb2074b444a86dfdec54b4e37, type: 3}
+      isCorrect: 0
+    - text: 
+      sprite: {fileID: 4654243438676650681, guid: cbd2487ad69adbb459135c136bd632aa, type: 3}
+      isCorrect: 0
+  - questionText: Which challenge is faced only by the people of the Himalayas?
+    displayMode: 1
+    answers:
+    - text: 
+      sprite: {fileID: 1043601642407180492, guid: 73c49607b17ed3641affeced8dacb08f, type: 3}
+      isCorrect: 0
+    - text: 
+      sprite: {fileID: 3677300226132018917, guid: 68fb8d29af9470942ac4c830a10a7d21, type: 3}
+      isCorrect: 1
+    - text: 
+      sprite: {fileID: -4156043029992211892, guid: 5c044ad8a3ec9a94099f1788ce0267ce, type: 3}
+      isCorrect: 0
+  - questionText: Which tree is common in the Himalayas?
+    displayMode: 1
+    answers:
+    - text: 
+      sprite: {fileID: -6783021527536332892, guid: 49ce3ecc6ac321b488583d5dd69555a2, type: 3}
+      isCorrect: 0
+    - text: 
+      sprite: {fileID: 5344412392975369150, guid: 98ad3cd87b3753e4780cc0997ba4d2f3, type: 3}
+      isCorrect: 0
+    - text: 
+      sprite: {fileID: 1270540083910462612, guid: 0814e887d2f8bf44fa62d2c809ffbf48, type: 3}
+      isCorrect: 1
+  - questionText: Which is the image of glaciers?
+    displayMode: 1
+    answers:
+    - text: 
+      sprite: {fileID: -6334274142688029068, guid: febb2ab381504604283387fcd3310c25, type: 3}
+      isCorrect: 1
+    - text: 
+      sprite: {fileID: -4156043029992211892, guid: 5c044ad8a3ec9a94099f1788ce0267ce, type: 3}
+      isCorrect: 0
+    - text: 
+      sprite: {fileID: -331435833986980133, guid: 82e274216e1e22c43bfa96d739d86f86, type: 3}
+      isCorrect: 0

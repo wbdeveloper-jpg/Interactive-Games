@@ -12,7 +12,7 @@ Project name:
 
 Current working version:
 
-**V5 - How To Play version**
+**V7 - Flexible Sentence + Multiple Answer Words version**
 
 Current state:
 
@@ -20,7 +20,7 @@ Current state:
 - Rough UI is working.
 - Manual rough graphics placement has started / mostly done.
 - The game has timer, score, hint penalty, narration, pause panel, result panel, background music support, DOTween polish, and How To Play intro.
-- Continue from the V5 How To Play version.
+- Continue from the current V7 flexible-sentence version.
 - Do not rebuild from scratch unless absolutely required.
 
 Important note:
@@ -71,6 +71,42 @@ Correct answer gives score
 Correct full line is shown and narrated
 Next question loads
 After required correct answers or timer ends, result panel appears
+```
+
+Sentence behaviour:
+
+```text
+Completed Line Text can contain any sentence.
+Answer Word can contain one or more exact words separated by spaces.
+Every configured word must appear in the sentence as a standalone word.
+The words do not need to be next to each other in the sentence.
+Every detected word is converted to first-letter-plus-blanks format.
+The missing letters are filled from left to right in sentence order.
+The adaptive letter grid resizes larger combined tile sets into extra rows.
+```
+
+Examples:
+
+```text
+Completed Line Text: I am brave.
+Answer Word: brave
+Question: I am b _ _ _ _
+
+Completed Line Text: Rishi runs very fast.
+Answer Word: runs
+Question: Rishi r _ _ _ very fast.
+
+Completed Line Text: The red flower is beautiful.
+Answer Word: beautiful
+Question: The red flower is b _ _ _ _ _ _ _ _.
+
+Completed Line Text: I am having food.
+Answer Word: am having
+Question: I a _ h _ _ _ _ _ food.
+
+Completed Line Text: The children are happily playing outside.
+Answer Word: are playing
+Question: The children a _ _ happily p _ _ _ _ _ _ outside.
 ```
 
 Example:
@@ -150,11 +186,15 @@ Important:
 fulfilled = 9 letters total = f + 8 blanks
 ```
 
+The sentence is no longer hardcoded to `I am`. Existing single-word affirmation
+questions remain compatible. New questions can hide multiple exact words from
+any sentence by writing them in `Answer Word`, separated by spaces.
+
 ---
 
 ## 6. Current Script Structure
 
-Current V5 structure:
+Current V7 structure:
 
 ```text
 Assets/WordFillGame/Scripts/
@@ -163,8 +203,11 @@ Assets/WordFillGame/Scripts/
  ├── WordFillGameController.cs
  ├── WordFillUIAnimator.cs
  ├── WordFillAudioManager.cs
+ ├── WordFillFontApplier.cs
  ├── WordFillHowToPlayStep.cs
- └── WordFillHowToPlayPanel.cs
+ ├── WordFillHowToPlayPanel.cs
+ ├── WordFillLetterGridFitter.cs
+ └── WordFillLoadingPanel.cs
 
 Assets/WordFillGame/Editor/
  └── WordFillSceneBuilder.cs

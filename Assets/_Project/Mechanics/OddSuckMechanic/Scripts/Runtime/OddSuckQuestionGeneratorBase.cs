@@ -21,7 +21,8 @@ namespace OddSuckMechanic
         MathOnly = 0,
         SpriteOnly = 1,
         MixedRandom = 2,
-        EnglishOnly = 3
+        EnglishOnly = 3,
+        GeneralQuestionOnly = 4
     }
 
     [Serializable]

@@ -3,8 +3,9 @@ using UnityEngine;
 
 public enum OddClawAnswerDisplayMode
 {
-    Text,
-    Sprite
+    Text = 0,
+    Sprite = 1,
+    SpriteWithOptionalText = 2
 }
 
 [System.Serializable]

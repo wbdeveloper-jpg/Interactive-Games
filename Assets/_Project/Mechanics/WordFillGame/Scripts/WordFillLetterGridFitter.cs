@@ -127,7 +127,6 @@ public class WordFillLetterGridFitter : MonoBehaviour
                 continue;
 
             child.localRotation = Quaternion.identity;
-            child.localScale = Vector3.one;
 
             if (difficulty == WordFillLetterDifficulty.Medium)
             {

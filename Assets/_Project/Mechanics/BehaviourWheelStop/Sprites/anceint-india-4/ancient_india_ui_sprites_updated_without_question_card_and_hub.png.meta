@@ -1,0 +1,372 @@
+fileFormatVersion: 2
+guid: e7d517b2ec494be40923180595b83394
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -1956126953739081129
+    second: ancient_india_ui_sprites_updated_without_question_card_and_hub_0
+  - first:
+      213: -4587779894167256390
+    second: ancient_india_ui_sprites_updated_without_question_card_and_hub_1
+  - first:
+      213: 6378958896471349581
+    second: ancient_india_ui_sprites_updated_without_question_card_and_hub_2
+  - first:
+      213: -4313860958435156129
+    second: ancient_india_ui_sprites_updated_without_question_card_and_hub_3
+  - first:
+      213: 6441360762387060162
+    second: ancient_india_ui_sprites_updated_without_question_card_and_hub_4
+  - first:
+      213: -794630453490618296
+    second: ancient_india_ui_sprites_updated_without_question_card_and_hub_5
+  - first:
+      213: -6873479173069320046
+    second: ancient_india_ui_sprites_updated_without_question_card_and_hub_6
+  - first:
+      213: -8192809771781800980
+    second: ancient_india_ui_sprites_updated_without_question_card_and_hub_7
+  - first:
+      213: 1367132874931707103
+    second: ancient_india_ui_sprites_updated_without_question_card_and_hub_8
+  - first:
+      213: 7653440656190178287
+    second: ancient_india_ui_sprites_updated_without_question_card_and_hub_9
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 1024
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: iOS
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: ancient_india_ui_sprites_updated_without_question_card_and_hub_0
+      rect:
+        serializedVersion: 2
+        x: 52
+        y: 193
+        width: 687
+        height: 707
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 75aa0da46e07ad4e0800000000000000
+      internalID: -1956126953739081129
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ancient_india_ui_sprites_updated_without_question_card_and_hub_1
+      rect:
+        serializedVersion: 2
+        x: 757
+        y: 745
+        width: 141
+        height: 155
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ab24b7c4e7ee450c0800000000000000
+      internalID: -4587779894167256390
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ancient_india_ui_sprites_updated_without_question_card_and_hub_2
+      rect:
+        serializedVersion: 2
+        x: 993
+        y: 741
+        width: 459
+        height: 148
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d491ef4b15d968850800000000000000
+      internalID: 6378958896471349581
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ancient_india_ui_sprites_updated_without_question_card_and_hub_7
+      rect:
+        serializedVersion: 2
+        x: 770
+        y: 458
+        width: 224
+        height: 232
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cebb8908bea4d4e80800000000000000
+      internalID: -8192809771781800980
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ancient_india_ui_sprites_updated_without_question_card_and_hub_8
+      rect:
+        serializedVersion: 2
+        x: 1020
+        y: 472
+        width: 450
+        height: 198
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fdc101b3b1809f210800000000000000
+      internalID: 1367132874931707103
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ancient_india_ui_sprites_updated_without_question_card_and_hub_9
+      rect:
+        serializedVersion: 2
+        x: 947
+        y: 241
+        width: 307
+        height: 150
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fe38fb52abb763a60800000000000000
+      internalID: 7653440656190178287
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ancient_india_ui_sprites_updated_without_question_card_and_hub_3
+      rect:
+        serializedVersion: 2
+        x: 942
+        y: 766
+        width: 50
+        height: 102
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 697b0c5dcaae06e4f806060cc5a6d89a
+      internalID: -4313860958435156129
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ancient_india_ui_sprites_updated_without_question_card_and_hub_4
+      rect:
+        serializedVersion: 2
+        x: 1453
+        y: 766
+        width: 45
+        height: 101
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c16b166d15fb89742ac6be59fc6c30d1
+      internalID: 6441360762387060162
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: d281ff09de0b3b043bb48c1d9f73d80f
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      ancient_india_ui_sprites_updated_without_question_card_and_hub_0: -1956126953739081129
+      ancient_india_ui_sprites_updated_without_question_card_and_hub_1: -4587779894167256390
+      ancient_india_ui_sprites_updated_without_question_card_and_hub_2: 6378958896471349581
+      ancient_india_ui_sprites_updated_without_question_card_and_hub_3: -4313860958435156129
+      ancient_india_ui_sprites_updated_without_question_card_and_hub_4: 6441360762387060162
+      ancient_india_ui_sprites_updated_without_question_card_and_hub_5: -794630453490618296
+      ancient_india_ui_sprites_updated_without_question_card_and_hub_6: -6873479173069320046
+      ancient_india_ui_sprites_updated_without_question_card_and_hub_7: -8192809771781800980
+      ancient_india_ui_sprites_updated_without_question_card_and_hub_8: 1367132874931707103
+      ancient_india_ui_sprites_updated_without_question_card_and_hub_9: 7653440656190178287
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

@@ -1,0 +1,140 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5bfeddc40f1fbfd468e8c2da0b3aac42, type: 3}
+  m_Name: being-a-responsible-citizen-5
+  m_EditorClassIdentifier: Assembly-CSharp::GuessWhoIAm.GuessWhoQuestionDatabase
+  questions:
+  - questionId: Panchayat
+    answer: Panchayat
+    clue1: ' I am a part of the government that helps people.'
+    clue2: I work mainly in villages.
+    clue3: I solve local problems like roads, water, and cleanliness in villages.
+    manualWrongOptions:
+    - Parliament
+    - Local Government
+    - State Government
+    correctAudio: {fileID: 0}
+    wrongAudio: {fileID: 0}
+    revealAudio: {fileID: 0}
+  - questionId: Parliament
+    answer: Parliament
+    clue1: I am an important part of India's government.
+    clue2: I make laws for the whole country.
+    clue3: I meet in New Delhi and include the Lok Sabha and Rajya Sabha.
+    manualWrongOptions:
+    - Legislature
+    - Central Government
+    - State Government
+    correctAudio: {fileID: 0}
+    wrongAudio: {fileID: 0}
+    revealAudio: {fileID: 0}
+  - questionId: Constitution
+    answer: Constitution
+    clue1: I help India run properly.
+    clue2: I contain important rules and principles.
+    clue3: I am known as the supreme law of India.
+    manualWrongOptions:
+    - Judiciary
+    - Parliament
+    - Legislature
+    correctAudio: {fileID: 0}
+    wrongAudio: {fileID: 0}
+    revealAudio: {fileID: 0}
+  - questionId: Legislature
+    answer: Legislature
+    clue1: I am one of the three organs of the government.
+    clue2: My main job is to make laws.
+    clue3: Parliament is an example of me at the national level.
+    manualWrongOptions:
+    - Executive
+    - Constitution
+    - Judiciary
+    correctAudio: {fileID: 0}
+    wrongAudio: {fileID: 0}
+    revealAudio: {fileID: 0}
+  - questionId: Executive
+    answer: Executive
+    clue1: I am one of the three organs of the government.
+    clue2: ' I make sure laws are carried out.'
+    clue3: 'The President, Prime Minister, and government officials are part of me.
+
+'
+    manualWrongOptions:
+    - Legislature
+    - Constitution
+    - Judiciary
+    correctAudio: {fileID: 0}
+    wrongAudio: {fileID: 0}
+    revealAudio: {fileID: 0}
+  - questionId: Judiciary
+    answer: Judiciary
+    clue1: I am one of the three organs of the government.
+    clue2: ' I help solve disputes and ensure justice.'
+    clue3: Judges and courts are part of me.
+    manualWrongOptions:
+    - Legislature
+    - Constitution
+    - Executive
+    correctAudio: {fileID: 0}
+    wrongAudio: {fileID: 0}
+    revealAudio: {fileID: 0}
+  - questionId: Secular
+    answer: Secular
+    clue1: I am an important value of India.
+    clue2: I am included in the preamble.
+    clue3: 'I mean that every religion is treated equally.
+
+'
+    manualWrongOptions:
+    - Equality
+    - Constitution
+    - Democracy
+    correctAudio: {fileID: 0}
+    wrongAudio: {fileID: 0}
+    revealAudio: {fileID: 0}
+  - questionId: Central Government
+    answer: Central Government
+    clue1: I govern India.
+    clue2: I am at the top in the three-tier system
+    clue3: I work from New Delhi.
+    manualWrongOptions:
+    - Local Government
+    - State Government
+    - Parliament
+    correctAudio: {fileID: 0}
+    wrongAudio: {fileID: 0}
+    revealAudio: {fileID: 0}
+  - questionId: Fundamental Duties
+    answer: Fundamental Duties
+    clue1: I help make India a better country.
+    clue2: I tell citizens how they should behave.
+    clue3: ' I remind every citizen to respect the Constitution, the National Flag,
+      and the National Anthem. '
+    manualWrongOptions:
+    - Fundamental Rights
+    - State Government
+    - Parliament
+    correctAudio: {fileID: 0}
+    wrongAudio: {fileID: 0}
+    revealAudio: {fileID: 0}
+  - questionId: Fundamental Rights
+    answer: Fundamental Rights
+    clue1: I am important to every citizen of India.
+    clue2: I protect the freedom and equality of people.
+    clue3: I am guaranteed by the Constitution of India.
+    manualWrongOptions:
+    - Constitution
+    - Law and order
+    - Parliament
+    correctAudio: {fileID: 0}
+    wrongAudio: {fileID: 0}
+    revealAudio: {fileID: 0}

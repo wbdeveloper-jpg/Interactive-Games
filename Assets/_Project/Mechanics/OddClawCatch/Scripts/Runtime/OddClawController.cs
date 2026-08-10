@@ -51,6 +51,21 @@ public class OddClawController : MonoBehaviour
     public Sprite grabbingClawSprite;
     public bool useSpriteSwap = true;
 
+    [Header("Image Magnet Head")]
+    [Tooltip("Assigned by the image-mode setup. The magnet is used only when the manager reports a sprite-answer question.")]
+    public Sprite imageMagnetSprite;
+    [Tooltip("Optional socket on or below the magnet. When empty, the normal Grab Socket or Claw Head is used.")]
+    public RectTransform imageMagnetGrabSocket;
+    [Tooltip("A slightly larger image-only catch radius. Text questions continue using Catch Radius above.")]
+    public float imageMagnetCatchRadius = 92f;
+    public float imageMagnetSnapDuration = 0.16f;
+    public float imageMagnetHoldBeforeAttachDelay = 0.06f;
+    public Vector2 imageMagnetGrabbedItemOffset = Vector2.zero;
+    public Vector3 imageMagnetGrabbedItemRotation = Vector3.zero;
+    public float imageMagnetGrabbedItemScale = 0.72f;
+    public bool overrideImageMagnetHeadSize = false;
+    public Vector2 imageMagnetHeadSize = new Vector2(150f, 105f);
+
     [Header("Rotation")]
     public float minRotationAngle = -55f;
     public float maxRotationAngle = 55f;
@@ -96,6 +111,7 @@ public class OddClawController : MonoBehaviour
     public float BaseRotationSpeed => Mathf.Max(0.01f, rotationSpeed);
     public float SpeedMultiplier => CurrentRotationSpeed / BaseRotationSpeed;
     public float CurrentReachLength => _baseReachLength + extensionLength;
+    public bool IsImageMagnetMode => _imageMagnetMode;
 
     private Vector2 _baseArmSize = new Vector2(22f, 215f);
     private Vector2 _baseHeadAnchoredPosition = new Vector2(0f, -215f);
@@ -105,8 +121,11 @@ public class OddClawController : MonoBehaviour
     private float _currentAngle;
     private int _rotateDirection = 1;
     private Vector3 _headBaseScale = Vector3.one;
+    private Vector2 _headBaseSize;
     private Vector2 _pivotBaseAnchoredPosition;
     private Coroutine _catchRoutine;
+    private bool _imageMagnetMode;
+    private bool _warnedAboutMissingMagnetSprite;
 
     private void Awake()
     {
@@ -145,7 +164,10 @@ public class OddClawController : MonoBehaviour
             _baseHeadAnchoredPosition = clawHead.anchoredPosition;
 
         if (clawHead != null)
+        {
             _headBaseScale = clawHead.localScale;
+            _headBaseSize = clawHead.sizeDelta;
+        }
 
         float reachFromHead = Mathf.Abs(_baseHeadAnchoredPosition.y);
         float reachFromArm = Mathf.Abs(_baseArmSize.y);
@@ -195,6 +217,32 @@ public class OddClawController : MonoBehaviour
     {
         IsRotating = enabled;
         SetEasyGuideVisible(enabled && easyModeAimGuide);
+    }
+
+    public void SetImageMagnetMode(bool enabled)
+    {
+        bool canUseMagnet = enabled && imageMagnetSprite != null;
+        if (enabled && imageMagnetSprite == null && !_warnedAboutMissingMagnetSprite)
+        {
+            _warnedAboutMissingMagnetSprite = true;
+            Debug.LogWarning(
+                "Image Magnet Mode was requested, but no Image Magnet Sprite is assigned. " +
+                "The existing claw will be used safely for image questions.",
+                this);
+        }
+
+        _imageMagnetMode = canUseMagnet;
+
+        if (clawHead != null)
+        {
+            clawHead.DOKill();
+            clawHead.localScale = _headBaseScale;
+            clawHead.sizeDelta = _imageMagnetMode && overrideImageMagnetHeadSize
+                ? imageMagnetHeadSize
+                : _headBaseSize;
+        }
+
+        ShowNormalClawSprite();
     }
 
     public void ResetClawImmediate()
@@ -264,7 +312,7 @@ public class OddClawController : MonoBehaviour
         OddClawCatchResult result = new OddClawCatchResult();
         Camera uiCamera = canvas != null && canvas.renderMode != RenderMode.ScreenSpaceOverlay ? canvas.worldCamera : null;
 
-        if (clawHead != null)
+        if (clawHead != null && !_imageMagnetMode)
         {
             clawHead.DOKill();
             clawHead.DOScale(_headBaseScale * clawOpenScale, 0.08f).SetEase(Ease.OutBack);
@@ -298,21 +346,28 @@ public class OddClawController : MonoBehaviour
 
         if (result.caughtSomething && result.caughtItem != null)
         {
-            if (holdBeforeGrabDelay > 0f)
-                yield return new WaitForSeconds(holdBeforeGrabDelay);
+            float beforeAttachDelay = _imageMagnetMode
+                ? imageMagnetHoldBeforeAttachDelay
+                : holdBeforeGrabDelay;
+            if (beforeAttachDelay > 0f)
+                yield return new WaitForSeconds(beforeAttachDelay);
 
-            ShowGrabbingClawSprite();
-            AttachCaughtItem(result.caughtItem);
+            if (!_imageMagnetMode)
+                ShowGrabbingClawSprite();
+            float attachDuration = AttachCaughtItem(result.caughtItem);
 
-            if (clawHead != null)
+            if (clawHead != null && !_imageMagnetMode)
                 clawHead.DOScale(_headBaseScale, clawCloseDuration).SetEase(Ease.OutBack);
 
-            result.caughtItem.PlayCaughtPop(caughtItemPopScale, caughtItemPopDuration);
+            if (!_imageMagnetMode)
+                result.caughtItem.PlayCaughtPop(caughtItemPopScale, caughtItemPopDuration);
 
             if (audioManager != null)
                 audioManager.PlayClawGrab();
 
-            float closeWait = Mathf.Max(clawCloseDuration, caughtItemPopDuration);
+            float closeWait = _imageMagnetMode
+                ? attachDuration
+                : Mathf.Max(clawCloseDuration, caughtItemPopDuration);
             if (closeWait > 0f)
                 yield return new WaitForSeconds(closeWait);
 
@@ -336,7 +391,7 @@ public class OddClawController : MonoBehaviour
 
         ApplyReach(_baseReachLength);
 
-        if (clawHead != null)
+        if (clawHead != null && !_imageMagnetMode)
             clawHead.DOScale(_headBaseScale, 0.1f).SetEase(Ease.OutBack);
 
         if (evaluateAfterRetractDelay > 0f)
@@ -353,18 +408,26 @@ public class OddClawController : MonoBehaviour
         completed?.Invoke(result);
     }
 
-    private void AttachCaughtItem(OddClawItemView item)
+    private float AttachCaughtItem(OddClawItemView item)
     {
         if (item == null)
-            return;
+            return 0f;
 
-        Transform attachParent = grabSocket != null ? grabSocket : clawHead;
+        Transform attachParent = _imageMagnetMode && imageMagnetGrabSocket != null
+            ? imageMagnetGrabSocket
+            : (grabSocket != null ? grabSocket : clawHead);
         if (attachParent == null)
-            return;
+            return 0f;
 
-        Vector2 finalOffset = globalGrabbedItemOffset;
-        Vector3 finalRotation = globalGrabbedItemRotation;
-        float finalScale = Mathf.Max(0.01f, globalGrabbedItemScale);
+        Vector2 finalOffset = _imageMagnetMode
+            ? imageMagnetGrabbedItemOffset
+            : globalGrabbedItemOffset;
+        Vector3 finalRotation = _imageMagnetMode
+            ? imageMagnetGrabbedItemRotation
+            : globalGrabbedItemRotation;
+        float finalScale = Mathf.Max(
+            0.01f,
+            _imageMagnetMode ? imageMagnetGrabbedItemScale : globalGrabbedItemScale);
 
         if (usePerItemGrabOffset)
         {
@@ -373,7 +436,15 @@ public class OddClawController : MonoBehaviour
             finalScale *= item.GrabbedLocalScale;
         }
 
+        if (_imageMagnetMode)
+        {
+            float duration = Mathf.Max(0f, imageMagnetSnapDuration);
+            item.MarkCaughtAnimated(attachParent, finalOffset, finalRotation, finalScale, duration);
+            return duration;
+        }
+
         item.MarkCaught(attachParent, finalOffset, finalRotation, finalScale);
+        return 0f;
     }
 
     private void TryFindOverlap(List<OddClawItemView> items, Camera uiCamera, OddClawCatchResult result)
@@ -389,7 +460,10 @@ public class OddClawController : MonoBehaviour
             if (item == null || item.IsCaught)
                 continue;
 
-            if (!item.OverlapsScreenCircle(tipScreen, catchRadius, uiCamera))
+            float activeCatchRadius = _imageMagnetMode
+                ? Mathf.Max(catchRadius, imageMagnetCatchRadius)
+                : catchRadius;
+            if (!item.OverlapsScreenCircle(tipScreen, activeCatchRadius, uiCamera))
                 continue;
 
             result.caughtSomething = true;
@@ -465,7 +539,17 @@ public class OddClawController : MonoBehaviour
 
     private void ShowNormalClawSprite()
     {
-        if (!useSpriteSwap || clawHeadImage == null || normalClawSprite == null)
+        if (clawHeadImage == null)
+            return;
+
+        if (_imageMagnetMode && imageMagnetSprite != null)
+        {
+            clawHeadImage.sprite = imageMagnetSprite;
+            clawHeadImage.preserveAspect = true;
+            return;
+        }
+
+        if (!useSpriteSwap || normalClawSprite == null)
             return;
 
         clawHeadImage.sprite = normalClawSprite;
@@ -474,6 +558,12 @@ public class OddClawController : MonoBehaviour
 
     private void ShowGrabbingClawSprite()
     {
+        if (_imageMagnetMode)
+        {
+            ShowNormalClawSprite();
+            return;
+        }
+
         if (!useSpriteSwap || clawHeadImage == null || grabbingClawSprite == null)
             return;
 

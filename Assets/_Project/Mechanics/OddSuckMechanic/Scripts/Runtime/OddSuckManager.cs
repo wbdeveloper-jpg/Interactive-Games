@@ -117,6 +117,14 @@ namespace OddSuckMechanic
         [SerializeField] private bool autoFindGeneratorsOnStart = true;
         [SerializeField] private bool showSpriteLabels = false;
 
+        [Header("Limited General Question Mode")]
+        [Tooltip("Optional direct reference. When empty, the manager finds an OddSuckGeneralQuestionGenerator from its children.")]
+        [SerializeField] private OddSuckGeneralQuestionGenerator generalQuestionGenerator;
+        [SerializeField] private bool increaseSpeedAfterEachGeneralQuestion = true;
+        [SerializeField, Min(0f)] private float generalSpeedIncreasePerQuestion = 0.08f;
+        [SerializeField, Min(1f)] private float generalMaximumSpeedMultiplier = 2.8f;
+        [SerializeField] private string generalCompletionTitle = "Quiz Complete!";
+
         [Header("Endless Health Gameplay")]
         [SerializeField, Min(1)] private int startingHealth = 3;
         [SerializeField, Min(1)] private int pointsPerCorrect = 10;
@@ -198,6 +206,7 @@ namespace OddSuckMechanic
         private int totalAttempts;
         private int score;
         private int health;
+        private int completedGeneralQuestions;
         private float currentSpeedMultiplier = 1f;
         private float currentWaveTime;
         private float waveTimeRemaining;
@@ -340,6 +349,7 @@ namespace OddSuckMechanic
             totalAttempts = 0;
             score = 0;
             health = startingHealth;
+            completedGeneralQuestions = 0;
             currentSpeedMultiplier = 1f;
             currentWaveTime = startingWaveTime;
             waveTimeRemaining = startingWaveTime;
@@ -364,6 +374,7 @@ namespace OddSuckMechanic
             ufoMover?.SetSpeedMultiplier(currentSpeedMultiplier);
             ufoMover?.ResetToCenter();
             ufoMover?.SetMovementEnabled(false);
+            PrepareGeneralQuestionRun();
             UpdateHud();
 
             if (playUfoEntryOnGameStart && ufoMover != null)
@@ -1042,10 +1053,21 @@ namespace OddSuckMechanic
             lowTimerWarningPlaying = false;
             StopTimerWarning();
 
+            if (IsGeneralQuestionMode()
+                && generalQuestionGenerator != null
+                && generalQuestionGenerator.IsRunComplete)
+            {
+                string completionTitle = string.IsNullOrWhiteSpace(generalCompletionTitle)
+                    ? "Quiz Complete!"
+                    : generalCompletionTitle;
+                FinishGame(completionTitle);
+                return;
+            }
+
             OddSuckQuestionGeneratorBase generator = SelectGenerator();
             if (generator == null)
             {
-                Debug.LogWarning("OddSuckManager has no usable question generator. Add OddSuckMathQuestionGenerator, OddSuckSpriteCategoryQuestionGenerator, or OddSuckEnglishWordQuestionGenerator.");
+                Debug.LogWarning("OddSuckManager has no usable question generator. Add the generator required by the selected Play Mode.");
                 FinishGame("No Generator");
                 return;
             }
@@ -1081,6 +1103,16 @@ namespace OddSuckMechanic
 
         private OddSuckQuestionGeneratorBase SelectGenerator()
         {
+            if (IsGeneralQuestionMode())
+            {
+                OddSuckGeneralQuestionGenerator generalGenerator = ResolveGeneralQuestionGenerator();
+                return generalGenerator != null
+                    && generalGenerator.enabled
+                    && generalGenerator.CanGenerate()
+                        ? generalGenerator
+                        : null;
+            }
+
             usableGenerators.Clear();
             int totalWeight = 0;
 
@@ -1133,8 +1165,51 @@ namespace OddSuckMechanic
                     return generator is OddSuckSpriteCategoryQuestionGenerator;
                 case OddSuckPlayMode.EnglishOnly:
                     return generator is OddSuckEnglishWordQuestionGenerator;
+                case OddSuckPlayMode.GeneralQuestionOnly:
+                    return generator is OddSuckGeneralQuestionGenerator;
+                case OddSuckPlayMode.MixedRandom:
+                    return !(generator is OddSuckGeneralQuestionGenerator);
                 default:
                     return true;
+            }
+        }
+
+        private bool IsGeneralQuestionMode()
+        {
+            return playMode == OddSuckPlayMode.GeneralQuestionOnly;
+        }
+
+        private OddSuckGeneralQuestionGenerator ResolveGeneralQuestionGenerator()
+        {
+            if (generalQuestionGenerator != null)
+            {
+                return generalQuestionGenerator;
+            }
+
+            for (int i = 0; i < questionGenerators.Count; i++)
+            {
+                if (questionGenerators[i] is OddSuckGeneralQuestionGenerator found)
+                {
+                    generalQuestionGenerator = found;
+                    return generalQuestionGenerator;
+                }
+            }
+
+            generalQuestionGenerator = GetComponentInChildren<OddSuckGeneralQuestionGenerator>(true);
+            return generalQuestionGenerator;
+        }
+
+        private void PrepareGeneralQuestionRun()
+        {
+            if (!IsGeneralQuestionMode())
+            {
+                return;
+            }
+
+            OddSuckGeneralQuestionGenerator generator = ResolveGeneralQuestionGenerator();
+            if (generator != null && generator.enabled && generator.CanGenerate())
+            {
+                generator.PrepareRun();
             }
         }
 
@@ -1460,7 +1535,10 @@ namespace OddSuckMechanic
                 feedbackPopup?.Show($"+{pointsPerCorrect} Correct!", new Color(0.3f, 1f, 0.45f));
                 audioManager?.PlayCorrect();
                 ufoMover?.PlayCorrectUfoAnimation(ufoVisualTransform, ufoFlashTarget);
-                UpdateSpeedAfterCorrect();
+                if (!IsGeneralQuestionMode())
+                {
+                    UpdateSpeedAfterCorrect();
+                }
             }
             else
             {
@@ -1471,6 +1549,7 @@ namespace OddSuckMechanic
                 ApplyHealthLoss(wrongAnswerHealthLoss);
             }
 
+            RegisterCompletedGeneralQuestion();
             UpdateHud();
 
             if (health <= 0)
@@ -1501,6 +1580,7 @@ namespace OddSuckMechanic
             audioManager?.PlayWrong();
             ufoMover?.PlayWrongUfoAnimation(ufoVisualTransform, ufoFlashTarget);
             ApplyHealthLoss(timeoutHealthLoss);
+            RegisterCompletedGeneralQuestion();
             UpdateHud();
 
             if (health <= 0)
@@ -1521,6 +1601,27 @@ namespace OddSuckMechanic
             }
 
             currentSpeedMultiplier = Mathf.Min(maxSpeedMultiplier, 1f + correctAnswers * speedIncreasePerCorrect);
+            ufoMover?.SetSpeedMultiplier(currentSpeedMultiplier);
+            ufoMover?.PlaySpeedUpAnimation(ufoVisualTransform);
+        }
+
+        private void RegisterCompletedGeneralQuestion()
+        {
+            if (!IsGeneralQuestionMode())
+            {
+                return;
+            }
+
+            completedGeneralQuestions++;
+            if (!increaseSpeedAfterEachGeneralQuestion)
+            {
+                return;
+            }
+
+            float safeMaximum = Mathf.Max(1f, generalMaximumSpeedMultiplier);
+            currentSpeedMultiplier = Mathf.Min(
+                safeMaximum,
+                1f + completedGeneralQuestions * Mathf.Max(0f, generalSpeedIncreasePerQuestion));
             ufoMover?.SetSpeedMultiplier(currentSpeedMultiplier);
             ufoMover?.PlaySpeedUpAnimation(ufoVisualTransform);
         }
@@ -1592,7 +1693,17 @@ namespace OddSuckMechanic
 
             if (resultScoreText != null)
             {
-                resultScoreText.text = $"Score: {score}\nWaves: {Mathf.Max(0, waveIndex - 1)}\nCorrect: {correctAnswers}";
+                if (IsGeneralQuestionMode())
+                {
+                    int total = generalQuestionGenerator != null
+                        ? generalQuestionGenerator.PreparedQuestionCount
+                        : completedGeneralQuestions;
+                    resultScoreText.text = $"Score: {score}\nQuestions: {completedGeneralQuestions}/{Mathf.Max(completedGeneralQuestions, total)}\nCorrect: {correctAnswers}";
+                }
+                else
+                {
+                    resultScoreText.text = $"Score: {score}\nWaves: {Mathf.Max(0, waveIndex - 1)}\nCorrect: {correctAnswers}";
+                }
             }
 
             if (resultPanel != null)
@@ -1907,7 +2018,17 @@ namespace OddSuckMechanic
 
             if (waveText != null)
             {
-                waveText.text = $"Wave {Mathf.Max(1, waveIndex)}";
+                if (IsGeneralQuestionMode()
+                    && generalQuestionGenerator != null
+                    && generalQuestionGenerator.IsRunPrepared)
+                {
+                    int total = Mathf.Max(1, generalQuestionGenerator.PreparedQuestionCount);
+                    waveText.text = $"Wave {Mathf.Clamp(waveIndex, 1, total)}";
+                }
+                else
+                {
+                    waveText.text = $"Wave {Mathf.Max(1, waveIndex)}";
+                }
             }
 
             if (speedText != null)

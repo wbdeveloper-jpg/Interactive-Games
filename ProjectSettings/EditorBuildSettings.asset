@@ -98,6 +98,63 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/All Games/Class 5/Mathematics/large-numbers-5.unity
     guid: 0aed8af9f301c584babbfbdc293ba142
+  - enabled: 1
+    path: Assets/All Games/Class 5/Mathematics/multiplication-and-division-5.unity
+    guid: 92b9d8c2885f25340a4310a61f231771
+  - enabled: 1
+    path: Assets/_Project/Mechanics/WordFillGame/Scenes/verbs-5.unity
+    guid: 1d60b02266a71684a9a1c91eacb969cf
+  - enabled: 1
+    path: Assets/_Project/Mechanics/OrderSortDrag/Scenes/the-sentence-3.unity
+    guid: c297e9c8dc7c7e14ebadd7bd1187ea1c
+  - enabled: 1
+    path: Assets/_Project/Mechanics/OrderSortDrag/Scenes/alphabetical-order-4.unity
+    guid: f1e86b6f2619fc0439109730a43d5576
+  - enabled: 1
+    path: Assets/_Project/Mechanics/OddClawCatch/Scenes/asking-questions-3.unity
+    guid: 18b617ea9fc88c64db8bfe8e81018b55
+  - enabled: 1
+    path: Assets/_Project/Mechanics/ImageChoiceRevealGame/Scenes/nouns-4.unity
+    guid: 4df94cee92c988c458a92bcd789150ca
+  - enabled: 1
+    path: Assets/_Project/Mechanics/OddSuckMechanic/Scenes/articles-5.unity
+    guid: 641190e8298a63e4a882b241b1f5af73
+  - enabled: 1
+    path: Assets/_Project/Mechanics/GuessWhoIAm/Scenes/being-a-responsible-citizen-5.unity
+    guid: 60d238751e0e13f48bedd3d78f03c7f7
+  - enabled: 1
+    path: Assets/_Project/Mechanics/SentenceWordSearch/Scenes/globe-in-hand-5.unity
+    guid: d29eec982d7d7ca45be5348c2ccec884
+  - enabled: 1
+    path: Assets/_Project/Mechanics/BehaviourWheelStop/Scenes/ancient-india-4.unity
+    guid: 0bce28cc39beaa544b3477a43d363e85
+  - enabled: 1
+    path: Assets/_Project/Mechanics/OddClawCatch/Scenes/mountain-desert-plain-4.unity
+    guid: f5707b411886f104397c7a6e99af8c51
+  - enabled: 1
+    path: Assets/_Project/Mechanics/ImageChoiceRevealGame/Scenes/clothing-and-festivals-of-india-3.unity
+    guid: 8a15bbaba669f714ea2f4a727c5b57e4
+  - enabled: 1
+    path: Assets/_Project/Mechanics/GridAdventure/Scenes/food-of-india-3.unity
+    guid: ee40a11b619ea07448aa38bfc49d5721
+  - enabled: 1
+    path: Assets/_Project/Mechanics/OrderSortDrag/Scenes/reproduction-in-animals-4.unity
+    guid: abd87c830cb6f294e8bcedc0a96d0948
+  - enabled: 1
+    path: Assets/_Project/Mechanics/BehaviourWheelStop/Scenes/our-feathered-friends-3.unity
+    guid: 4800f83d68ff4c844a764c33d2d60eb7
+  - enabled: 1
+    path: Assets/_Project/Mechanics/OddClawCatch/Scenes/adaptation-in-plants-4.unity
+    guid: 406131405c3022b448625f4bd5fd7fb7
+  - enabled: 1
+    path: Assets/_Project/Mechanics/SentenceWordSearch/Scenes/rocks-and-minerals-5.unity
+    guid: 3c6d465d0ba9c4649a6f7a1b3555f84c
+  - enabled: 1
+    path: Assets/_Project/Mechanics/WordShuffleDragSwap/Scenes/circulatory-system-5.unity
+    guid: 4b75cbb8f8701234dab39c80cee42470
+  - enabled: 1
+    path: Assets/_Project/Mechanics/ImageChoiceRevealGame/Scenes/eating-habits-of-animals-3.unity
+    guid: 10a5463db65062142a4ee2d725e44513
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0

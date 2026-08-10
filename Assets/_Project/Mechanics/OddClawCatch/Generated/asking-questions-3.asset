@@ -1,0 +1,104 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 641713ef6584ced439903568e620018c, type: 3}
+  m_Name: asking-questions-3
+  m_EditorClassIdentifier: Assembly-CSharp::OddClawGeneralQuestionGenerator
+  minimumOptions: 2
+  maximumOptions: 4
+  questionsPerRun: 5
+  completionTitle: All Waves Completed!
+  shuffleAnswerOrder: 1
+  questionBank:
+  - questionText: ______ is the monitor of the class?
+    displayMode: 0
+    answers:
+    - text: Who
+      sprite: {fileID: 0}
+      isCorrect: 1
+    - text: What
+      sprite: {fileID: 0}
+      isCorrect: 0
+    - text: Which
+      sprite: {fileID: 0}
+      isCorrect: 0
+  - questionText: _______ will you do after school today?
+    displayMode: 0
+    answers:
+    - text: Who
+      sprite: {fileID: 0}
+      isCorrect: 0
+    - text: What
+      sprite: {fileID: 0}
+      isCorrect: 1
+    - text: Which
+      sprite: {fileID: 0}
+      isCorrect: 0
+  - questionText: _______ model did you like the most?
+    displayMode: 0
+    answers:
+    - text: Who
+      sprite: {fileID: 0}
+      isCorrect: 0
+    - text: What
+      sprite: {fileID: 0}
+      isCorrect: 0
+    - text: Which
+      sprite: {fileID: 0}
+      isCorrect: 1
+  - questionText: _______ pencil is lying on the floor?
+    displayMode: 0
+    answers:
+    - text: Whose
+      sprite: {fileID: 0}
+      isCorrect: 1
+    - text: Who
+      sprite: {fileID: 0}
+      isCorrect: 0
+    - text: Which
+      sprite: {fileID: 0}
+      isCorrect: 0
+  - questionText: _______ will the train arrive?
+    displayMode: 0
+    answers:
+    - text: When
+      sprite: {fileID: 0}
+      isCorrect: 1
+    - text: Who
+      sprite: {fileID: 0}
+      isCorrect: 0
+    - text: Which
+      sprite: {fileID: 0}
+      isCorrect: 0
+  - questionText: _______  is the playground located?
+    displayMode: 0
+    answers:
+    - text: When
+      sprite: {fileID: 0}
+      isCorrect: 0
+    - text: Where
+      sprite: {fileID: 0}
+      isCorrect: 1
+    - text: Which
+      sprite: {fileID: 0}
+      isCorrect: 0
+  - questionText: _______  were you late yesterday?
+    displayMode: 0
+    answers:
+    - text: Why
+      sprite: {fileID: 0}
+      isCorrect: 1
+    - text: Where
+      sprite: {fileID: 0}
+      isCorrect: 0
+    - text: Which
+      sprite: {fileID: 0}
+      isCorrect: 0

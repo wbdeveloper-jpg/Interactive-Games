@@ -1,0 +1,149 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 641713ef6584ced439903568e620018c, type: 3}
+  m_Name: adaptation-in-plants-4
+  m_EditorClassIdentifier: Assembly-CSharp::OddClawGeneralQuestionGenerator
+  minimumOptions: 2
+  maximumOptions: 3
+  questionsPerRun: 5
+  completionTitle: All Waves Completed!
+  shuffleAnswerOrder: 1
+  questionBank:
+  - questionText: Pick the evergreen tree.
+    displayMode: 1
+    answers:
+    - text: 
+      sprite: {fileID: 21300000, guid: 67e082ce14b6f81489a952dd094b72af, type: 3}
+      isCorrect: 1
+    - text: 
+      sprite: {fileID: 21300000, guid: a966796f03a84ec4796667924812d1b9, type: 3}
+      isCorrect: 0
+    - text: 
+      sprite: {fileID: 21300000, guid: a65c39829a5b2a34a934340a928609d0, type: 3}
+      isCorrect: 0
+  - questionText: Select the tree that grows in hilly areas
+    displayMode: 1
+    answers:
+    - text: 
+      sprite: {fileID: 21300000, guid: 2491705ae3b85ca4d95f75da239614ce, type: 3}
+      isCorrect: 1
+    - text: 
+      sprite: {fileID: 21300000, guid: 25992016786fe8e42879b70c353775d7, type: 3}
+      isCorrect: 0
+    - text: 
+      sprite: {fileID: 21300000, guid: 8b28cec3eaabcf145953e3ab4dc806e8, type: 3}
+      isCorrect: 0
+  - questionText: Select the tree that does NOT grow in the desert.
+    displayMode: 1
+    answers:
+    - text: 
+      sprite: {fileID: 21300000, guid: 25992016786fe8e42879b70c353775d7, type: 3}
+      isCorrect: 0
+    - text: 
+      sprite: {fileID: 21300000, guid: 8b28cec3eaabcf145953e3ab4dc806e8, type: 3}
+      isCorrect: 1
+    - text: 
+      sprite: {fileID: 21300000, guid: 069542cc4805e0d42b6b11eab2aa59eb, type: 3}
+      isCorrect: 0
+  - questionText: Which tree has pneumatophores?
+    displayMode: 1
+    answers:
+    - text: 
+      sprite: {fileID: 21300000, guid: b7ec091b242361948bd36698b9795fff, type: 3}
+      isCorrect: 1
+    - text: 
+      sprite: {fileID: 21300000, guid: 37db44eb996fc4f49b72b48adbfb20de, type: 3}
+      isCorrect: 0
+    - text: 
+      sprite: {fileID: 21300000, guid: a65c39829a5b2a34a934340a928609d0, type: 3}
+      isCorrect: 0
+    - text: 
+      sprite: {fileID: 21300000, guid: 67e082ce14b6f81489a952dd094b72af, type: 3}
+      isCorrect: 0
+  - questionText: Which fixed plant has a long, thin, hollow, and flexible stem?
+    displayMode: 1
+    answers:
+    - text: 
+      sprite: {fileID: 21300000, guid: c11fb165c9618bc4d82e0f7d9a37272c, type: 3}
+      isCorrect: 1
+    - text: 
+      sprite: {fileID: 21300000, guid: 25992016786fe8e42879b70c353775d7, type: 3}
+      isCorrect: 0
+    - text: 
+      sprite: {fileID: 21300000, guid: 4da0ce0914304c54ca7bda44470a1330, type: 3}
+      isCorrect: 0
+  - questionText: Which plant floats on the surface of water?
+    displayMode: 1
+    answers:
+    - text: 
+      sprite: {fileID: 21300000, guid: c11fb165c9618bc4d82e0f7d9a37272c, type: 3}
+      isCorrect: 0
+    - text: 
+      sprite: {fileID: 21300000, guid: 0bb2bdeada7b06a469104acc28721a13, type: 3}
+      isCorrect: 1
+    - text: 
+      sprite: {fileID: 21300000, guid: 4da0ce0914304c54ca7bda44470a1330, type: 3}
+      isCorrect: 0
+  - questionText: Select the plant that grows underwater.
+    displayMode: 1
+    answers:
+    - text: 
+      sprite: {fileID: 21300000, guid: a8e131bc834e19a45bbc52d9e5fff626, type: 3}
+      isCorrect: 1
+    - text: 
+      sprite: {fileID: 21300000, guid: 3cfd625ed68d528438b73988d8f67bff, type: 3}
+      isCorrect: 0
+    - text: 
+      sprite: {fileID: 21300000, guid: 1bb72f7455efc9547988406d829497f7, type: 3}
+      isCorrect: 0
+  - questionText: Which trees are cone-shaped and called conifers?
+    displayMode: 1
+    answers:
+    - text: 
+      sprite: {fileID: 21300000, guid: 25992016786fe8e42879b70c353775d7, type: 3}
+      isCorrect: 0
+    - text: 
+      sprite: {fileID: 21300000, guid: 2491705ae3b85ca4d95f75da239614ce, type: 3}
+      isCorrect: 1
+    - text: 
+      sprite: {fileID: 21300000, guid: 8fcbbfc5a959bf146b7e825288957a45, type: 3}
+      isCorrect: 0
+  - questionText: I shed my leaves in winter. Catch me.
+    displayMode: 1
+    answers:
+    - text: 
+      sprite: {fileID: 21300000, guid: 37db44eb996fc4f49b72b48adbfb20de, type: 3}
+      isCorrect: 0
+    - text: 
+      sprite: {fileID: 21300000, guid: a65c39829a5b2a34a934340a928609d0, type: 3}
+      isCorrect: 1
+    - text: 
+      sprite: {fileID: 21300000, guid: 2491705ae3b85ca4d95f75da239614ce, type: 3}
+      isCorrect: 0
+    - text: 
+      sprite: {fileID: 21300000, guid: 67e082ce14b6f81489a952dd094b72af, type: 3}
+      isCorrect: 0
+  - questionText: Which one is a terrestrial plant?
+    displayMode: 1
+    answers:
+    - text: 
+      sprite: {fileID: 21300000, guid: 3cfd625ed68d528438b73988d8f67bff, type: 3}
+      isCorrect: 1
+    - text: 
+      sprite: {fileID: 21300000, guid: c11fb165c9618bc4d82e0f7d9a37272c, type: 3}
+      isCorrect: 0
+    - text: 
+      sprite: {fileID: 21300000, guid: 1bb72f7455efc9547988406d829497f7, type: 3}
+      isCorrect: 0
+    - text: 
+      sprite: {fileID: 21300000, guid: a8e131bc834e19a45bbc52d9e5fff626, type: 3}
+      isCorrect: 0

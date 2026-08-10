@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -12,6 +13,13 @@ public enum OddClawAimMode
 {
     EasyWithGuideLine,
     NormalNoGuideLine
+}
+
+public enum OddClawHowToPlayMode
+{
+    FirstTimeAutomatically,
+    EveryGameStartAutomatically,
+    ManualButtonOnly
 }
 
 public class OddClawCatchManager : MonoBehaviour, IGameSceneCallbacks, IGameAudioCallbacks
@@ -50,6 +58,8 @@ public class OddClawCatchManager : MonoBehaviour, IGameSceneCallbacks, IGameAudi
     public RectTransform itemContainer;
     public OddClawItemView textItemTemplate;
     public OddClawItemView imageItemTemplate;
+    [Tooltip("Optional template used only by Sprite With Optional Text questions when an answer has both a sprite and visible text.")]
+    public OddClawItemView imageTextItemTemplate;
     public float itemSpacing = 30f;
     [Tooltip("Keeps remaining objects from snapping into the empty gap after one object gets caught.")]
     public bool lockItemPositionsAfterSpawn = true;
@@ -83,6 +93,11 @@ public class OddClawCatchManager : MonoBehaviour, IGameSceneCallbacks, IGameAudi
     public float firstPickHintBreathDuration = 0.8f;
 
     [Header("How To Play")]
+    public OddClawHowToPlayMode howToPlayMode = OddClawHowToPlayMode.FirstTimeAutomatically;
+    [Tooltip("Optional existing scene button used to open How To Play manually. The button continues to work in every automatic mode.")]
+    public Button howToPlayOpenButton;
+    [Tooltip("The active scene name is appended automatically, keeping this save separate per scene.")]
+    public string howToPlaySaveKeyPrefix = "OddClawCatch_HowToPlayViewed";
     public List<Sprite> howToPlayGuideImages = new List<Sprite>();
     public Image howToPlayGuideImage;
     public TMP_Text howToPlayFallbackText;
@@ -92,6 +107,14 @@ public class OddClawCatchManager : MonoBehaviour, IGameSceneCallbacks, IGameAudi
     public Button howToPlayStartButton;
     [TextArea(4, 8)] public string howToPlayFallbackInstructions =
         "Wait for the claw to aim at the correct answer.\nTap anywhere to extend the claw.\nOnly overlapping items can be caught.\nCorrect catches increase score. Wrong catches and timeouts reduce health. Misses only play feedback and let you try again.";
+
+    [Header("First-Time Interactive Tutorial")]
+    [Tooltip("Installed under OddClawCatch_FirstTimeTutorial by the additive editor installer.")]
+    public OddClawFirstTimeTutorialController firstTimeTutorial;
+
+    [Header("Image Question Features")]
+    [Tooltip("Optional additive controller for enlarged image preview, first-use image guidance, and image-only magnet selection.")]
+    public OddClawImageModeFeatureController imageModeFeatures;
 
     [Header("Pause Panel Buttons")]
     public Button resumeButton;
@@ -137,6 +160,7 @@ public class OddClawCatchManager : MonoBehaviour, IGameSceneCallbacks, IGameAudi
     public float expectedMaxTime = 180f;
 
     private readonly List<OddClawItemView> _spawnedItems = new List<OddClawItemView>();
+    private readonly List<RaycastResult> _uiRaycastResults = new List<RaycastResult>();
     private List<SkillEntry> _skills = new List<SkillEntry>
     {
         new SkillEntry(BloomSkillType.Apply, 100f, timeWeight: 0.3f, accuracyWeight: 0.7f),
@@ -156,9 +180,20 @@ public class OddClawCatchManager : MonoBehaviour, IGameSceneCallbacks, IGameAudi
     private int _howToPlayIndex;
     private bool _gameplayActive;
     private bool _gameOver;
+    private bool _warnedMissingImageTextTemplate;
     private bool _isPaused;
     private bool _localResultShown;
     private bool _hasCaughtFirstCorrect;
+    private bool _howToPlayOpenedManually;
+    private bool _resumeGameplayAfterHowToPlay;
+    private bool _introFlowFinished;
+    private bool _realGameplayStarting;
+    private bool _imageFeatureHold;
+    private GameObject _manualHowToPlayReturnPanel;
+    private OddClawGeneralQuestionGenerator _generalQuestionGenerator;
+    private bool _generalQuestionRunActive;
+    private int _generalQuestionsResolved;
+    private int _generalQuestionsTotal;
 
     private void Awake()
     {
@@ -172,6 +207,18 @@ public class OddClawCatchManager : MonoBehaviour, IGameSceneCallbacks, IGameAudi
 
         if (clawController != null && clawController.audioManager == null)
             clawController.audioManager = audioManager;
+
+        if (imageModeFeatures == null)
+            imageModeFeatures = rootCanvas != null
+                ? rootCanvas.GetComponentInChildren<OddClawImageModeFeatureController>(true)
+                : GetComponentInChildren<OddClawImageModeFeatureController>(true);
+
+        if (imageModeFeatures != null)
+        {
+            imageModeFeatures.gameManager = this;
+            imageModeFeatures.clawController = clawController;
+            imageModeFeatures.rootCanvas = rootCanvas;
+        }
 
         ApplyAimModeToClaw();
 
@@ -248,7 +295,10 @@ public class OddClawCatchManager : MonoBehaviour, IGameSceneCallbacks, IGameAudi
         UpdateLoadingView(1f);
         yield return new WaitForSeconds(0.1f);
 
-        ShowHowToPlayPanel();
+        if (ShouldShowHowToPlayAutomatically() && howToPlayPanel != null)
+            ShowHowToPlayPanel(false);
+        else
+            ContinueAfterIntroPanels();
     }
 
     private void UpdateLoadingView(float progress)
@@ -266,6 +316,7 @@ public class OddClawCatchManager : MonoBehaviour, IGameSceneCallbacks, IGameAudi
         AddButtonListener(howToPlayPrevButton, PreviousHowToPlayStep);
         AddButtonListener(howToPlayNextButton, NextHowToPlayStep);
         AddButtonListener(howToPlayStartButton, StartFromHowToPlay);
+        AddButtonListener(howToPlayOpenButton, OpenHowToPlayManually);
         AddButtonListener(resumeButton, ResumeGame);
         AddButtonListener(restartButton, OnPlayAgain);
         AddButtonListener(homeButton, OnHome);
@@ -296,12 +347,68 @@ public class OddClawCatchManager : MonoBehaviour, IGameSceneCallbacks, IGameAudi
         clawController.SetEasyGuideEnabled(aimMode == OddClawAimMode.EasyWithGuideLine);
     }
 
-    private void ShowHowToPlayPanel()
+    private bool ShouldShowHowToPlayAutomatically()
+    {
+        switch (howToPlayMode)
+        {
+            case OddClawHowToPlayMode.EveryGameStartAutomatically:
+                return true;
+            case OddClawHowToPlayMode.ManualButtonOnly:
+                return false;
+            default:
+                return PlayerPrefs.GetInt(GetHowToPlaySaveKey(), 0) == 0;
+        }
+    }
+
+    private string GetHowToPlaySaveKey()
+    {
+        string sceneName = SceneManager.GetActiveScene().name;
+        return howToPlaySaveKeyPrefix + "_" + sceneName;
+    }
+
+    private void MarkHowToPlayViewed()
+    {
+        PlayerPrefs.SetInt(GetHowToPlaySaveKey(), 1);
+        PlayerPrefs.Save();
+    }
+
+    private void ShowHowToPlayPanel(bool openedManually)
     {
         HideFirstPickHint(true);
+        _howToPlayOpenedManually = openedManually;
         _howToPlayIndex = 0;
         UpdateHowToPlayPanel();
         ShowOnlyPanel(howToPlayPanel);
+    }
+
+    public void OpenHowToPlayManually()
+    {
+        if (howToPlayPanel == null || howToPlayPanel.activeSelf)
+            return;
+
+        _resumeGameplayAfterHowToPlay = _gameplayActive && !_gameOver;
+        _manualHowToPlayReturnPanel = GetCurrentOverlayPanel();
+
+        if (_resumeGameplayAfterHowToPlay)
+        {
+            _gameplayActive = false;
+            HideFirstPickHint(true);
+            if (clawController != null)
+                clawController.SetInputEnabled(false);
+        }
+
+        ShowHowToPlayPanel(true);
+    }
+
+    private GameObject GetCurrentOverlayPanel()
+    {
+        if (pausePanel != null && pausePanel.activeSelf)
+            return pausePanel;
+        if (resultPanel != null && resultPanel.activeSelf)
+            return resultPanel;
+        if (loadingPanel != null && loadingPanel.activeSelf)
+            return loadingPanel;
+        return null;
     }
 
     private void PreviousHowToPlayStep()
@@ -355,6 +462,69 @@ public class OddClawCatchManager : MonoBehaviour, IGameSceneCallbacks, IGameAudi
 
     private void StartFromHowToPlay()
     {
+        MarkHowToPlayViewed();
+        HideAllPanels();
+
+        if (_howToPlayOpenedManually)
+        {
+            _howToPlayOpenedManually = false;
+
+            if (_manualHowToPlayReturnPanel != null)
+            {
+                GameObject returnPanel = _manualHowToPlayReturnPanel;
+                _manualHowToPlayReturnPanel = null;
+                _resumeGameplayAfterHowToPlay = false;
+                ShowOnlyPanel(returnPanel);
+                return;
+            }
+
+            if (_resumeGameplayAfterHowToPlay)
+            {
+                _resumeGameplayAfterHowToPlay = false;
+                _gameplayActive = true;
+                if (clawController != null)
+                    clawController.SetInputEnabled(true);
+                RefreshFirstPickHintForWave();
+                return;
+            }
+
+            if (_introFlowFinished)
+                return;
+        }
+
+        ContinueAfterIntroPanels();
+    }
+
+    private void ContinueAfterIntroPanels()
+    {
+        _introFlowFinished = true;
+        EnterTutorialHold();
+
+        if (firstTimeTutorial != null && firstTimeTutorial.ShouldPlayTutorial())
+        {
+            firstTimeTutorial.BeginTutorial(this, StartRealGameplay);
+            return;
+        }
+
+        StartRealGameplay();
+    }
+
+    public void EnterTutorialHold()
+    {
+        _gameplayActive = false;
+        HideAllPanels();
+        HideFirstPickHint(true);
+
+        if (clawController != null)
+            clawController.SetInputEnabled(false);
+    }
+
+    private void StartRealGameplay()
+    {
+        if (_realGameplayStarting || _gameplayActive || _gameOver)
+            return;
+
+        _realGameplayStarting = true;
         HideAllPanels();
         StartCoroutine(StartGameplayAfterReadyAnimation());
     }
@@ -380,17 +550,44 @@ public class OddClawCatchManager : MonoBehaviour, IGameSceneCallbacks, IGameAudi
         _gameOver = false;
         _localResultShown = false;
         _hasCaughtFirstCorrect = false;
+        _generalQuestionsResolved = 0;
+        _generalQuestionsTotal = 0;
+        _generalQuestionRunActive = false;
+        _imageFeatureHold = false;
+        _generalQuestionGenerator = questionGenerator as OddClawGeneralQuestionGenerator;
+
+        if (_generalQuestionGenerator != null)
+        {
+            if (!_generalQuestionGenerator.PrepareRun(out string generalRunError))
+            {
+                FailGeneralQuestionRun(generalRunError);
+                _realGameplayStarting = false;
+                yield break;
+            }
+
+            _generalQuestionRunActive = true;
+            _generalQuestionsTotal = _generalQuestionGenerator.SelectedQuestionCount;
+        }
 
         if (audioManager != null)
             audioManager.PlayBgm();
 
         StartNextWave();
+        _realGameplayStarting = false;
     }
 
     private void StartNextWave()
     {
         if (_gameOver)
             return;
+
+        if (_generalQuestionRunActive
+            && (_generalQuestionGenerator == null
+                || !_generalQuestionGenerator.HasRemainingQuestions))
+        {
+            CompleteGeneralQuestionRun();
+            return;
+        }
 
         ClearItems();
         EnsureGenerator();
@@ -411,11 +608,21 @@ public class OddClawCatchManager : MonoBehaviour, IGameSceneCallbacks, IGameAudi
         string error = string.Empty;
         if (_currentQuestion == null || !_currentQuestion.IsValid(2, out error))
         {
+            if (_generalQuestionRunActive)
+            {
+                FailGeneralQuestionRun(
+                    "The selected General Question Generator could not provide a valid question. "
+                    + error);
+                return;
+            }
+
             Debug.LogWarning("Odd Claw question generator returned invalid data: " + error);
             _currentQuestion = BuildEmergencyQuestion();
         }
 
         SpawnAnswerItems(_currentQuestion);
+        if (imageModeFeatures != null)
+            imageModeFeatures.ConfigureForWave(_currentQuestion, _spawnedItems);
         _gameplayActive = true;
         UpdateTopBar();
         RefreshFirstPickHintForWave();
@@ -469,9 +676,12 @@ public class OddClawCatchManager : MonoBehaviour, IGameSceneCallbacks, IGameAudi
 
         for (int i = 0; i < question.answerOptions.Count; i++)
         {
-            OddClawItemView template = question.displayMode == OddClawAnswerDisplayMode.Sprite && imageItemTemplate != null
-                ? imageItemTemplate
-                : textItemTemplate;
+            OddClawAnswerOption option = question.answerOptions[i];
+            OddClawAnswerDisplayMode itemDisplayMode;
+            OddClawItemView template = ResolveItemTemplate(
+                question.displayMode,
+                option,
+                out itemDisplayMode);
 
             if (template == null)
             {
@@ -482,7 +692,7 @@ public class OddClawCatchManager : MonoBehaviour, IGameSceneCallbacks, IGameAudi
             OddClawItemView view = Instantiate(template, itemContainer);
             view.gameObject.name = "AnswerItem_" + (i + 1);
             view.gameObject.SetActive(true);
-            view.Setup(question.answerOptions[i], question.displayMode, i, question.correctAnswerIndex, primaryFont, secondaryFont);
+            view.Setup(option, itemDisplayMode, i, question.correctAnswerIndex, primaryFont, secondaryFont);
             _spawnedItems.Add(view);
         }
 
@@ -492,6 +702,46 @@ public class OddClawCatchManager : MonoBehaviour, IGameSceneCallbacks, IGameAudi
             LayoutRebuilder.ForceRebuildLayoutImmediate(itemContainer);
 
         EnsureClawCanReachEdgeItems();
+    }
+
+    private OddClawItemView ResolveItemTemplate(
+        OddClawAnswerDisplayMode displayMode,
+        OddClawAnswerOption option,
+        out OddClawAnswerDisplayMode itemDisplayMode)
+    {
+        itemDisplayMode = displayMode;
+
+        if (displayMode == OddClawAnswerDisplayMode.SpriteWithOptionalText)
+        {
+            bool hasSprite = option != null && option.sprite != null;
+            bool hasText = option != null && !string.IsNullOrWhiteSpace(option.text);
+
+            if (!hasSprite)
+            {
+                itemDisplayMode = OddClawAnswerDisplayMode.Text;
+                return textItemTemplate;
+            }
+
+            if (hasText && imageTextItemTemplate != null)
+                return imageTextItemTemplate;
+
+            if (hasText && imageTextItemTemplate == null && !_warnedMissingImageTextTemplate)
+            {
+                _warnedMissingImageTextTemplate = true;
+                Debug.LogWarning(
+                    "Sprite With Optional Text is selected, but Image Text Item Template is not assigned. "
+                    + "The affected answers will remain image-only. Run the additive Image Mode Features installer.",
+                    this);
+            }
+
+            itemDisplayMode = OddClawAnswerDisplayMode.Sprite;
+            return imageItemTemplate != null ? imageItemTemplate : textItemTemplate;
+        }
+
+        if (displayMode == OddClawAnswerDisplayMode.Sprite && imageItemTemplate != null)
+            return imageItemTemplate;
+
+        return textItemTemplate;
     }
 
     private void PlaceItemsManuallyAndLock()
@@ -698,6 +948,7 @@ public class OddClawCatchManager : MonoBehaviour, IGameSceneCallbacks, IGameAudi
         }
 
         UpdateTopBar();
+        MarkGeneralQuestionResolved();
 
         if (_currentHealth <= 0)
             GameOver();
@@ -736,6 +987,8 @@ public class OddClawCatchManager : MonoBehaviour, IGameSceneCallbacks, IGameAudi
         if (nextWaveDelay > 0f)
             yield return new WaitForSeconds(nextWaveDelay);
 
+        MarkGeneralQuestionResolved();
+
         if (_currentHealth <= 0)
             GameOver();
         else
@@ -746,6 +999,40 @@ public class OddClawCatchManager : MonoBehaviour, IGameSceneCallbacks, IGameAudi
     {
         _currentHealth = Mathf.Max(0, _currentHealth - Mathf.Max(0, amount));
         UpdateTopBar();
+    }
+
+    public bool BeginImageFeatureHold()
+    {
+        if (_imageFeatureHold)
+            return true;
+
+        if (!_gameplayActive
+            || _gameOver
+            || _isPaused
+            || (clawController != null && clawController.IsBusy))
+            return false;
+
+        _imageFeatureHold = true;
+        _gameplayActive = false;
+        HideFirstPickHint(false);
+        if (clawController != null)
+            clawController.SetInputEnabled(false);
+        return true;
+    }
+
+    public void EndImageFeatureHold()
+    {
+        if (!_imageFeatureHold)
+            return;
+
+        _imageFeatureHold = false;
+        if (_gameOver || _isPaused || _localResultShown)
+            return;
+
+        _gameplayActive = true;
+        if (clawController != null)
+            clawController.SetInputEnabled(true);
+        RefreshFirstPickHintForWave();
     }
 
     private void UpdateTopBar()
@@ -817,11 +1104,75 @@ public class OddClawCatchManager : MonoBehaviour, IGameSceneCallbacks, IGameAudi
 
     private void GameOver()
     {
+        FinishGame("Game Over");
+    }
+
+    private void CompleteGeneralQuestionRun()
+    {
+        if (!_generalQuestionRunActive || _localResultShown)
+            return;
+
+        string title = _generalQuestionGenerator != null
+            ? _generalQuestionGenerator.completionTitle
+            : string.Empty;
+        if (string.IsNullOrWhiteSpace(title))
+            title = "All Waves Completed!";
+
+        FinishGame(title);
+    }
+
+    private void MarkGeneralQuestionResolved()
+    {
+        if (!_generalQuestionRunActive)
+            return;
+
+        _generalQuestionsResolved = Mathf.Min(
+            _generalQuestionsResolved + 1,
+            _generalQuestionsTotal);
+    }
+
+    private void FailGeneralQuestionRun(string reason)
+    {
+        string warning = string.IsNullOrWhiteSpace(reason)
+            ? "The General Question Generator is not configured correctly."
+            : reason;
+        Debug.LogWarning("Odd Claw General Question Mode stopped safely: " + warning, this);
+
+        _gameOver = true;
+        _gameplayActive = false;
+        _imageFeatureHold = false;
+        if (imageModeFeatures != null)
+            imageModeFeatures.EndWave();
+        _localResultShown = true;
+        Time.timeScale = 1f;
+        HideFirstPickHint(true);
+        ClearItems();
+
+        if (clawController != null)
+            clawController.SetInputEnabled(false);
+
+        if (audioManager != null)
+            audioManager.StopBgm();
+
+        if (resultTitleText != null)
+            resultTitleText.text = "Questions Not Configured";
+
+        if (resultBodyText != null)
+            resultBodyText.text = warning;
+
+        ShowOnlyPanel(resultPanel);
+    }
+
+    private void FinishGame(string title)
+    {
         if (_localResultShown)
             return;
 
         _gameOver = true;
         _gameplayActive = false;
+        _imageFeatureHold = false;
+        if (imageModeFeatures != null)
+            imageModeFeatures.EndWave();
         _localResultShown = true;
         Time.timeScale = 1f;
         HideFirstPickHint(true);
@@ -836,16 +1187,28 @@ public class OddClawCatchManager : MonoBehaviour, IGameSceneCallbacks, IGameAudi
         float accuracy = _totalAttempts > 0 ? Mathf.Clamp01((float)_correctCount / _totalAttempts) : 0f;
 
         if (resultTitleText != null)
-            resultTitleText.text = "Game Over";
+            resultTitleText.text = title;
 
         if (resultBodyText != null)
         {
-            resultBodyText.text =
-                "Score: " + _score + "\n" +
-                "Waves Played: " + Mathf.Max(0, _wave) + "\n" +
-                "Accuracy: " + Mathf.RoundToInt(accuracy * 100f) + "%\n" +
-                "Mistakes: " + _mistakeCount + "\n" +
-                "Time: " + Mathf.RoundToInt(timeTaken) + "s";
+            if (_generalQuestionRunActive)
+            {
+                resultBodyText.text =
+                    "Score: " + _score + "\n" +
+                    "Waves: " + _generalQuestionsResolved + "/" + _generalQuestionsTotal + "\n" +
+                    "Accuracy: " + Mathf.RoundToInt(accuracy * 100f) + "%\n" +
+                    "Mistakes: " + _mistakeCount + "\n" +
+                    "Time: " + Mathf.RoundToInt(timeTaken) + "s";
+            }
+            else
+            {
+                resultBodyText.text =
+                    "Score: " + _score + "\n" +
+                    "Waves Played: " + Mathf.Max(0, _wave) + "\n" +
+                    "Accuracy: " + Mathf.RoundToInt(accuracy * 100f) + "%\n" +
+                    "Mistakes: " + _mistakeCount + "\n" +
+                    "Time: " + Mathf.RoundToInt(timeTaken) + "s";
+            }
         }
 
         ShowOnlyPanel(resultPanel);
@@ -911,14 +1274,8 @@ public class OddClawCatchManager : MonoBehaviour, IGameSceneCallbacks, IGameAudi
 
     private bool WasTapPressed()
     {
-        if (Input.GetMouseButtonDown(0))
-        {
-            if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
-                return false;
-
-            return true;
-        }
-
+        // Device Simulator can expose one press as both touch and mouse input.
+        // Handle touch first so its real finger id wins over the duplicate mouse event.
         if (Input.touchCount > 0)
         {
             for (int i = 0; i < Input.touchCount; i++)
@@ -927,14 +1284,41 @@ public class OddClawCatchManager : MonoBehaviour, IGameSceneCallbacks, IGameAudi
                 if (touch.phase != TouchPhase.Began)
                     continue;
 
-                if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject(touch.fingerId))
+                if (IsScreenPositionOverUI(touch.position, touch.fingerId))
                     continue;
 
                 return true;
             }
+
+            // Do not also process the mouse event generated from the same simulated touch.
+            return false;
         }
 
+        if (Input.GetMouseButtonDown(0))
+            return !IsScreenPositionOverUI(Input.mousePosition, -1);
+
         return false;
+    }
+
+    private bool IsScreenPositionOverUI(Vector2 screenPosition, int pointerId)
+    {
+        EventSystem eventSystem = EventSystem.current;
+        if (eventSystem == null)
+            return false;
+
+        // Raycast the current press position directly instead of relying on the
+        // EventSystem's cached pointer state, which may update later in the frame.
+        PointerEventData pointerData = new PointerEventData(eventSystem)
+        {
+            position = screenPosition,
+            pointerId = pointerId
+        };
+
+        _uiRaycastResults.Clear();
+        eventSystem.RaycastAll(pointerData, _uiRaycastResults);
+        bool isOverUI = _uiRaycastResults.Count > 0;
+        _uiRaycastResults.Clear();
+        return isOverUI;
     }
 
     private void RefreshFirstPickHintForWave()
@@ -1046,10 +1430,15 @@ public class OddClawCatchManager : MonoBehaviour, IGameSceneCallbacks, IGameAudi
             textItemTemplate.gameObject.SetActive(false);
         if (imageItemTemplate != null)
             imageItemTemplate.gameObject.SetActive(false);
+        if (imageTextItemTemplate != null)
+            imageTextItemTemplate.gameObject.SetActive(false);
     }
 
     private void ClearItems()
     {
+        if (imageModeFeatures != null)
+            imageModeFeatures.EndWave();
+
         for (int i = _spawnedItems.Count - 1; i >= 0; i--)
         {
             if (_spawnedItems[i] != null)

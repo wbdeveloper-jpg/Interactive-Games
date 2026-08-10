@@ -1,0 +1,171 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3b08ad0ab6ac18340b35c8dc8bd98aeb, type: 3}
+  m_Name: circulatory-system-5
+  m_EditorClassIdentifier: Assembly-CSharp::WordShuffleDragSwap.WordShuffleQuestionDatabase
+  questions:
+  - Question: 'Rearrange the letters to find the correct word.
+
+      Clue: The heart
+      is an example of this body part.'
+    Answer: ORGAN
+    Hint: 
+    Picture: {fileID: 0}
+    VoiceOver: {fileID: 0}
+  - Question: 'Rearrange the letters to find the correct word. Clue: It carries oxygen
+      and nutrients throughout the body.'
+    Answer: BLOOD
+    Hint: 
+    Picture: {fileID: 0}
+    VoiceOver: {fileID: 0}
+  - Question: 'Rearrange the letters to find the correct word.
+
+      Clue: Which
+      organ pumps blood all over the body?'
+    Answer: HEART
+    Hint: 
+    Picture: {fileID: 0}
+    VoiceOver: {fileID: 0}
+  - Question: 'Rearrange the letters to find the correct word.
+
+      Clue: Which
+      blood vessels arise from capillaries and end at the heart?'
+    Answer: VEINS
+    Hint: 
+    Picture: {fileID: 0}
+    VoiceOver: {fileID: 0}
+  - Question: 'Rearrange the letters to find the correct word.
+
+      Clue: What
+      can you feel on your wrist to know your heart is beating?'
+    Answer: PULSE
+    Hint: 
+    Picture: {fileID: 0}
+    VoiceOver: {fileID: 0}
+  - Question: 'Rearrange the letters to find the correct word.
+
+      Clue: Which
+      blood cells help stop bleeding by forming clots?'
+    Answer: PLATELETS
+    Hint: 
+    Picture: {fileID: 0}
+    VoiceOver: {fileID: 0}
+  - Question: 'Rearrange the letters to find the correct word.
+
+      Clue: Which
+      blood vessels carry oxygenated blood away from the heart?'
+    Answer: ARTERIES
+    Hint: 
+    Picture: {fileID: 0}
+    VoiceOver: {fileID: 0}
+  - Question: 'Rearrange the letters to find the correct word.
+
+      Clue: These
+      blood vessels arise from arteries and end at veins.'
+    Answer: CAPILLARIES
+    Hint: 
+    Picture: {fileID: 0}
+    VoiceOver: {fileID: 0}
+  - Question: 'Rearrange the letters to find the correct word.
+
+      Clue: What
+      are the two lower chambers of the heart called?'
+    Answer: VENTRICLES
+    Hint: 
+    Picture: {fileID: 0}
+    VoiceOver: {fileID: 0}
+  - Question: 'Rearrange the letters to find the correct word.
+
+      Clue: Which
+      upper chamber of the heart receives oxygen-rich blood from the lungs?'
+    Answer: LEFT ATRIUM
+    Hint: 
+    Picture: {fileID: 0}
+    VoiceOver: {fileID: 0}
+  - Question: 'Rearrange the letters to find the correct word.
+
+      Clue: Blood
+      flows in only one direction. What word describes this?'
+    Answer: UNIDIRECTIONAL
+    Hint: 
+    Picture: {fileID: 0}
+    VoiceOver: {fileID: 0}
+  - Question: "Rearrange the letters to find the correct word.\nClue: What do we
+      call one complete \u201Club-dub\u201D of the heart?"
+    Answer: HEARTBEAT
+    Hint: 
+    Picture: {fileID: 0}
+    VoiceOver: {fileID: 0}
+  - Question: 'Rearrange the letters to find the correct word.
+
+      Clue: Which
+      instrument is used by doctors to listen to your heart?'
+    Answer: STETHOSCOPE
+    Hint: 
+    Picture: {fileID: 0}
+    VoiceOver: {fileID: 0}
+  - Question: 'Rearrange the letters to find the correct word.
+
+      Clue: What
+      sound does a heartbeat make?'
+    Answer: LUB-DUB
+    Hint: 
+    Picture: {fileID: 0}
+    VoiceOver: {fileID: 0}
+  - Question: 'Rearrange the letters to find the correct word.
+
+      Clue: This
+      gas is carried by red blood cells to all parts of the body.  '
+    Answer: OXYGEN
+    Hint: 
+    Picture: {fileID: 0}
+    VoiceOver: {fileID: 0}
+  - Question: 'Rearrange the letters to find the correct word.
+
+      Clue: Similar
+      functioning cells join together to form a ________.'
+    Answer: TISSUE
+    Hint: 
+    Picture: {fileID: 0}
+    VoiceOver: {fileID: 0}
+  - Question: 'Rearrange the letters to find the correct word.
+
+      Clue: Which
+      part of the heart makes sure blood flows in the right direction? '
+    Answer: VALVE
+    Hint: 
+    Picture: {fileID: 0}
+    VoiceOver: {fileID: 0}
+  - Question: 'Rearrange the letters to find the correct word.
+
+      Clue: Which
+      body system includes the heart and blood vessels?'
+    Answer: CARDIOVASCULAR
+    Hint: 
+    Picture: {fileID: 0}
+    VoiceOver: {fileID: 0}
+  - Question: 'Rearrange the letters to find the correct word.
+
+      Clue: Which
+      red-coloured respiratory pigment is present in red blood cells?'
+    Answer: HAEMOGLOBIN
+    Hint: 
+    Picture: {fileID: 0}
+    VoiceOver: {fileID: 0}
+  - Question: 'Rearrange the letters to find the correct word.
+
+      Clue: Fill
+      in the blank: RBCs contain respiratory __________.'
+    Answer: PIGMENT
+    Hint: 
+    Picture: {fileID: 0}
+    VoiceOver: {fileID: 0}

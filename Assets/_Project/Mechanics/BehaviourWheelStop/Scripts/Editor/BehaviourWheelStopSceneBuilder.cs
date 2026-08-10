@@ -254,8 +254,8 @@ namespace BehaviourWheelStopEditor
             spinner.labelRadiusMultiplier = 0.66f;
             spinner.labelRadiusWithoutIconsMultiplier = 0.60f;
             spinner.iconRadiusMultiplier = 0.42f;
-            spinner.labelWidthMultiplier = 0.68f;
-            spinner.labelHeightMultiplier = 0.15f;
+            spinner.labelWidthMultiplier = 0.82f;
+            spinner.labelHeightMultiplier = 0.32f;
             spinner.iconSizeMultiplier = 0.15f;
 
             RectTransform wheelGraphicRect = CreateUI("WheelVisualMesh_WheelGraphic", wheelRoot);
@@ -281,6 +281,11 @@ namespace BehaviourWheelStopEditor
                 slice.iconImage = icon;
 
                 TMP_Text label = CreateText("Label", sliceRect, "Option", 25, FontStyles.Bold, TextAlignmentOptions.Center, Color.black);
+                label.enableWordWrapping = true;
+                label.enableAutoSizing = true;
+                label.fontSizeMin = 16f;
+                label.fontSizeMax = 40f;
+                label.margin = new Vector4(2f, 2f, 2f, 2f);
                 slice.labelText = label;
                 primaryTexts.Add(label);
 

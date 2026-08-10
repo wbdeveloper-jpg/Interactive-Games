@@ -1211,7 +1211,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 736.119}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &476511593
 MonoBehaviour:
@@ -1228,7 +1228,7 @@ MonoBehaviour:
   gridParent: {fileID: 1705189911}
   gridLayout: {fileID: 1705189912}
   cellPrefab: {fileID: 4410955288936806436, guid: 59d02cab78445174d8a2d703285cae83, type: 3}
-  rows: 10
+  rows: 8
   columns: 10
   gridPadding: 5
   gridSpacing: {x: 10, y: 10}
@@ -1249,7 +1249,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.LayoutElement
   m_IgnoreLayout: 0
   m_MinWidth: -1
-  m_MinHeight: -1
+  m_MinHeight: 600
   m_PreferredWidth: 900
   m_PreferredHeight: 900
   m_FlexibleWidth: -1
@@ -5038,6 +5038,7 @@ MonoBehaviour:
   resultPanel: {fileID: 364425964}
   howToPlayPanel: {fileID: 963920033}
   pausePanel: {fileID: 1285580785}
+  timerDisplayRoot: {fileID: 0}
   pauseButton: {fileID: 71250972}
   resumeButton: {fileID: 200100560}
   howToPlayButton: {fileID: 1420317176}
@@ -5049,12 +5050,16 @@ MonoBehaviour:
   howToPlayMode: 0
   overlayRoot: {fileID: 373425670}
   sentenceAnswerTarget: {fileID: 1142374090}
+  scoreAnimationTarget: {fileID: 0}
   sentenceNormalColor: {r: 0.22, g: 0.18, b: 0.18, a: 1}
   sentenceActiveColor: {r: 0, g: 0.6981132, b: 0.091919065, a: 1}
   positivePopupColor: {r: 0, g: 0.3898821, b: 1, a: 1}
   negativePopupColor: {r: 0.75, g: 0.18, b: 0.18, a: 1}
   scorePopupDuration: 1.75
   wordFlyDuration: 0.5
+  scoreGainFlyDuration: 0.72
+  scoreGainImpactScale: 1.14
+  scoreGainImpactDuration: 0.16
 --- !u!114 &1447282730
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5142,10 +5147,6 @@ MonoBehaviour:
     answer: Ranchi
     questionSprite: {fileID: 0}
     narrationClip: {fileID: 0}
-  - sentenceWithBlank: Capital of Karnataka _________
-    answer: Bengaluru
-    questionSprite: {fileID: 0}
-    narrationClip: {fileID: 0}
   - sentenceWithBlank: Capital of Madhya Pradesh ______
     answer: Bhopal
     questionSprite: {fileID: 0}
@@ -5182,10 +5183,6 @@ MonoBehaviour:
     answer: Chennai
     questionSprite: {fileID: 0}
     narrationClip: {fileID: 0}
-  - sentenceWithBlank: Capital of Telangana _________
-    answer: Hyderabad
-    questionSprite: {fileID: 0}
-    narrationClip: {fileID: 0}
   - sentenceWithBlank: Capital of Tripura ________
     answer: Agartala
     questionSprite: {fileID: 0}
@@ -5205,10 +5202,13 @@ MonoBehaviour:
   questionCount: 5
   randomizeQuestions: 1
   autoStart: 1
+  clockMode: 0
   useTimer: 1
-  gameTime: 120
+  gameTime: 200
   correctScore: 10
   wrongPenalty: 1
+  hintPenalty: 1
+  allowNegativeHintScore: 0
   allowReverseSelection: 0
   wrongFlashDuration: 0.35
   useBloomRewardSystem: 1
@@ -5304,7 +5304,7 @@ MonoBehaviour:
   m_ChildForceExpandWidth: 1
   m_ChildForceExpandHeight: 1
   m_ChildControlWidth: 1
-  m_ChildControlHeight: 0
+  m_ChildControlHeight: 1
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
@@ -6512,7 +6512,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 100}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1762206296
 MonoBehaviour:
@@ -6736,7 +6736,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 97.2211}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1869459354
 MonoBehaviour:
@@ -6999,7 +6999,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 75}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2064102007
 MonoBehaviour:

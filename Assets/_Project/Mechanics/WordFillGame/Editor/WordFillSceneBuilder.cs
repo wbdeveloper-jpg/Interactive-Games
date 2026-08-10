@@ -72,6 +72,7 @@ public static class WordFillSceneBuilder
         grid.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
         grid.constraintCount = 8;
         grid.childAlignment = TextAnchor.MiddleCenter;
+        WordFillLetterGridFitter gridFitter = letterParent.AddComponent<WordFillLetterGridFitter>();
         AddLayoutElement(letterParent, 880, 122, 0);
 
         GameObject controls = CreateUIObject("ControlButtons", bottomPanel.transform);
@@ -140,6 +141,7 @@ public static class WordFillSceneBuilder
 
         so.FindProperty("letterTileTemplate").objectReferenceValue = letterTemplate;
         so.FindProperty("letterButtonParent").objectReferenceValue = letterParent.transform;
+        so.FindProperty("letterGridFitter").objectReferenceValue = gridFitter;
 
         so.FindProperty("backspaceButton").objectReferenceValue = backspaceButton;
         so.FindProperty("clearButton").objectReferenceValue = clearButton;

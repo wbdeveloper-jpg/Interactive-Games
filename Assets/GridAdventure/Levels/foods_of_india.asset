@@ -1,0 +1,130 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4ca1638266a6904d811adc991eeac3c, type: 3}
+  m_Name: foods_of_india
+  m_EditorClassIdentifier: Assembly-CSharp::GridAdventureLevelData
+  levelTitle: Food Grid Fun
+  columns: 3
+  rows: 3
+  basketTitle: FOOD BASKET
+  randomizeWhenMoreThanGridCells: 1
+  randomSeed: 0
+  itemDisplayMode: 0
+  items:
+  - itemId: Tea
+    displayName: Tea
+    gridCoordinate: A1
+    clueText: Parents enjoy this hot drink early in the morning.
+    sprite: {fileID: 39555281480936009, guid: d20d771be0217e0449f51305c2deab73, type: 3}
+    hintAudioClip: {fileID: 0}
+  - itemId: Milk
+    displayName: Milk
+    gridCoordinate: A2
+    clueText: This white drink helps children grow strong.
+    sprite: {fileID: 7264567709313338622, guid: 8ac9f236ad134d94ca48ff44364993ff, type: 3}
+    hintAudioClip: {fileID: 0}
+  - itemId: Rasgulla
+    displayName: Rasgulla
+    gridCoordinate: A3
+    clueText: This soft, white sweet is famous in Kolkata.
+    sprite: {fileID: 1070956172918109450, guid: 8ac9f236ad134d94ca48ff44364993ff, type: 3}
+    hintAudioClip: {fileID: 0}
+  - itemId: Coconut
+    displayName: Coconut
+    gridCoordinate: B1
+    clueText: This fruit has a hard shell and water inside.
+    sprite: {fileID: 5827135659098106525, guid: 8ac9f236ad134d94ca48ff44364993ff, type: 3}
+    hintAudioClip: {fileID: 0}
+  - itemId: Turmeric
+    displayName: Turmeric
+    gridCoordinate: B2
+    clueText: This yellow spice gives food a bright colour.
+    sprite: {fileID: 5558171355175836549, guid: 8ac9f236ad134d94ca48ff44364993ff, type: 3}
+    hintAudioClip: {fileID: 0}
+  - itemId: Biryani
+    displayName: Biryani
+    gridCoordinate: B3
+    clueText: This tasty rice dish is often served at celebrations.
+    sprite: {fileID: 21300000, guid: 7d79b0ffd2d971945827ffcbd22bda14, type: 3}
+    hintAudioClip: {fileID: 0}
+  - itemId: Dhosa
+    displayName: Dhosa
+    gridCoordinate: C1
+    clueText: This tasty food is popular in South India.
+    sprite: {fileID: -5233832108393945374, guid: 8ac9f236ad134d94ca48ff44364993ff, type: 3}
+    hintAudioClip: {fileID: 0}
+  - itemId: Watermelon
+    displayName: Watermelon
+    gridCoordinate: C2
+    clueText: This fruit is green outside and red inside.
+    sprite: {fileID: 3573385130740886834, guid: 8ac9f236ad134d94ca48ff44364993ff, type: 3}
+    hintAudioClip: {fileID: 0}
+  - itemId: Onion
+    displayName: Onion
+    gridCoordinate: C3
+    clueText: This vegetable can make your eyes water when you cut it.
+    sprite: {fileID: 8023191619124240501, guid: dec0b4b3fa09eb9459021c58fba67e22, type: 3}
+    hintAudioClip: {fileID: 0}
+  - itemId: Coffee
+    displayName: Coffee
+    gridCoordinate: A1
+    clueText: We enjoy this hot drink in winter.
+    sprite: {fileID: -5492806482442181536, guid: dec0b4b3fa09eb9459021c58fba67e22, type: 3}
+    hintAudioClip: {fileID: 0}
+  - itemId: Chilli
+    displayName: Chilli
+    gridCoordinate: B2
+    clueText: This vegetable makes food hot and spicy.
+    sprite: {fileID: -2639465706515524593, guid: dec0b4b3fa09eb9459021c58fba67e22, type: 3}
+    hintAudioClip: {fileID: 0}
+  - itemId: Mango
+    displayName: Mango
+    gridCoordinate: C3
+    clueText: This sweet fruit is called the king of fruits.
+    sprite: {fileID: 5578281666278461505, guid: dec0b4b3fa09eb9459021c58fba67e22, type: 3}
+    hintAudioClip: {fileID: 0}
+  - itemId: Wheat
+    displayName: Wheat
+    gridCoordinate: A3
+    clueText: Bread and chapati are made from this.
+    sprite: {fileID: -2307933997355213992, guid: 15e92adb92b47634c9d21484318f175f, type: 3}
+    hintAudioClip: {fileID: 0}
+  - itemId: Corn
+    displayName: Corn
+    gridCoordinate: B1
+    clueText: Popcorn is made from this.
+    sprite: {fileID: 7754035073059272441, guid: 15e92adb92b47634c9d21484318f175f, type: 3}
+    hintAudioClip: {fileID: 0}
+  - itemId: Lemon
+    displayName: Lemon
+    gridCoordinate: C2
+    clueText: This yellow fruit tastes sour.
+    sprite: {fileID: 4644763863305147859, guid: 15e92adb92b47634c9d21484318f175f, type: 3}
+    hintAudioClip: {fileID: 0}
+  - itemId: Dhokla
+    displayName: Dhokla
+    gridCoordinate: A2
+    clueText: This tasty food is popular in Gujarat.
+    sprite: {fileID: -8987465404263039115, guid: 15e92adb92b47634c9d21484318f175f, type: 3}
+    hintAudioClip: {fileID: 0}
+  - itemId: Mishti Doi
+    displayName: Mishti Doi
+    gridCoordinate: B3
+    clueText: This sweet desert  is famous in West Bengal.
+    sprite: {fileID: -666122273236303155, guid: d20d771be0217e0449f51305c2deab73, type: 3}
+    hintAudioClip: {fileID: 0}
+  - itemId: Black Pepper
+    displayName: Black Pepper
+    gridCoordinate: C1
+    clueText: This black spice adds flavour to food.
+    sprite: {fileID: -2426044548103941259, guid: 15e92adb92b47634c9d21484318f175f, type: 3}
+    hintAudioClip: {fileID: 0}

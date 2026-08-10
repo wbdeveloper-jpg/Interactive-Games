@@ -16,6 +16,10 @@ namespace BehaviourWheelStop
     {
         private const int MinSliceCount = 3;
         private const int MaxSliceCount = 6;
+        private const float MinimumReadableLabelWidthMultiplier = 0.78f;
+        private const float MinimumReadableLabelHeightMultiplier = 0.32f;
+        private const float MinimumReadableLabelFontSize = 16f;
+        private const float MaximumReadableLabelFontSize = 40f;
 
         [Header("Wheel References")]
         public RectTransform wheelRoot;
@@ -56,10 +60,10 @@ namespace BehaviourWheelStop
         [Range(0.18f, 0.62f)] public float iconRadiusMultiplier = 0.42f;
         [Tooltip("Icon size = wheel radius * this value.")]
         [Range(0.06f, 0.25f)] public float iconSizeMultiplier = 0.15f;
-        [Tooltip("Label width = wheel radius * this value. Increase if text still gets cut.")]
-        [Range(0.30f, 1.05f)] public float labelWidthMultiplier = 0.72f;
-        [Tooltip("Label height = wheel radius * this value.")]
-        [Range(0.08f, 0.30f)] public float labelHeightMultiplier = 0.16f;
+        [Tooltip("Label width = wheel radius * this value. Runtime keeps a safe readable minimum for existing scenes.")]
+        [Range(0.30f, 1.20f)] public float labelWidthMultiplier = 0.82f;
+        [Tooltip("Label height = wheel radius * this value. A taller box allows long answers to wrap instead of becoming tiny.")]
+        [Range(0.08f, 0.45f)] public float labelHeightMultiplier = 0.32f;
         [Tooltip("Optional extra angle offset for content only. Usually keep 0 so visual order matches detection.")]
         public float contentRotationOffset = 0f;
 
@@ -387,16 +391,27 @@ namespace BehaviourWheelStop
             labelRect.anchorMin = new Vector2(0.5f, 0.5f);
             labelRect.anchorMax = new Vector2(0.5f, 0.5f);
             labelRect.pivot = new Vector2(0.5f, 0.5f);
-            labelRect.sizeDelta = new Vector2(wheelRadius * labelWidthMultiplier, wheelRadius * labelHeightMultiplier);
+            // Existing scenes may still contain the older 0.72 x 0.16 serialized values.
+            // Keep those references intact, but enforce enough usable space at runtime so
+            // TextMeshPro can wrap long answers instead of shrinking them to an unreadable size.
+            float effectiveWidthMultiplier = Mathf.Max(labelWidthMultiplier, MinimumReadableLabelWidthMultiplier);
+            float effectiveHeightMultiplier = Mathf.Max(labelHeightMultiplier, MinimumReadableLabelHeightMultiplier);
+            labelRect.sizeDelta = new Vector2(
+                wheelRadius * effectiveWidthMultiplier,
+                wheelRadius * effectiveHeightMultiplier);
             labelRect.anchoredPosition = position;
             labelRect.localRotation = Quaternion.Euler(0f, 0f, zRotation);
 
             slice.labelText.alignment = TextAlignmentOptions.Center;
-            slice.labelText.enableWordWrapping = false;
+            slice.labelText.enableWordWrapping = true;
             slice.labelText.overflowMode = TextOverflowModes.Overflow;
             slice.labelText.enableAutoSizing = true;
-            slice.labelText.fontSizeMin = 10f;
-            slice.labelText.fontSizeMax = Mathf.Clamp(wheelRadius * 0.105f, 22f, 36f);
+            slice.labelText.fontSizeMin = MinimumReadableLabelFontSize;
+            // Give TMP the real requested maximum. The previous wheelRadius * 0.115f
+            // calculation evaluated to roughly 32 on the standard wheel, so even short
+            // answers could never grow to the configured visual maximum of 40.
+            slice.labelText.fontSizeMax = MaximumReadableLabelFontSize;
+            slice.labelText.margin = new Vector4(2f, 2f, 2f, 2f);
         }
 
         private void ApplyActiveSliceCountToWheelGraphic()

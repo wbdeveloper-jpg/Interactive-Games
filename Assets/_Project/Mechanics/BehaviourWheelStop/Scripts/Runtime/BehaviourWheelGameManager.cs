@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.Serialization;
 using RewardSystem;
 
 namespace BehaviourWheelStop
@@ -24,6 +25,7 @@ namespace BehaviourWheelStop
         public BehaviourWheelFontTheme fontTheme;
         public BehaviourWheelAudioController audioController;
         public BehaviourWheelFirstTimeTutorial firstTimeTutorial;
+        public BehaviourWheelQuestionCard questionCard;
 
         [Header("Quiz Mode")]
         public BehaviourWheelQuizMode quizMode = BehaviourWheelQuizMode.Behaviour;
@@ -34,10 +36,14 @@ namespace BehaviourWheelStop
         public int questionsPerRound = 5;
         public int scorePerCorrect = 10;
         public float loadingDuration = 0.65f;
-        [Tooltip("Main feedback wait before next question. Existing scenes may keep their old serialized value, so Minimum Feedback Duration below is also respected.")]
-        public float feedbackDuration = 1.8f;
-        [Tooltip("Guarantees feedback stays visible long enough even if an older scene still has a smaller serialized Feedback Duration.")]
-        public float minimumFeedbackDuration = 1.8f;
+        [FormerlySerializedAs("feedbackDuration")]
+        [Min(0f)]
+        [Tooltip("How long correct-answer feedback remains visible before the next question starts.")]
+        public float correctAnswerFeedbackDuration = 1.8f;
+        [FormerlySerializedAs("minimumFeedbackDuration")]
+        [Min(0f)]
+        [Tooltip("How long wrong-answer feedback remains visible before the next question starts. This can be longer when the explanation needs more reading time.")]
+        public float wrongAnswerFeedbackDuration = 1.8f;
         [Header("How To Play Behaviour")]
         public BehaviourWheelHowToPlayDisplayMode howToPlayDisplayMode = BehaviourWheelHowToPlayDisplayMode.FirstTimeAutomatically;
         [Tooltip("Kept only so existing scene serialization is not broken. The dropdown above now controls automatic display.")]
@@ -69,6 +75,10 @@ namespace BehaviourWheelStop
         private bool localResultShown;
         private bool bloomPostShown;
         private bool howToPlayOpenedAtStartup;
+        private bool isWheelStopping;
+        private bool isQuestionCardOpen;
+        private float questionCardHeldDuration;
+        private float questionCardHoldStartedAt;
 
         private string HowToPlaySeenKey =>
             $"BehaviourWheelStop.HowToPlay.Seen.{SceneManager.GetActiveScene().name}";
@@ -95,6 +105,12 @@ namespace BehaviourWheelStop
 
             if (spinner != null)
                 spinner.StoppedOnSlice += OnWheelStopped;
+
+            if (questionCard != null)
+            {
+                questionCard.GameplayQuestionRequested += TryReopenQuestionCard;
+                questionCard.VisibilityChanged += OnQuestionCardVisibilityChanged;
+            }
 
             if (pausePanel != null)
                 pausePanel.SetButtons(ResumeGame, ShowHowToPlayFromPause, RestartRound, OnHome);
@@ -223,10 +239,17 @@ namespace BehaviourWheelStop
             if (firstTimeTutorial != null && firstTimeTutorial.IsRunning)
                 return;
 
+            if (questionCard != null)
+                questionCard.HideImmediate(false);
+
             isPaused = false;
             waitingForNextQuestion = false;
             localResultShown = false;
             bloomPostShown = false;
+            isWheelStopping = false;
+            isQuestionCardOpen = false;
+            questionCardHeldDuration = 0f;
+            questionCardHoldStartedAt = 0f;
             currentQuestionIndex = 0;
             score = 0;
             correctCount = 0;
@@ -256,6 +279,8 @@ namespace BehaviourWheelStop
                 audioController.PlayButtonClick();
 
             StopAllCoroutines();
+            if (questionCard != null)
+                questionCard.HideImmediate(false);
             Time.timeScale = 1f;
             if (ui != null)
                 ui.HidePause();
@@ -265,7 +290,8 @@ namespace BehaviourWheelStop
 
         public void OpenPause()
         {
-            if ((firstTimeTutorial != null && firstTimeTutorial.IsRunning) || waitingForNextQuestion || localResultShown)
+            if ((firstTimeTutorial != null && firstTimeTutorial.IsRunning) || waitingForNextQuestion ||
+                localResultShown || isQuestionCardOpen || isWheelStopping)
                 return;
 
             if (audioController != null)
@@ -303,7 +329,8 @@ namespace BehaviourWheelStop
 
         public void StopWheel()
         {
-            if (isPaused || waitingForNextQuestion || spinner == null || localResultShown)
+            if (isPaused || waitingForNextQuestion || spinner == null || localResultShown ||
+                isQuestionCardOpen || isWheelStopping)
                 return;
 
             if (firstTimeTutorial != null && firstTimeTutorial.IsRunning)
@@ -339,6 +366,7 @@ namespace BehaviourWheelStop
                 ui.PlayStopButtonTapAnimation();
             }
 
+            isWheelStopping = true;
             spinner.StopNow();
         }
 
@@ -351,25 +379,94 @@ namespace BehaviourWheelStop
             }
 
             currentQuestion = roundQuestions[currentQuestionIndex];
+            isWheelStopping = false;
 
             if (spinner != null)
             {
                 spinner.SetupOptions(currentQuestion.options);
-                spinner.StartSpin();
+                spinner.StopSilently();
             }
 
             if (ui != null)
             {
                 ui.HideFeedback();
-                ui.SetStopButtonInteractable(true);
+                ui.SetStopButtonInteractable(false);
                 ui.SetGameplayTexts(currentQuestionIndex + 1, roundQuestions.Count, currentQuestion.questionText, score);
             }
+
+            bool cardShown = questionCard != null &&
+                questionCard.ShowAtQuestionStart(currentQuestion.questionText, BeginCurrentQuestionSpin);
+            if (!cardShown)
+                BeginCurrentQuestionSpin();
+        }
+
+        private void BeginCurrentQuestionSpin()
+        {
+            if (isPaused || waitingForNextQuestion || localResultShown || currentQuestion == null)
+                return;
+
+            if (spinner != null)
+                spinner.StartSpin();
+
+            if (ui != null)
+                ui.SetStopButtonInteractable(true);
+        }
+
+        private void TryReopenQuestionCard()
+        {
+            if (questionCard == null || !questionCard.AllowsGameplayQuestionTap || questionCard.IsVisible ||
+                currentQuestion == null || spinner == null || !spinner.IsSpinning || isPaused ||
+                waitingForNextQuestion || localResultShown || isWheelStopping ||
+                (firstTimeTutorial != null && firstTimeTutorial.IsRunning))
+                return;
+
+            spinner.StopSilently();
+            if (ui != null)
+                ui.SetStopButtonInteractable(false);
+
+            if (!questionCard.ShowFromGameplayQuestion(currentQuestion.questionText, ResumeAfterQuestionCard))
+                ResumeAfterQuestionCard();
+        }
+
+        private void ResumeAfterQuestionCard()
+        {
+            if (isPaused || waitingForNextQuestion || localResultShown || isWheelStopping ||
+                currentQuestion == null)
+                return;
+
+            if (spinner != null)
+                spinner.StartSpin();
+
+            if (ui != null)
+                ui.SetStopButtonInteractable(true);
+        }
+
+        private void OnQuestionCardVisibilityChanged(bool visible)
+        {
+            if (visible)
+            {
+                if (isQuestionCardOpen)
+                    return;
+
+                isQuestionCardOpen = true;
+                questionCardHoldStartedAt = Time.unscaledTime;
+                return;
+            }
+
+            if (!isQuestionCardOpen)
+                return;
+
+            questionCardHeldDuration += Mathf.Max(0f, Time.unscaledTime - questionCardHoldStartedAt);
+            questionCardHoldStartedAt = 0f;
+            isQuestionCardOpen = false;
         }
 
         private void OnWheelStopped(int sliceIndex, string selectedAnswer)
         {
             if (firstTimeTutorial != null && firstTimeTutorial.IsRunning)
                 return;
+
+            isWheelStopping = false;
 
             if (waitingForNextQuestion || currentQuestion == null || localResultShown)
                 return;
@@ -398,13 +495,15 @@ namespace BehaviourWheelStop
                 ui.ShowFeedback(correct, selectedAnswer, currentQuestion.correctAnswer, currentQuestion.explanation);
             }
 
-            StartCoroutine(FeedbackThenNextRoutine());
+            StartCoroutine(FeedbackThenNextRoutine(correct));
         }
 
-        private IEnumerator FeedbackThenNextRoutine()
+        private IEnumerator FeedbackThenNextRoutine(bool wasCorrect)
         {
             waitingForNextQuestion = true;
-            float waitTime = Mathf.Max(0f, feedbackDuration, minimumFeedbackDuration);
+            float waitTime = wasCorrect
+                ? Mathf.Max(0f, correctAnswerFeedbackDuration)
+                : Mathf.Max(0f, wrongAnswerFeedbackDuration);
             yield return new WaitForSeconds(waitTime);
             waitingForNextQuestion = false;
             currentQuestionIndex++;
@@ -413,6 +512,9 @@ namespace BehaviourWheelStop
 
         private void ShowResult()
         {
+            if (questionCard != null)
+                questionCard.HideImmediate(false);
+
             localResultShown = true;
 
             if (audioController != null)
@@ -454,7 +556,11 @@ namespace BehaviourWheelStop
 
         private GameEvaluationData BuildEvaluationData()
         {
-            float timeTaken = Mathf.Max(0f, Time.time - roundStartTime);
+            float activeQuestionCardHold = isQuestionCardOpen
+                ? Mathf.Max(0f, Time.unscaledTime - questionCardHoldStartedAt)
+                : 0f;
+            float timeTaken = Mathf.Max(0f,
+                Time.time - roundStartTime - questionCardHeldDuration - activeQuestionCardHold);
             float safeExpectedTime = Mathf.Max(1f, expectedMaxTimeForBloom);
             float timeScore = Mathf.Clamp01(1f - (timeTaken / safeExpectedTime));
             float accuracyScore = roundQuestions.Count > 0
@@ -511,6 +617,12 @@ namespace BehaviourWheelStop
         {
             if (spinner != null)
                 spinner.StoppedOnSlice -= OnWheelStopped;
+
+            if (questionCard != null)
+            {
+                questionCard.GameplayQuestionRequested -= TryReopenQuestionCard;
+                questionCard.VisibilityChanged -= OnQuestionCardVisibilityChanged;
+            }
         }
     }
 }

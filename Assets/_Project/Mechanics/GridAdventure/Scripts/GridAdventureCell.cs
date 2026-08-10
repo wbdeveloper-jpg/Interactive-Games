@@ -56,6 +56,7 @@ public class GridAdventureCell : MonoBehaviour, IPointerClickHandler
     public void OnPointerClick(PointerEventData eventData)
     {
         if (manager == null || IsCompleted) return;
+        if (!manager.CanSelectCells) return;
         manager.SelectCell(this, true);
     }
 

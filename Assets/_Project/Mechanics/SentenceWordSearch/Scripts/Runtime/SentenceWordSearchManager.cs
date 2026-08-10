@@ -4,6 +4,12 @@ using RewardSystem;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+public enum SentenceWordSearchClockMode
+{
+    NormalCountdown,
+    HiddenUnlimited
+}
+
 [DisallowMultipleComponent]
 public class SentenceWordSearchManager : MonoBehaviour, IGameSceneCallbacks, IGameAudioCallbacks
 {
@@ -14,18 +20,32 @@ public class SentenceWordSearchManager : MonoBehaviour, IGameSceneCallbacks, IGa
 
     [Header("Gameplay")]
     public bool autoStart = true;
+    [Tooltip("Normal Countdown preserves the existing visible timer and timeout. Hidden Unlimited hides the clock, removes the timeout, and still records active gameplay time for Bloom rewards.")]
+    public SentenceWordSearchClockMode clockMode = SentenceWordSearchClockMode.NormalCountdown;
     public bool useTimer = true;
     public float gameTime = 120f;
     public int correctScore = 10;
     public int wrongPenalty = 1;
+    [Tooltip("Score removed the first time Hint is used on each real question. Every charged Hint also counts as one Bloom mistake. Tutorial Hint practice is never charged.")]
+    public int hintPenalty = 1;
+    [Tooltip("When enabled, Hint penalties may reduce the score below zero. Disabled by default so existing scenes preserve their current non-negative score behaviour.")]
+    public bool allowNegativeHintScore = false;
     public bool allowReverseSelection = true;
     public float wrongFlashDuration = 0.35f;
 
     [Header("Bloom Reward System")]
     [Tooltip("Keep enabled for final build. If RewardManager.Instance is missing during direct scene testing, the game will safely skip Bloom screens.")]
     public bool useBloomRewardSystem = true;
-    [Tooltip("Used for Bloom timeScore. If 0 or less, Game Time is used.")]
+    [Tooltip("Used for Normal Countdown Bloom timeScore. If 0 or less, Game Time is used.")]
     public float expectedMaxTime = 120f;
+
+    [Header("Hidden Clock Bloom Time Score")]
+    [Tooltip("Hidden Unlimited players receive a full Bloom timeScore when they finish within this many active gameplay seconds.")]
+    [Min(1f)] public float hiddenClockBestTime = 60f;
+    [Tooltip("After Best Time, each additional interval lowers the Hidden Unlimited Bloom timeScore once.")]
+    [Min(1f)] public float hiddenClockScoreInterval = 60f;
+    [Tooltip("Bloom timeScore removed for each interval after Best Time. Example: 0.25 produces 1.00, 0.75, 0.50, 0.25, 0.00.")]
+    [Range(0f, 1f)] public float hiddenClockScoreReduction = 0.25f;
 
     [Header("Board Settings - Edit Here Or On Board")]
     [Tooltip("If enabled, these Manager board values are copied to SentenceWordSearchBoard when the game starts. Keep enabled for fast production editing from one Inspector.")]
@@ -68,8 +88,11 @@ public class SentenceWordSearchManager : MonoBehaviour, IGameSceneCallbacks, IGa
     private int score;
     private int correctCount;
     private int wrongCount;
+    private int hintCount;
     private float remainingTime;
+    private float hiddenElapsedGameplayTime;
     private float _startTime;
+    private bool hintChargedForCurrentQuestion;
     private bool gameRunning;
     private bool gameplayStarted;
     private bool inputLocked;
@@ -132,7 +155,14 @@ public class SentenceWordSearchManager : MonoBehaviour, IGameSceneCallbacks, IGa
         if (!gameRunning || !gameplayStarted || paused || inputLocked)
             return;
 
-        if (useTimer)
+        if (clockMode == SentenceWordSearchClockMode.HiddenUnlimited)
+        {
+            // Match the playable portions of the normal timer: pre-screens,
+            // tutorial, feedback locks, pause, and open gameplay panels do not count.
+            if (ui == null || !ui.IsGameplayBlockingPanelOpen)
+                hiddenElapsedGameplayTime += Time.deltaTime;
+        }
+        else if (useTimer)
         {
             remainingTime -= Time.deltaTime;
 
@@ -143,7 +173,7 @@ public class SentenceWordSearchManager : MonoBehaviour, IGameSceneCallbacks, IGa
             }
         }
 
-        if (ui != null)
+        if (ui != null && clockMode == SentenceWordSearchClockMode.NormalCountdown)
             ui.UpdateTimer(remainingTime, useTimer);
     }
 
@@ -171,7 +201,10 @@ public class SentenceWordSearchManager : MonoBehaviour, IGameSceneCallbacks, IGa
         score = 0;
         correctCount = 0;
         wrongCount = 0;
+        hintCount = 0;
         remainingTime = Mathf.Max(1f, gameTime);
+        hiddenElapsedGameplayTime = 0f;
+        hintChargedForCurrentQuestion = false;
         gameRunning = true;
         gameplayStarted = false;
         inputLocked = true;
@@ -193,6 +226,7 @@ public class SentenceWordSearchManager : MonoBehaviour, IGameSceneCallbacks, IGa
             ui.HidePause();
             ui.HideHowToPlay();
             ui.UpdateScore(score);
+            ui.SetTimerVisible(clockMode == SentenceWordSearchClockMode.NormalCountdown && useTimer);
             ui.UpdateTimer(remainingTime, useTimer);
             ui.ApplyFonts();
         }
@@ -306,6 +340,25 @@ public class SentenceWordSearchManager : MonoBehaviour, IGameSceneCallbacks, IGa
         if (!CanAcceptInput || CurrentQuestion == null)
             return;
 
+        if (!hintChargedForCurrentQuestion)
+        {
+            hintChargedForCurrentQuestion = true;
+            hintCount++;
+
+            if (hintPenalty > 0)
+            {
+                score = allowNegativeHintScore
+                    ? score - hintPenalty
+                    : Mathf.Max(0, score - hintPenalty);
+            }
+
+            if (ui != null)
+            {
+                Camera eventCamera = inputController != null ? inputController.EventCamera : null;
+                ui.ShowHintPenalty(hintPenalty, score, eventCamera);
+            }
+        }
+
         if (board != null)
             board.PulseHintForWord(CurrentQuestion.answer);
 
@@ -387,16 +440,13 @@ public class SentenceWordSearchManager : MonoBehaviour, IGameSceneCallbacks, IGa
         score += correctScore;
         correctCount++;
 
-        if (ui != null)
-        {
-            ui.UpdateScore(score);
-            ui.ShowScorePopup($"+{correctScore}", popupPosition, eventCamera, true);
-        }
-
         if (audioController != null)
             audioController.PlaySfx(audioController.scorePopupClip != null ? audioController.scorePopupClip : audioController.correctClip);
 
-        yield return new WaitForSeconds(0.28f);
+        if (ui != null)
+            yield return ui.AnimateCorrectScoreToBar(correctScore, score, popupPosition, eventCamera);
+
+        yield return new WaitForSeconds(0.12f);
 
         if (board != null)
         {
@@ -484,6 +534,8 @@ public class SentenceWordSearchManager : MonoBehaviour, IGameSceneCallbacks, IGa
             return;
         }
 
+        hintChargedForCurrentQuestion = false;
+
         if (board != null)
         {
             board.ClearPreview();
@@ -525,20 +577,40 @@ public class SentenceWordSearchManager : MonoBehaviour, IGameSceneCallbacks, IGa
     private GameEvaluationData BuildEvaluationData()
     {
         int totalQuestions = activeQuestions.Count;
-        float timeTaken = Mathf.Max(0f, Time.time - _startTime);
-        float maxTime = expectedMaxTime > 0f ? expectedMaxTime : gameTime;
-        maxTime = Mathf.Max(1f, maxTime);
+        float timeTaken = clockMode == SentenceWordSearchClockMode.HiddenUnlimited
+            ? Mathf.Max(0f, hiddenElapsedGameplayTime)
+            : Mathf.Max(0f, Time.time - _startTime);
 
-        float timeScore = Mathf.Clamp01(1f - (timeTaken / maxTime));
-        float accuracyScore = totalQuestions > 0 ? (float)correctCount / totalQuestions : 0f;
+        float timeScore = CalculateBloomTimeScore(timeTaken);
+        float accuracyScore = totalQuestions > 0 ? Mathf.Clamp01(((float)correctCount / totalQuestions) - (hintCount * (hintPenalty / 100f))) : 0f;
 
         return new GameEvaluationData
         {
             timeScore = timeScore,
             accuracyScore = Mathf.Clamp01(accuracyScore),
-            mistakeCount = wrongCount,
+            mistakeCount = wrongCount + hintCount,
             timeTaken = timeTaken
         };
+    }
+
+    private float CalculateBloomTimeScore(float timeTaken)
+    {
+        if (clockMode == SentenceWordSearchClockMode.HiddenUnlimited)
+        {
+            float bestTime = Mathf.Max(1f, hiddenClockBestTime);
+
+            if (timeTaken <= bestTime)
+                return 1f;
+
+            float interval = Mathf.Max(1f, hiddenClockScoreInterval);
+            int reductionSteps = Mathf.CeilToInt((timeTaken - bestTime) / interval);
+            return Mathf.Clamp01(1f - (reductionSteps * hiddenClockScoreReduction));
+        }
+
+        // Preserve the original linear Bloom calculation for existing normal-clock games.
+        float maxTime = expectedMaxTime > 0f ? expectedMaxTime : gameTime;
+        maxTime = Mathf.Max(1f, maxTime);
+        return Mathf.Clamp01(1f - (timeTaken / maxTime));
     }
 
     public void ShowPostGameReward()
@@ -625,7 +697,11 @@ public class SentenceWordSearchManager : MonoBehaviour, IGameSceneCallbacks, IGa
         columns = Mathf.Max(2, columns);
         gridPadding = Mathf.Max(0, gridPadding);
         wrongPenalty = Mathf.Max(0, wrongPenalty);
+        hintPenalty = Mathf.Max(0, hintPenalty);
         correctScore = Mathf.Max(0, correctScore);
+        hiddenClockBestTime = Mathf.Max(1f, hiddenClockBestTime);
+        hiddenClockScoreInterval = Mathf.Max(1f, hiddenClockScoreInterval);
+        hiddenClockScoreReduction = Mathf.Clamp01(hiddenClockScoreReduction);
 
         if (expectedMaxTime <= 0f)
             expectedMaxTime = gameTime;

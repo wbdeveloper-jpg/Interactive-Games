@@ -41,6 +41,8 @@ public class SentenceWordSearchUI : MonoBehaviour
     public GameObject resultPanel;
     public GameObject howToPlayPanel;
     public GameObject pausePanel;
+    [Tooltip("Optional dedicated Timer Card/root. This entire object is hidden in Hidden Unlimited mode or whenever Use Timer is disabled. Leave empty to hide only Timer Text and preserve the existing layout spacing.")]
+    public GameObject timerDisplayRoot;
 
     [Header("Buttons")]
     public Button pauseButton;
@@ -60,6 +62,8 @@ public class SentenceWordSearchUI : MonoBehaviour
     [Header("Animation Targets")]
     public RectTransform overlayRoot;
     public RectTransform sentenceAnswerTarget;
+    [Tooltip("Optional. Leave empty to animate into the parent of Score Text (normally the complete score card).")]
+    public RectTransform scoreAnimationTarget;
 
     [Header("Colors")]
     public Color sentenceNormalColor = new Color(0.22f, 0.18f, 0.18f, 1f);
@@ -70,6 +74,11 @@ public class SentenceWordSearchUI : MonoBehaviour
     [Header("Animation")]
     public float scorePopupDuration = 0.75f;
     public float wordFlyDuration = 0.5f;
+
+    [Header("Correct Score Reward Animation")]
+    [Min(0.05f)] public float scoreGainFlyDuration = 0.72f;
+    [Range(1f, 1.5f)] public float scoreGainImpactScale = 1.14f;
+    [Min(0.05f)] public float scoreGainImpactDuration = 0.16f;
 
     private Sequence sentencePulseSequence;
     private string currentSentenceWithBlank = "";
@@ -167,6 +176,52 @@ public class SentenceWordSearchUI : MonoBehaviour
         timerText.text = $"{minutes:00}:{sec:00}";
     }
 
+    public void SetTimerVisible(bool visible)
+    {
+        GameObject display = ResolveTimerDisplay();
+
+        if (display != null)
+            display.SetActive(visible);
+    }
+
+    private GameObject ResolveTimerDisplay()
+    {
+        if (timerDisplayRoot != null)
+            return timerDisplayRoot;
+
+        if (timerText == null)
+            return null;
+
+        // Existing generated scenes use a TimerCard parent. Resolve a clearly
+        // named Timer/Clock container without risking a shared top information row.
+        Transform current = timerText.transform.parent;
+        while (current != null && current != transform)
+        {
+            string lowerName = current.name.ToLowerInvariant();
+            if (lowerName.Contains("timer") || lowerName.Contains("clock"))
+                return current.gameObject;
+
+            current = current.parent;
+        }
+
+        // Custom hierarchies with no dedicated named container remain safe.
+        return timerText.gameObject;
+    }
+
+    public void ShowHintPenalty(int penalty, int resultingScore, Camera uiCamera)
+    {
+        UpdateScore(resultingScore);
+
+        if (penalty <= 0 || hintButton == null)
+            return;
+
+        Vector2 screenPosition = RectTransformUtility.WorldToScreenPoint(
+            uiCamera,
+            hintButton.transform.position);
+
+        ShowScorePopup($"-{penalty}", screenPosition, uiCamera, false);
+    }
+
     public void FillSentenceAnswer(string answer)
     {
         if (sentenceText == null)
@@ -250,6 +305,97 @@ public class SentenceWordSearchUI : MonoBehaviour
             if (popupObject != null)
                 Destroy(popupObject);
         });
+    }
+
+    public IEnumerator AnimateCorrectScoreToBar(int amount, int resultingScore, Vector2 startScreenPosition, Camera uiCamera)
+    {
+        // Older/custom scenes can still play safely even if an animation reference is missing.
+        if (overlayRoot == null || scoreText == null)
+        {
+            UpdateScore(resultingScore);
+            yield break;
+        }
+
+        GameObject rewardObject = new GameObject("FlyingScoreReward", typeof(RectTransform));
+        rewardObject.transform.SetParent(overlayRoot, false);
+
+        TextMeshProUGUI rewardText = rewardObject.AddComponent<TextMeshProUGUI>();
+        rewardText.text = $"+{amount}";
+        rewardText.alignment = TextAlignmentOptions.Center;
+        rewardText.fontSize = 56f;
+        rewardText.fontStyle = FontStyles.Bold;
+        rewardText.raycastTarget = false;
+        rewardText.color = positivePopupColor;
+
+        if (primaryFont != null)
+            rewardText.font = primaryFont;
+
+        RectTransform rewardRect = rewardObject.GetComponent<RectTransform>();
+        rewardRect.sizeDelta = new Vector2(240f, 100f);
+
+        Vector2 startLocal;
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(
+            overlayRoot,
+            startScreenPosition,
+            uiCamera,
+            out startLocal);
+
+        rewardRect.anchoredPosition = startLocal;
+        rewardRect.localScale = Vector3.one;
+
+        RectTransform target = ResolveScoreAnimationTarget();
+        Vector2 targetScreenPosition = RectTransformUtility.WorldToScreenPoint(uiCamera, target.position);
+        Vector2 targetLocalPosition;
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(
+            overlayRoot,
+            targetScreenPosition,
+            uiCamera,
+            out targetLocalPosition);
+
+        Sequence rewardSequence = DOTween.Sequence();
+        rewardSequence.Append(rewardRect.DOAnchorPos(targetLocalPosition, scoreGainFlyDuration).SetEase(Ease.InOutCubic));
+        rewardSequence.Join(rewardRect.DOScale(0.72f, scoreGainFlyDuration).SetEase(Ease.InCubic));
+
+        yield return rewardSequence.WaitForCompletion();
+
+        if (rewardObject != null)
+            Destroy(rewardObject);
+
+        // The visible score changes only when the reward reaches the score card.
+        UpdateScore(resultingScore);
+
+        Vector3 originalScale = target.localScale;
+        Sequence impactSequence = DOTween.Sequence();
+        impactSequence.Append(target.DOScale(originalScale * scoreGainImpactScale, scoreGainImpactDuration).SetEase(Ease.OutBack));
+        impactSequence.Append(target.DOScale(originalScale, scoreGainImpactDuration).SetEase(Ease.InOutSine));
+
+        yield return impactSequence.WaitForCompletion();
+
+        if (target != null)
+            target.localScale = originalScale;
+    }
+
+    private RectTransform ResolveScoreAnimationTarget()
+    {
+        if (scoreAnimationTarget != null)
+            return scoreAnimationTarget;
+
+        // Prefer the nearest visual card so customised UI hierarchies pulse the
+        // score bar rather than only the text or an entire top navigation row.
+        Transform current = scoreText != null ? scoreText.transform.parent : null;
+        while (current != null && current != overlayRoot)
+        {
+            RectTransform currentRect = current as RectTransform;
+            if (currentRect != null && current.GetComponent<Image>() != null)
+                return currentRect;
+
+            current = current.parent;
+        }
+
+        if (scoreText != null && scoreText.rectTransform.parent is RectTransform parentRect)
+            return parentRect;
+
+        return scoreText != null ? scoreText.rectTransform : overlayRoot;
     }
 
     public IEnumerator AnimateWordToSentence(string answer, Vector2 startScreenPosition, Camera uiCamera)
